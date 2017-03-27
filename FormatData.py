@@ -78,25 +78,27 @@ def buildClass(allData,estation,contaminant,delta):
     cont = len(build.index)-1;
     values = np.ones((cont+1,1))*-1;
     #building the DataFrame, the first column is the date
-    name = estation + '_'+tableContaminant + '_delta';#name the column in the DataFrame
     x =0;
-    while x <= cont :
-        #Construction of the second column having the pollutant value
-        time=build.ix[x,'fecha'];
-        time = time + timedelta(hours=delta);#You add the delta to the date
-        sql = """SELECT val FROM {0} WHERE id_est ='{1}' AND fecha ='{2}';""".format(tableContaminant,estation,time);
-        cur.execute(sql);
-        temp=cur.fetchall();
-        tempValue = np.array(temp);
-        if len(tempValue)!=0:
-            #If the query is empty it puts -1 in the value of the column
-            values[x,0]=tempValue[0,0];
-            x=x+1;
-        else:
-            values[x,0]=-1;
-            x=x+1;
-    temBuild= pd.DataFrame(values,columns=[name]);
-    build[name]= temBuild;
+    for xv in estation:
+        name = tableContaminant+'_'+ xv + '_delta';#name the column in the DataFrame
+        while x <= cont :
+            #Construction of the second column having the pollutant value
+            time=build.ix[x,'fecha'];
+            time = time + timedelta(hours=delta);#You add the delta to the date
+            sql = """SELECT val FROM {0} WHERE id_est ='{1}' AND fecha ='{2}';""".format(tableContaminant,xv,time);
+            cur.execute(sql);
+            temp=cur.fetchall();
+            tempValue = np.array(temp);
+            if len(tempValue)!=0:
+                #If the query is empty it puts -1 in the value of the column
+                values[x,0]=tempValue[0,0];
+                x=x+1;
+            else:
+                values[x,0]=-1;
+                x=x+1;
+            temBuild= pd.DataFrame(values,columns=[name]);
+        x=0;
+        build[name]= temBuild;
     conn.commit();
     cur.close();
     #The connection to the database is closed
@@ -105,7 +107,7 @@ def buildClass(allData,estation,contaminant,delta):
 def main():
     dta=readData(startDate,endDate,estations);
     print(dta);
-    build =buildClass(dta,'TAX','NOX',6);
+    build =buildClass(dta,estations,'NOX',6);
     print(build);
 
 if __name__ == "__main__":
