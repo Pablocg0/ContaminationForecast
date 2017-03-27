@@ -9,7 +9,7 @@ endDate='2009/02/25';
 estations=['MER','TAX','TLA'];
 
 data = FormatData.readData(startDate,endDate,estations);
-build = FormatData.buildClass(data,estations,'NOX',24);
+build = FormatData.buildClass(data,['MER'],'NOX',24);
 
 x_vals = an.converToArray(data,'NOX');
 y_vals = an.converToArray(build,'NOX');
@@ -25,7 +25,7 @@ x_vals_train =x_vals[train_indices];
 x_vals_test = x_vals[test_indices];
 y_vals_train = y_vals[train_indices];
 y_vals_test = y_vals[test_indices];
-size = len(x_vals_train);
+size = len(x_vals_train);# The number of neurons in the first layer is equal to the number of columns of data
 # Declare batch size
 batch_size= size;
 
@@ -66,6 +66,7 @@ def fully_connected(input_layer,weight,biases):
     return tf.nn.sigmoid(layer);
 
 #--------Create the first layer (size hidden nodes)--------
+# TODO De alguna manera tenemos que recibir todas las columnas en mi primer capa de neuronas
 weight_1 = init_weight(shape=[1,size]);
 bias_1 = init_bias(shape=[size]);
 layer_1 = fully_connected(x_data,weight_1,bias_1);
@@ -98,9 +99,14 @@ test_loss =[];
 # Training loop
 for i in range(1000):
     #random data for x_values and y_values
+
+    # TODO cambiar esta parte, y jalar desde arriba una serie de indices (permutados)
+    # con el 80 y el 20 de los datos
     rand_index = np.random.choice(len(x_vals_train), size= 100);
     rand_x = x_vals_train[rand_index];
     rand_y = y_vals_train[rand_index];
+    # 
+    # TODO solo dejar 2, uno de entrenamiento con el 80% de los datos y otro de prueba con el 20%
     temp_train=sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y});
 
     temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y});
