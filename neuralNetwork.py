@@ -70,11 +70,7 @@ weight_1 = init_weight(shape=[columns-1,size]);
 bias_1 = init_bias(shape=[size]);
 layer_1 = fully_connected(x_data,weight_1,bias_1);
 
-#--------Create the second layeprint(size);
-print(columns-1);
-print(x_vals_test.shape);
-print(y_vals_train.shape);
-print(y_vals_test.shape);r (size*2 hidden nodes)--------
+#--------Create the second layeprint(size);--------
 weight_2 = init_weight(shape=[size,size*2]);
 bias_2= init_bias(shape=[size*2]);
 layer_2 = fully_connected(layer_1,weight_2, bias_2);
