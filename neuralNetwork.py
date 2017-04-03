@@ -33,7 +33,7 @@ sess= tf.Session();
 x_vals_train,x_vals_test,y_vals_train,y_vals_test = train_test_split(x_vals, y_vals, test_size=0.2)
 size = len(x_vals_train);# The number of neurons in the first layer is equal to the number of columns of data
 # Declare batch size
-batch_size= 20;
+batch_size= 60;
 
 def init_weight(shape):
     """
@@ -94,6 +94,8 @@ sess.run(init);
 
 loss_vec =[];
 test_loss =[];
+x_temp = x_vals_train;
+y_temp = y_vals_train;
 
 # Training loop
 for i in range(1000):
@@ -103,10 +105,16 @@ for i in range(1000):
     # en cada iteracion los datos con los que se entrena, si no que en cada iteracion se van a agregando datos,
     # entonces batch_size es el tamaño de datos que queremos que se vaya dado en cada iteracion.
 
-    rand_index = np.random.choice(len(x_vals_train), size= batch_size);
-    rand_x = x_vals_train[rand_index];
-    rand_y = y_vals_train[rand_index];
-
+    rand_x,x_rest,rand_y,y_rest = train_test_split(x_vals_train, y_vals_train, test_size=batch_size*0.010);
+    if len(rand_x) == 0 and len(rand_y)== 0:
+        x_vals_train = x_temp;
+        y_vals_train = y_temp;
+        rand_x,x_rest,rand_y,y_rest = train_test_split(x_vals_train, y_vals_train, test_size=batch_size*0.010);
+        x_vals_train= x_rest;
+        y_vals_train = y_rest;
+    else:
+        x_vals_train= x_rest;
+        y_vals_train = y_rest;
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
