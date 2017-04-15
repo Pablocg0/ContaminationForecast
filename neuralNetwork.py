@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split #installl sklearn with pip 
 import matplotlib.pyplot as plt
 
 startDate='2009/02/20';
-endDate='2009/02/25';
+endDate='2009/03/02';
 estations=['MER','TAX','TLA'];
 contaminant = 'NOX';
 
@@ -30,10 +30,10 @@ y_vals = np.nan_to_num(an.normalize_cols(y_vals));
 sess= tf.Session();
 
 # Split data into train/test = 80%/20%
-x_vals_train,x_vals_test,y_vals_train,y_vals_test = train_test_split(x_vals, y_vals, test_size=0.2)
+x_vals_train,x_vals_test,y_vals_train,y_vals_test = train_test_split(x_vals, y_vals, test_size=0.2);
 size = len(x_vals_train);# The number of neurons in the first layer is equal to the number of columns of data
 # Declare batch size
-batch_size= 60;
+batch_size= 80;
 
 def init_weight(shape):
     """
@@ -66,18 +66,18 @@ def fully_connected(input_layer,weight,biases):
 
 #--------Create the first layer (size hidden nodes)--------
 # TODO ya recibe todas las columnas en la primera capa
-weight_1 = init_weight(shape=[columns-1,size]);
-bias_1 = init_bias(shape=[size]);
+weight_1 = init_weight(shape=[columns-1,columns-1]);
+bias_1 = init_bias(shape=[columns-1]);
 layer_1 = fully_connected(x_data,weight_1,bias_1);
 
 #--------Create the second layeprint(size);--------
-weight_2 = init_weight(shape=[size,size*2]);
-bias_2= init_bias(shape=[size*2]);
+weight_2 = init_weight(shape=[columns-1,(columns-1)*2]);
+bias_2= init_bias(shape=[(columns-1)*2]);
 layer_2 = fully_connected(layer_1,weight_2, bias_2);
 
 
 #--------Create output layer (1 output value)--------
-weight_3= init_weight(shape=[size*2,1]);
+weight_3= init_weight(shape=[(columns-1)*2,1]);
 bias_3 = init_bias(shape=[1]);
 final_output = fully_connected(layer_2,weight_3, bias_3);
 
@@ -85,8 +85,8 @@ final_output = fully_connected(layer_2,weight_3, bias_3);
 loss= tf.reduce_mean(tf.abs(y_target - final_output));
 
 # Declare optimizer gradientDescent
-my_opt = tf.train.GradientDescentOptimizer(0.001);
-train_step =  my_opt.minimize(loss);
+my_opt = tf.train.GradientDescentOptimizer(0.1);
+train_step = my_opt.minimize(loss);
 
 # Initialize Variables
 init = tf.global_variables_initializer();
@@ -98,35 +98,19 @@ x_temp = x_vals_train;
 y_temp = y_vals_train;
 
 # Training loop
-for i in range(1000):
-    #random data for x_values and y_values
-
-    # TODO esto es necesario, no habia entendido bien por que se hace esto, no es que se este cambiando
-    # en cada iteracion los datos con los que se entrena, si no que en cada iteracion se van a agregando datos,
-    # entonces batch_size es el tamaño de datos que queremos que se vaya dado en cada iteracion.
-
-    rand_x,x_rest,rand_y,y_rest = train_test_split(x_vals_train, y_vals_train, test_size=batch_size*0.010);
-    if len(rand_x) == 0 and len(rand_y)== 0:
-        x_vals_train = x_temp;
-        y_vals_train = y_temp;
-        rand_x,x_rest,rand_y,y_rest = train_test_split(x_vals_train, y_vals_train, test_size=batch_size*0.010);
-        x_vals_train= x_rest;
-        y_vals_train = y_rest;
-    else:
-        x_vals_train= x_rest;
-        y_vals_train = y_rest;
+for i in range(100):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
-    sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y});
+    sess.run(train_step, feed_dict={x_data: x_vals_train, y_target: y_vals_train});
 
-    temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y});
+    temp_loss = sess.run(loss, feed_dict={x_data: x_vals_train, y_target: y_vals_train});
     loss_vec.append(temp_loss);
 
     test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
     test_loss.append(test_temp_loss);
 
-    if (i+1)%200==0:
+    if (i+1)%20==0:
         print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
 
 # Plot loss
