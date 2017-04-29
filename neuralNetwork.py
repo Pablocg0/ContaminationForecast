@@ -6,13 +6,14 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
 import matplotlib.pyplot as plt
 
-startDate='2009/02/20';
-endDate='2009/03/02';
-estations=['MER','TAX','TLA'];
-contaminant = 'NOX';
+startDate='1986/01/10';
+endDate='2017/02/02';
+estations=['XAL'];
+contaminant = 'O3';
+
 
 data = FormatData.readData(startDate,endDate,estations);
-build = FormatData.buildClass(data,['MER'],contaminant,24);
+build = FormatData.buildClass(data,['XAL'],contaminant,24);
 
 
 x_vals = np.nan_to_num(data.values);
@@ -32,8 +33,6 @@ sess= tf.Session();
 # Split data into train/test = 80%/20%
 x_vals_train,x_vals_test,y_vals_train,y_vals_test = train_test_split(x_vals, y_vals, test_size=0.2);
 size = len(x_vals_train);# The number of neurons in the first layer is equal to the number of columns of data
-# Declare batch size
-batch_size= 80;
 
 def init_weight(shape):
     """
@@ -94,11 +93,9 @@ sess.run(init);
 
 loss_vec =[];
 test_loss =[];
-x_temp = x_vals_train;
-y_temp = y_vals_train;
 
 # Training loop
-for i in range(100):
+for i in range(2000):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -110,13 +107,14 @@ for i in range(100):
     test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
     test_loss.append(test_temp_loss);
 
-    if (i+1)%20==0:
+    if (i+1)%200==0:
         print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
 
-# Plot loss
+#Plot loss
 plt.plot(loss_vec, 'k-', label='Train Loss')
 plt.plot(test_loss, 'r--', label='Test Loss')
 plt.title('Loss per Iteration')
 plt.xlabel('Iterations')
 plt.ylabel('Loss')
+plt.legend(loc='best')
 plt.show()
