@@ -1,26 +1,23 @@
 # ContaminationForecast
 
-#Neural network design for pollution prediction
+# Neural network design for pollution prediction
 
-##Pip dependency installation
+## Pip dependency installation
 
-###tensorflow
+### tensorflow
 
-'''
-pip installl tensorflow
-'''
+
+`pip installl tensorflow`
+
 or
-'''
-pip installl tensorflow-gpu
-'''
 
-###pandas
-'''
-pip install pandas
-'''
+`pip installl tensorflow-gpu`
+
+### pandas
+
+`pip install pandas`
+
 
 ### sklearn
 
-'''
-pip install -U scikit-learn
-'''
+`pip install -U scikit-learn`
