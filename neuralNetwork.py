@@ -4,10 +4,11 @@ import numpy as np
 import pandas as df
 import tensorflow as tf
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
+from sklearn import preprocessing
 import matplotlib.pyplot as plt
 
-startDate='1986/01/10';
-endDate='2017/02/02';
+startDate='2017/01/10';
+endDate='2017/03/02';
 estations=['XAL'];
 contaminant = 'O3';
 
@@ -16,16 +17,15 @@ data = FormatData.readData(startDate,endDate,estations);
 build = FormatData.buildClass(data,['XAL'],contaminant,24);
 
 
-x_vals = np.nan_to_num(data.values);
-
+x_vals = data.values;
 x = x_vals.shape;
-columns = x[1]
+columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an.converToArray(build,contaminant);
 
 # Normalize data
-x_vals = np.nan_to_num(an.normalize_array(x_vals));
-y_vals = np.nan_to_num(an.normalize_cols(y_vals));
+x_vals= preprocessing.normalize(x_vals);
+y_vals = preprocessing.normalize(y_vals);
 
 # Create graph session
 sess= tf.Session();
