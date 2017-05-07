@@ -47,7 +47,7 @@ def readData(startDate,endDate,estations):
     conn.commit();
     cur.close();
     #The connection to the database is closed
-    return allData;
+    return allData.fillna(value=-1);
 
 
 
@@ -102,7 +102,7 @@ def buildClass(allData,estation,contaminant,delta):
     conn.commit();
     cur.close();
     #The connection to the database is closed
-    return build;
+    return build.fillna(value=-1);
 
 def main():
     dta=readData(startDate,endDate,estations);
