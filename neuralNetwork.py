@@ -6,13 +6,14 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
+from time import time
 
-startDate='2017/01/10';
-endDate='2017/03/02';
+startDate='1986/01/10';
+endDate='2017/02/02';
 estations=['XAL'];
 contaminant = 'O3';
 
-
+ini = time();
 data = FormatData.readData(startDate,endDate,estations);
 build = FormatData.buildClass(data,['XAL'],contaminant,24);
 
@@ -22,7 +23,7 @@ x = x_vals.shape;
 columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an.converToArray(build,contaminant);
-
+fin = time(); 
 # Normalize data
 x_vals= preprocessing.normalize(x_vals);
 y_vals = preprocessing.normalize(y_vals);
@@ -95,7 +96,8 @@ loss_vec =[];
 test_loss =[];
 
 # Training loop
-for i in range(2000):
+initial = time();
+for i in range(100000):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -107,14 +109,19 @@ for i in range(2000):
     test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
     test_loss.append(test_temp_loss);
 
-    if (i+1)%200==0:
+    if (i+1)%100000==0:
         print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
 
+final = time();
+total_execution = final-initial;
+total_dta = fin-ini;
+print('tiempo de red:',total_dta);
+print('Tiempo de datos: ', total_execution);
 #Plot loss
-plt.plot(loss_vec, 'k-', label='Train Loss')
-plt.plot(test_loss, 'r--', label='Test Loss')
-plt.title('Loss per Iteration')
-plt.xlabel('Iterations')
-plt.ylabel('Loss')
-plt.legend(loc='best')
-plt.show()
+#plt.plot(loss_vec, 'k-', label='Train Loss')
+#plt.plot(test_loss, 'r--', label='Test Loss')
+#plt.title('Loss per Iteration')
+#plt.xlabel('Iterations')
+#plt.ylabel('Loss')
+#plt.legend(loc='best')
+#plt.show()
