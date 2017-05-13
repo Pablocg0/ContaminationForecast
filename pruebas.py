@@ -18,7 +18,7 @@ def estations():
         estation += [x];
         print(estation);
         data = FormatData.readData(start,endDate,estation);
-        build = FormatData.buildClass(data,estation,contaminant,24);
+        build = FormatData.buildClass(data,[est[0]],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
         temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2]);
         loss_vec.append(temp_loss);
