@@ -24,8 +24,10 @@ def estations():
     i = 1;
     while i < 22 :
         print(est[i]);
-        data = FormatData.readData(startDate[i],endDate,[est[i]]);
-        build = FormatData.buildClass(data,[est[i]],contaminant,24);
+        estation= est[0];
+        data = FormatData.readData(startDate[i],endDate,[estation]);
+        print(data);
+        build = FormatData.buildClass(data,[estation],contaminant,24);
         total_data = df.concat([total_data, data], axis=1);
         total_build = df.concat([total_build, build], axis=1);
         total_data.fillna(value=-1);
