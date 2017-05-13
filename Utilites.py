@@ -32,7 +32,7 @@ def converToArray(alldata,contaminant):
                     index = index +1;
     return c;
 
-def prepro(data,build):
+def prepro(data,build,contaminant):
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
