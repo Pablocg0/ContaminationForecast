@@ -12,6 +12,25 @@ startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','20
 endDate = '2017/02/02';
 
 def estations():
+    start =startDate[0];
+    for x in est:
+        estation += [x];
+        data = FormatData.readData(start,endDate,estation);
+        build = FormatData.buildClass(data,estation,contaminant,24);
+        xy_values = an.prepro(data,build, contaminant);
+        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2]);
+        loss_vec.append(temp_loss);
+    print(loss_vec);
+    plt.plot(loss_vec, 'k-', label='Loss')
+    plt.title('Error aumentando el numero de estaciones')
+    plt.xlabel('Numero de estaciones')
+    plt.ylabel('Loss')
+    plt.legend(loc='best')
+    savefig("estaciones.png")
+    plt.show()
+        
+
+def estac2():
     estation= est[0];
     start = startDate[0];
     data = FormatData.readData(start,endDate,[estation]);
