@@ -1,40 +1,11 @@
-import FormatData
-import Utilites as an
 import numpy as np
 import pandas as df
 import tensorflow as tf
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
-from sklearn import preprocessing
-import matplotlib.pyplot as plt
-from time import time
-
-startDate='1986/01/10';
-endDate='2017/02/02';
-estations=['XAL'];
-contaminant = 'O3';
-
-initial = time();
-data = FormatData.readData(startDate,endDate,estations);
-build = FormatData.buildClass(data,['XAL'],contaminant,24);
-
-
-x_vals = data.values;
-x = x_vals.shape;
-columns = x[1];
-x_vals= x_vals[:,1:columns];
-y_vals = an.converToArray(build,contaminant);
-final = time();
-# Normalize data
-x_vals= preprocessing.normalize(x_vals);
-y_vals = preprocessing.normalize(y_vals);
 
 
 # Create graph session
 sess= tf.Session();
-
-# Split data into train/test = 80%/20%
-x_vals_train,x_vals_test,y_vals_train,y_vals_test = train_test_split(x_vals, y_vals, test_size=0.2);
-size = len(x_vals_train);# The number of neurons in the first layer is equal to the number of columns of data
 
 def init_weight(shape):
     """
@@ -106,36 +77,24 @@ test_loss =[];
 
 ini = time();
 # Training loop
-for i in range(100000):
-    #
-    # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
-    #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
-    sess.run(train_step, feed_dict={x_data: x_vals_train, y_target: y_vals_train});
 
-    temp_loss = sess.run(loss, feed_dict={x_data: x_vals_train, y_target: y_vals_train});
-    loss_vec.append(temp_loss);
+def train(x_data,y_data, col):
+    global columns;
+    columns = col;
+    global size;
+    size = len(x_data);
+    for i in range(1000):
+        #
+        # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
+        #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
+        sess.run(train_step, feed_dict={x_data: x_data, y_target: y_data});
 
-    test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
-    test_loss.append(test_temp_loss);
+        temp_loss = sess.run(loss, feed_dict={x_data: x_data, y_target: y_data});
+        loss_vec.append(temp_loss);
 
-    if (i+1)%100000==0:
-        print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
+        #test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
+        #test_loss.append(test_temp_loss);
 
-fin = time();
-total_execution = fin - ini;
-total_data = final - initial;
-print('tiempoGpu de datos:', total_data);
-print('\n tiempoGpu de red neuronal:',total_execution );
-
-#Plot loss
-#plt.plot(loss_vec, 'k-', label='Train Loss')
-#plt.plot(test_loss, 'r--', label='Test Loss')
-#plt.title('Loss per Iteration')
-#plt.xlabel('Iterations')
-#plt.ylabel('Loss')
-#plt.legend(loc='best')
-#plt.show()
-
-#prediction= tf.argmax(final_output,1);
-#prediction.eval(feed_dict={x: x_vals_train},session=sess);
-#print(prediction);
+        if (i+1)%1000==0:
+            total_loss = temp_loss;
+    return total_loss;
