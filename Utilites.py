@@ -2,6 +2,7 @@ import FormatData
 import re
 import numpy as np
 from oztools import ContIOTools
+from sklearn import preprocessing
 
 def converToArray(alldata,contaminant):
     """
@@ -30,3 +31,14 @@ def converToArray(alldata,contaminant):
                     c[index,0]= i;
                     index = index +1;
     return c;
+
+def prepro(data,build):
+    x_vals = data.values;
+    x = x_vals.shape;
+    columns = x[1];
+    x_vals= x_vals[:,1:columns];
+    y_vals = converToArray(build,contaminant);
+    # Normalize data
+    x_vals= preprocessing.normalize(x_vals);
+    y_vals = preprocessing.normalize(y_vals);
+    return [x_vals, y_vals,columns];
