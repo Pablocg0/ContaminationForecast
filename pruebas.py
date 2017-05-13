@@ -23,6 +23,7 @@ def estations():
     loss_vec.append(temp_loss);
     i = 1;
     while i < 22 :
+        print(estations[i]);
         data = fd.readData(startDate[i],endDate,estations[i]);
         build = fd.buildClass(data,[estations[i]],contaminant,24);
         total_data = df.concat([total_data, data], axis=1);
@@ -41,3 +42,5 @@ def estations():
     plt.legend(loc='best')
     savefig("estaciones.png")
     plt.show()
+
+estation();
