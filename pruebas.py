@@ -23,7 +23,7 @@ def estations():
     loss_vec.append(temp_loss);
     i = 1;
     while i < 22 :
-        print(estations[i]);
+        print(est[i]);
         data = FormatData.readData(startDate[i],endDate,[est[i]]);
         build = FormatData.buildClass(data,[est[i]],contaminant,24);
         total_data = df.concat([total_data, data], axis=1);
