@@ -74,6 +74,7 @@ def train(x_d,y_data, columns):
     # Initialize Variables
     init = tf.global_variables_initializer();
     sess.run(init);
+    loss_vec =[];
 
     # Training loop
     for i in range(1000):
