@@ -13,8 +13,10 @@ endDate = '2017/02/02';
 
 def estations():
     start =startDate[0];
+    estation = [];
     for x in est:
         estation += [x];
+        print(estation);
         data = FormatData.readData(start,endDate,estation);
         build = FormatData.buildClass(data,estation,contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
@@ -28,7 +30,7 @@ def estations():
     plt.legend(loc='best')
     savefig("estaciones.png")
     plt.show()
-        
+
 
 def estac2():
     estation= est[0];
