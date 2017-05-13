@@ -8,14 +8,15 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from time import time
 
-startDate='1986/01/10';
-endDate='2017/02/02';
-estations=['XAL'];
+startDate='2015/01/10';
+endDate='2015/02/02';
+estations=['AJM'];
 contaminant = 'O3';
 
 ini = time();
 data = FormatData.readData(startDate,endDate,estations);
-build = FormatData.buildClass(data,['XAL'],contaminant,24);
+print(data);
+build = FormatData.buildClass(data,['AJM'],contaminant,24);
 
 
 x_vals = data.values;
@@ -23,7 +24,7 @@ x = x_vals.shape;
 columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an.converToArray(build,contaminant);
-fin = time(); 
+fin = time();
 # Normalize data
 x_vals= preprocessing.normalize(x_vals);
 y_vals = preprocessing.normalize(y_vals);
@@ -97,7 +98,7 @@ test_loss =[];
 
 # Training loop
 initial = time();
-for i in range(100000):
+for i in range(1000):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -109,7 +110,7 @@ for i in range(100000):
     test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
     test_loss.append(test_temp_loss);
 
-    if (i+1)%100000==0:
+    if (i+1)%1000==0:
         print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
 
 final = time();
