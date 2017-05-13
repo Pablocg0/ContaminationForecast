@@ -26,13 +26,12 @@ def estations():
         print(est[i]);
         estation= est[0];
         data = FormatData.readData(startDate[i],endDate,[estation]);
-        print(data);
         build = FormatData.buildClass(data,[estation],contaminant,24);
         total_data = df.concat([total_data, data], axis=1);
         total_build = df.concat([total_build, build], axis=1);
         total_data.fillna(value=-1);
         total_build.fillna(value=-1);
-        xy_values = an.prepro(total_data,total_build);
+        xy_values = an.prepro(total_data,total_build,contaminant);
         temp_loss = nng.train(xy_valuessize[0],xy_values[1],xy_values[2]);
         loss_vec.append(temp_loss);
         i= i+1;
