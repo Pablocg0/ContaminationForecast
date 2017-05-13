@@ -34,7 +34,7 @@ def estations():
         loss_vec.append(temp_loss);
         i= i+1;
     print(loss_vec);
-    plt.plot(loss_vec, 'k-', label=Loss')
+    plt.plot(loss_vec, 'k-', label='Loss')
     plt.title('Error aumentando el numero de estaciones')
     plt.xlabel('Numero de estaciones')
     plt.ylabel('Loss')
