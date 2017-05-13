@@ -14,11 +14,8 @@ endDate = '2017/02/02';
 def estations():
     estation= est[0];
     start = startDate[0];
-    print(estation);
-    print(start);
     data = FormatData.readData(start,endDate,[estation]);
     total_data = data;
-    print(data);
     build = FormatData.buildClass(data,[estation],contaminant,24);
     total_build = build;
     xy_values = an.prepro(data,build, contaminant);
