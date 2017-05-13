@@ -103,12 +103,3 @@ def buildClass(allData,estation,contaminant,delta):
     cur.close();
     #The connection to the database is closed
     return build.fillna(value=-1);
-
-def main():
-    dta=readData(startDate,endDate,estations);
-    print(dta);
-    build =buildClass(dta,estations,'NOX',6);
-    print(build);
-
-if __name__ == "__main__":
-    main()
