@@ -27,7 +27,7 @@ def init_bias(shape):
         bias=  tf.Variable(tf.random_normal(shape));
         return bias;
 
-def train(x_d,y_data, columns):
+def train(x_d,y_data, columns,iteraciones):
 
     # Create graph session
     sess= tf.Session();
@@ -77,7 +77,7 @@ def train(x_d,y_data, columns):
     loss_vec =[];
 
     # Training loop
-    for i in range(1000):
+    for i in range(iteraciones):
         #
         # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
         #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -89,6 +89,6 @@ def train(x_d,y_data, columns):
         #test_temp_loss= sess.run(loss, feed_dict={x_data: x_vals_test, y_target: y_vals_test });
         #test_loss.append(test_temp_loss);
 
-        if (i+1)%1000==0:
+        if (i+1)%iteraciones==0:
             total_loss = temp_loss;
     return total_loss;
