@@ -20,7 +20,7 @@ def estations():
         data = FormatData.readData(start,endDate,estation);
         build = FormatData.buildClass(data,[est[0]],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
-        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2]);
+        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2],1000);
         loss_vec.append(temp_loss);
     print(loss_vec);
     plt.plot(loss_vec, 'k-', label='Loss')
@@ -28,9 +28,28 @@ def estations():
     plt.xlabel('Numero de estaciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
-    savefig("estaciones.png")
+    plt.savefig("estaciones.png")
     plt.show()
 
+def iteration():
+    i = 200
+    start =startDate[11];
+    estations= est[11];
+    data = FormatData.readData(start,endDate,estation);
+    build = FormatData.buildClass(data,[est[0]],contaminant,24);
+    xy_values = an.prepro(data,build, contaminant);
+    while i <= 5000:
+        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2],i);
+        loss_vec.append(temp_loss);
+        i = i + 200;
+    print(loss_vec);
+    plt.plot(loss_vec, 'k-', label='Loss')
+    plt.title('Error aumentando el numero de iteraciones de entrenamiento')
+    plt.xlabel('Numero de iteraciones')
+    plt.ylabel('Loss')
+    plt.legend(loc='best')
+    plt.savefig("iteraciones.png")
+    plt.show()
 
 def estac2():
     estation= est[0];
@@ -65,4 +84,14 @@ def estac2():
     savefig("estaciones.png")
     plt.show()
 
-estations();
+def main():
+    option = int(input("Escoga opcion a ejecutar \n 1.Numero de estaciones \n 2.Numero de iteraciones"));
+    if option == 1:
+        estations();
+    elif option == 2:
+        iteration();
+    else:
+        print("opcion incorrecta");
+
+if __name__ == '__main__':
+    main()
