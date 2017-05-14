@@ -5,14 +5,6 @@ from sqlCont import SqlCont
 from oztools import ContIOTools
 
 
-startDate='2009/02/20';
-endDate='2009/02/23';
-oztool = ContIOTools()
-contaminants = oztool.getContaminants();
-tables_contaminants = oztool.getTables();
-tables_contaminants.extend(oztool.getMeteoTables());
-estations=['MER','TAX','TLA'];
-
 
 def readData(startDate,endDate,estations):
     """
@@ -54,7 +46,13 @@ def readData(startDate,endDate,estations):
 
 
 
-def buildClass(allData,estation,contaminant,delta):
+def buildClass(allData,estation,contaminant,delta): Únete a la comunidad de Stack Overflow
+Stack Overflow es una comunidad de 7.1 millones de programadores como tú que se ayudan mutuamente.
+Únete a ellos, sólo te llevará un minuto:
+Registrarse
+Matplotlib savefig image trim
+Ask Question
+
     """
     Function so that every date in the allData table is added n hours and get the value that belongs to it.
     :param allData: is data extracted  the function readData
