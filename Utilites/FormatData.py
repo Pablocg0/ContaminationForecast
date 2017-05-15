@@ -10,7 +10,7 @@ class FormatData(object):
     def __init__(self, arg):
         """Constructor of the class"""
 
-    def readData(startDate,endDate,estations):
+    def readData(startDate,endDate,estations,contaminant):
         """
         Function to extract information from the database.
         :param startDate: range of data wit wich the vaues of tue query are extracted.
@@ -24,11 +24,12 @@ class FormatData(object):
         """
         oztool = ContIOTools();
         tables_contaminants = oztool.getTables();
+        cont = oztool.findTable(contaminant)
         conexion = SqlCont();
         conn = conexion.getPostgresConn();
         cur=conn.cursor();
         #conexion for the database
-        allData= pd.read_sql_query("""SELECT fecha FROM {0} WHERE id_est ='{1}' AND fecha >= '{2}' AND fecha <= '{3}';""".format(tables_contaminants[1],estations[0],startDate, endDate), conn);
+        allData= pd.read_sql_query("""SELECT fecha FROM {0} WHERE id_est ='{1}' AND fecha >= '{2}' AND fecha <= '{3}';""".format(cont,estations[0],startDate, endDate), conn);
         #query the dates in the gives range
         numberows = len(allData.index)#Numbers the data given by the previous query
         for x in estations:
