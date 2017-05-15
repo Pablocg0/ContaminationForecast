@@ -103,7 +103,7 @@ def time():
     date = start + timedelta(hours = dy);
     while date <= end:
         print(date);
-        data = FormatData.readData(start,date,[estation]);
+        data = FormatData.readData(start,date,[estation],contaminant);    
         build = FormatData.buildClass(data,[estation],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
         initCpu = time();
