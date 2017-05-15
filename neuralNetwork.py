@@ -1,5 +1,5 @@
-import FormatData
-import Utilites as an
+from Utilites.FormatData import FormatData
+from Utilites.Utilites import Utilites as an
 import numpy as np
 import pandas as df
 import tensorflow as tf
@@ -15,7 +15,6 @@ contaminant = 'O3';
 
 ini = time();
 data = FormatData.readData(startDate,endDate,estations);
-print(data);
 build = FormatData.buildClass(data,['AJM'],contaminant,24);
 
 
@@ -119,10 +118,11 @@ total_dta = fin-ini;
 print('tiempo de red:',total_dta);
 print('Tiempo de datos: ', total_execution);
 #Plot loss
-#plt.plot(loss_vec, 'k-', label='Train Loss')
-#plt.plot(test_loss, 'r--', label='Test Loss')
-#plt.title('Loss per Iteration')
-#plt.xlabel('Iterations')
-#plt.ylabel('Loss')
-#plt.legend(loc='best')
-#plt.show()
+plt.plot(loss_vec, 'k-', label='Train Loss')
+plt.plot(test_loss, 'r--', label='Test Loss')
+plt.title('Loss per Iteration')
+plt.xlabel('Iterations')
+plt.ylabel('Loss')
+plt.legend(loc='best')
+plt.savefig('prue.png')
+plt.show()

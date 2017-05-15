@@ -14,8 +14,8 @@ class SqlCont:
 
         #For Posgresql only
         try:
-            conn =psycopg2.connect(database="contingencia", user=login,host='192.168.1.103', password=passw)
-            #conn = psycopg2.connect(database="contingencia", user=login, host='132.248.8.238', password=passw)
+            #conn =psycopg2.connect(database="contingencia", user=login,host='192.168.1.103', password=passw)
+            conn = psycopg2.connect(database="contingencia", user=login, host='132.248.8.238', password=passw)
         except:
             print("Failed to connect to database")
 
