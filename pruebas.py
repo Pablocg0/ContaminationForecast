@@ -158,6 +158,17 @@ def main():
             iteration();
         else:
             print("Incorrect option");
+
+
+def main():
+    option = int(input("Escoga opcion a ejecutar \n 1.Numero de estaciones \n 2.Numero de iteraciones \n 3.Ambas"));
+    if option == 1:
+        estations();
+    elif option == 2:
+        iteration();
+    elif option == 3:
+        estations();
+        iteration();
     else:
         print("Incorrect option");
 
