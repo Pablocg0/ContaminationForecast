@@ -135,8 +135,8 @@ def main():
     if opt == 1:
         time();
     elif opt == 2:
-        print("1.Estations number \n 2.iterations number \n 3.All the tests \n"));
-        option = int(input("Option to execute: "))
+        print("1.Estations number \n 2.iterations number \n 3.All the tests \n");
+        option = int(input("Option to execute: "));
         if option == 1:
             estationsGpu();
         elif option == 2:
@@ -147,8 +147,8 @@ def main():
         else:
             print("Incorrect option");
     elif opt == 3:
-        print("1.Estations number \n 2.iterations number \n 3.All the tests \n"));
-        option = int(input("Option to execute: "))
+        print("1.Estations number \n 2.iterations number \n 3.All the tests \n");
+        option = int(input("Option to execute: "));
         if option == 1:
             estations();
         elif option == 2:
