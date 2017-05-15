@@ -10,6 +10,20 @@ class Utilites(object):
     def __init__(self, arg):
         """Constructor of the class"""
 
+
+
+    def prepro(data,build,contaminant):
+        x_vals = data.values;
+        x = x_vals.shape;
+        columns = x[1];
+        x_vals= x_vals[:,1:columns];
+        y_vals = converToArray(build,contaminant);
+        # Normalize data
+        x_vals= preprocessing.normalize(x_vals);
+        y_vals = preprocessing.normalize(y_vals);
+        return [x_vals, y_vals,columns];
+
+
     def converToArray(alldata,contaminant):
         """
         Function that returns in a single column the columns have a specific name
@@ -37,14 +51,3 @@ class Utilites(object):
                         c[index,0]= i;
                         index = index +1;
         return c;
-
-    def prepro(data,build,contaminant):
-        x_vals = data.values;
-        x = x_vals.shape;
-        columns = x[1];
-        x_vals= x_vals[:,1:columns];
-        y_vals = converToArray(build,contaminant);
-        # Normalize data
-        x_vals= preprocessing.normalize(x_vals);
-        y_vals = preprocessing.normalize(y_vals);
-        return [x_vals, y_vals,columns];
