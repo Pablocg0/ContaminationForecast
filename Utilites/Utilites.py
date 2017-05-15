@@ -17,7 +17,7 @@ class Utilites(object):
         x = x_vals.shape;
         columns = x[1];
         x_vals= x_vals[:,1:columns];
-        y_vals = converToArray(build,contaminant);
+        y_vals = This.converToArray(build,contaminant);
         # Normalize data
         x_vals= preprocessing.normalize(x_vals);
         y_vals = preprocessing.normalize(y_vals);
