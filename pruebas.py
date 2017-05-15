@@ -19,7 +19,7 @@ def estations():
     for x in est:
         estation += [x];
         print(estation);
-        data = FormatData.readData(start,endDate,estation);
+        data = FormatData.readData(start,endDate,estation,contaminant);
         build = FormatData.buildClass(data,[est[0]],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
         temp_loss = nn.train(xy_values[0],xy_values[1],xy_values[2],1000);
@@ -38,7 +38,7 @@ def estationsGpu():
     for x in est:
         estation += [x];
         print(estation);
-        data = FormatData.readData(start,endDate,estation);
+        data = FormatData.readData(start,endDate,estation,contaminant);
         build = FormatData.buildClass(data,[est[0]],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
         temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2],1000);
@@ -56,7 +56,7 @@ def iteration():
     i = 200
     start =startDate[10];
     estation= est[10];
-    data = FormatData.readData(start,endDate,[estation]);
+    data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
     xy_values = an.prepro(data,build, contaminant);
     while i <= 3000:
@@ -76,7 +76,7 @@ def iterationGpu():
     i = 200
     start =startDate[10];
     estation= est[10];
-    data = FormatData.readData(start,endDate,[estation]);
+    data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
     xy_values = an.prepro(data,build, contaminant);
     while i <= 3000:
@@ -103,7 +103,7 @@ def time():
     date = start + timedelta(hours = dy);
     while date <= end:
         print(date);
-        data = FormatData.readData(start,date,[estation],contaminant);    
+        data = FormatData.readData(start,date,[estation],contaminant);
         build = FormatData.buildClass(data,[estation],contaminant,24);
         xy_values = an.prepro(data,build, contaminant);
         initCpu = time();
