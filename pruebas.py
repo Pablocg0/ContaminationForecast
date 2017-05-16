@@ -125,10 +125,10 @@ def tiempo():
         time_cpu.append(totalCpu);
         time_gpu.append(totalGpu);
         date= date + timedelta(hours = dy);
-    plt.plot(totalCpu,'k-', label='time CPU');
-    plt.plot(totalGpu, 'r--',label='time GPU');
+    plt.plot(time_cpu,'k-', label='time CPU');
+    plt.plot(time_gpu, 'r-',label='time GPU');
     plt.title('GPU vs CPU');
-    plt.xlabel('Years with which the neural network was trained');
+    plt.xlabel('Years');
     plt.ylabel('Time');
     plt.legend(loc ='best');
     plt.savefig('tiempo.png',dpi=600);
