@@ -1,7 +1,7 @@
 from tests.neuralNetworkGpu import train as nng
 from tests.neuralNetwork import train as nn
 from Utilites.FormatData import FormatData
-from Utilites.Utilites import Utilites as an
+from Utilites.Utilites import prepro as an
 from datetime import datetime, timedelta
 import pandas as df
 import matplotlib.pyplot as plt
