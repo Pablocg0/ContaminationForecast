@@ -4,6 +4,8 @@ from Utilites.FormatData import FormatData
 from Utilites.Utilites import prepro as an
 from datetime import datetime, timedelta
 import pandas as df
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from time import time
 
@@ -93,7 +95,7 @@ def iterationGpu():
     plt.savefig("/iteraciones.png");
 
 
-def time():
+def tiempo():
     time_cpu =[];
     time_gpu =[];
     start  = datetime.strptime(startDate[21],'%Y/%m/%d')
@@ -107,10 +109,12 @@ def time():
         build = FormatData.buildClass(data,[estation],contaminant,24);
         xy_values = an(data,build, contaminant);
         initCpu = time();
-        nn(xy_values[0],xy_values[1],xy_values[2],1000);
+        temp_loss= nn(xy_values[0],xy_values[1],xy_values[2],1000);
+        loss_vec.append(temp_loss);
         finCpu = time();
         initGpu = time();
-        nng(xy_values[0],xy_values[1],xy_values[2],1000);
+        temp_loss=nng(xy_values[0],xy_values[1],xy_values[2],1000);
+        loss_vec.append(temp_loss);
         finGpu = time();
         totalCpu = finCpu - initCpu;
         totalGpu = finGpu - initGpu;
@@ -133,7 +137,7 @@ def main():
     print("3.Testing using CPU \n");
     opt = int(input("Option to execute: "))
     if opt == 1:
-        time();
+        tiempo();
     elif opt == 2:
         print("1.Estations number \n 2.iterations number \n 3.All the tests \n");
         option = int(input("Option to execute: "));
