@@ -1,5 +1,5 @@
 from Utilites.FormatData import FormatData
-from Utilites.Utilites import Utilites as an
+from Utilites.Utilites import converToArray as an
 import numpy as np
 import pandas as df
 import tensorflow as tf
@@ -22,7 +22,7 @@ x_vals = data.values;
 x = x_vals.shape;
 columns = x[1];
 x_vals= x_vals[:,1:columns];
-y_vals = an.converToArray(build,contaminant);
+y_vals = an(build,contaminant);
 fin = time();
 # Normalize data
 x_vals= preprocessing.normalize(x_vals);
