@@ -21,8 +21,8 @@ def estations():
         print(estation);
         data = FormatData.readData(start,endDate,estation,contaminant);
         build = FormatData.buildClass(data,[est[0]],contaminant,24);
-        xy_values = an.prepro(data,build, contaminant);
-        temp_loss = nn.train(xy_values[0],xy_values[1],xy_values[2],1000);
+        xy_values = an(data,build, contaminant);
+        temp_loss = nn(xy_values[0],xy_values[1],xy_values[2],1000);
         loss_vec.append(temp_loss);
     print(loss_vec);
     plt.plot(loss_vec, 'k-', label='Loss')
@@ -40,8 +40,8 @@ def estationsGpu():
         print(estation);
         data = FormatData.readData(start,endDate,estation,contaminant);
         build = FormatData.buildClass(data,[est[0]],contaminant,24);
-        xy_values = an.prepro(data,build, contaminant);
-        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2],1000);
+        xy_values = an(data,build, contaminant);
+        temp_loss = nng(xy_values[0],xy_values[1],xy_values[2],1000);
         loss_vec.append(temp_loss);
     print(loss_vec);
     plt.plot(loss_vec, 'k-', label='Loss')
@@ -58,9 +58,9 @@ def iteration():
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
-    xy_values = an.prepro(data,build, contaminant);
+    xy_values = an(data,build, contaminant);
     while i <= 3000:
-        temp_loss = nn.train(xy_values[0],xy_values[1],xy_values[2],i);
+        temp_loss = nn(xy_values[0],xy_values[1],xy_values[2],i);
         loss_vec.append(temp_loss);
         i = i + 200;
         print(i);
@@ -78,9 +78,9 @@ def iterationGpu():
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
-    xy_values = an.prepro(data,build, contaminant);
+    xy_values = an(data,build, contaminant);
     while i <= 3000:
-        temp_loss = nng.train(xy_values[0],xy_values[1],xy_values[2],i);
+        temp_loss = nng(xy_values[0],xy_values[1],xy_values[2],i);
         loss_vec.append(temp_loss);
         i = i + 200;
         print(i);
@@ -105,12 +105,12 @@ def time():
         print(date);
         data = FormatData.readData(start,date,[estation],contaminant);
         build = FormatData.buildClass(data,[estation],contaminant,24);
-        xy_values = an.prepro(data,build, contaminant);
+        xy_values = an(data,build, contaminant);
         initCpu = time();
-        nn.train(xy_values[0],xy_values[1],xy_values[2],1000);
+        nn(xy_values[0],xy_values[1],xy_values[2],1000);
         finCpu = time();
         initGpu = time();
-        nng.train(xy_values[0],xy_values[1],xy_values[2],1000);
+        nng(xy_values[0],xy_values[1],xy_values[2],1000);
         finGpu = time();
         totalCpu = finCpu - initCpu;
         totalGpu = finGpu - initGpu;
