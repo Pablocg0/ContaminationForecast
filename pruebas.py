@@ -32,7 +32,8 @@ def estations():
     plt.xlabel('Numero de estaciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
-    plt.savefig("/estaciones.png");
+    plt.savefig("estaciones.png", dpi=600);
+    plt.show();
 
 def estationsGpu():
     start =startDate[0];
@@ -51,7 +52,8 @@ def estationsGpu():
     plt.xlabel('Numero de estaciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
-    plt.savefig("/estaciones.png");
+    plt.savefig("estacionesGpu.png", dpi=600);
+    plt.show();
 
 
 def iteration():
@@ -72,7 +74,8 @@ def iteration():
     plt.xlabel('Numero de iteraciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
-    plt.savefig("/iteraciones.png");
+    plt.savefig("iteraciones.png",dpi=600);
+    plt.show();
 
 def iterationGpu():
     i = 200
@@ -92,7 +95,8 @@ def iterationGpu():
     plt.xlabel('Numero de iteraciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
-    plt.savefig("/iteraciones.png");
+    plt.savefig("iteraciones.png",dpi=600);
+    plt.show();
 
 
 def tiempo():
@@ -127,7 +131,7 @@ def tiempo():
     plt.xlabel('Years with which the neural network was trained');
     plt.ylabel('Time');
     plt.legend(loc ='best');
-    plt.savefig('/time.png')
+    plt.savefig('tiempo.png',dpi=600);
     plt.show();
 
 
