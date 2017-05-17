@@ -11,8 +11,8 @@ from time import time
 
 contaminant = 'O3';
 loss_vec= [];
-est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MER','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
-startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','2007/07/20','1994/01/02','1990/08/07','2007/07/20','2011/07/05','1986/11/01','2015/01/01','2011/07/27','1986/01/17','1986/02/20','2012/02/20','2011/07/01','1994/01/02','1986/11/01','2012/02/20','1990/05/16','1986/11/22'];
+est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
+startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','2007/07/20','1994/01/02','1990/08/07','2007/07/20','2011/07/05','2015/01/01','2011/07/27','1986/01/17','1986/02/20','2012/02/20','2011/07/01','1994/01/02','1986/11/01','2012/02/20','1990/05/16','1986/11/22'];
 endDate = '2017/02/02';
 
 def estations():
@@ -58,7 +58,7 @@ def estationsGpu():
 
 def iteration():
     i = 200
-    start =startDate[10];
+    start =startDate[0];
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
@@ -79,7 +79,7 @@ def iteration():
 
 def iterationGpu():
     i = 200
-    start =startDate[10];
+    start =startDate[0];
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass(data,[est[10]],contaminant,24);
@@ -102,16 +102,19 @@ def iterationGpu():
 def tiempo():
     time_cpu =[];
     time_gpu =[];
-    start  = datetime.strptime(startDate[21],'%Y/%m/%d')
+    time_base= [];
+    start  = datetime.strptime(startDate[20],'%Y/%m/%d')
     end = datetime.strptime(endDate,'%Y/%m/%d')
     dy= 8760 * 2;
-    estation = est[21];
+    estation = est[20];
     date = start + timedelta(hours = dy);
     while date <= end:
         print(date);
+        initData=time();
         data = FormatData.readData(start,date,[estation],contaminant);
         build = FormatData.buildClass(data,[estation],contaminant,24);
         xy_values = an(data,build, contaminant);
+        finData= time();
         initCpu = time();
         temp_loss= nn(xy_values[0],xy_values[1],xy_values[2],1000);
         loss_vec.append(temp_loss);
@@ -122,9 +125,12 @@ def tiempo():
         finGpu = time();
         totalCpu = finCpu - initCpu;
         totalGpu = finGpu - initGpu;
+        totalBase = finData - initData;
+        time_base.append(totalBase);
         time_cpu.append(totalCpu);
         time_gpu.append(totalGpu);
         date= date + timedelta(hours = dy);
+    plt.plot(time_base,'g-',label='time Data base');
     plt.plot(time_cpu,'k-', label='time CPU');
     plt.plot(time_gpu, 'r-',label='time GPU');
     plt.title('GPU vs CPU');
