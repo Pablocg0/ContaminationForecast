@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from Utilites.sqlCont import SqlCont
-from Utilites.oztools import ContIOTools
+from sqlCont import SqlCont
+from oztools import ContIOTools
 
 class FormatData(object):
     """docstring for FormatData"""
