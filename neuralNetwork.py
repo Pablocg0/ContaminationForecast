@@ -10,24 +10,27 @@ from time import time
 
 startDate='2015/01/10';
 endDate='2015/02/02';
-estations=['AJM'];
+estations=['XAL'];
 contaminant = 'O3';
 
 ini = time();
-data = FormatData.readData(startDate,endDate,estations);
-build = FormatData.buildClass(data,['AJM'],contaminant,24);
-
+data = FormatData.readData(startDate,endDate,estations,contaminant);
+build = FormatData.buildClass(data,['XAL'],contaminant,24);
 
 x_vals = data.values;
 x = x_vals.shape;
+
 columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an(build,contaminant);
 fin = time();
+print(x_vals[0]);
 # Normalize data
-x_vals= preprocessing.normalize(x_vals);
-y_vals = preprocessing.normalize(y_vals);
+min_max_scaler = preprocessing.MinMaxScaler()
+x_vals= min_max_scaler.fit_transform(x_vals)
+y_vals = min_max_scaler.fit_transform(y_vals)
 
+print(y_vals)
 # Create graph session
 sess= tf.Session();
 
@@ -118,6 +121,7 @@ total_dta = fin-ini;
 print('tiempo de red:',total_dta);
 print('Tiempo de datos: ', total_execution);
 #Plot loss
+print(sess.run(final_output, feed_dict={x_data: np.array([[-1.0,-1.0,86.0,-1.0,1.5,55.0,31.0,2.0,50.0,-1.0]])}))
 plt.plot(loss_vec, 'k-', label='Train Loss')
 plt.plot(test_loss, 'r--', label='Test Loss')
 plt.title('Loss per Iteration')
