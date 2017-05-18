@@ -1,5 +1,5 @@
 import numpy as np
-from Utilites.oztools import ContIOTools
+from oztools import ContIOTools
 from sklearn import preprocessing
 import re
 
@@ -39,6 +39,7 @@ def prepro(data,build,contaminant):
     x_vals= x_vals[:,1:columns];
     y_vals = converToArray(build,contaminant);
     # Normalize data
-    x_vals= preprocessing.normalize(x_vals);
-    y_vals = preprocessing.normalize(y_vals);
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_vals= min_max_scaler.fit_transform(x_vals)
+    y_vals = min_max_scaler.fit_transform(y_vals)
     return [x_vals, y_vals,columns];
