@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from sqlCont import SqlCont
-from oztools import ContIOTools
+from Utilites.sqlCont import SqlCont
+from Utilites.oztools import ContIOTools
+from datetime import datetime, timedelta
 
 class FormatData(object):
     """docstring for FormatData"""
@@ -93,6 +94,37 @@ class FormatData(object):
                     x=x+1;
                 temBuild= pd.DataFrame(values,columns=[name]);
             x=0;
+            build[name]= temBuild;
+        conn.commit();
+        cur.close();
+        #The connection to the database is closed
+        return build.fillna(value=-1);
+
+    def buildClass2(allData,estation,contaminant,delta,startDate, endDate):
+        oztool = ContIOTools();
+        conexion = SqlCont();
+        conn = conexion.getPostgresConn();
+        cur= conn.cursor();
+        #conexion database
+        tableContaminant = oztool.findTable(contaminant);# name the contaminant in the database
+        fechas = allData['fecha']
+        build= pd.DataFrame(fechas,columns=['fecha']);
+        cont = len(build.index);
+        values = np.ones((cont,1))*-1;
+        start  = datetime.strptime(startDate,'%Y/%m/%d')
+        end = datetime.strptime(endDate,'%Y/%m/%d')
+        startDelta = start + timedelta(hours=delta);#You add the delta to the date
+        endDelta = end + timedelta(hours=delta);#You add the delta to the date
+        for xv in estation:
+            name = tableContaminant+'_'+ xv + '_delta';#name the column in the DataFrame
+            sql = """SELECT val FROM {0} WHERE id_est ='{1}' AND fecha >= '{2}' AND fecha <= '{3}';""".format(tableContaminant,xv,startDelta,endDelta);
+            cur.execute(sql);
+            temp=cur.fetchall();
+            tempValue = np.array(temp);
+            if len(tempValue)!=0:
+                temBuild= pd.DataFrame(tempValue,columns=[name]);
+            else:
+                temBuild= pd.DataFrame(values,columns=[name]);
             build[name]= temBuild;
         conn.commit();
         cur.close();
