@@ -15,7 +15,8 @@ contaminant = 'O3';
 
 ini = time();
 data = FormatData.readData(startDate,endDate,estations,contaminant);
-build = FormatData.buildClass(data,['XAL'],contaminant,24);
+build = FormatData.buildClass2(data,['XAL'],contaminant,24,startDate,endDate);
+#build = FormatData.buildClass(data,['XAL'],contaminant,24);
 
 x_vals = data.values;
 x = x_vals.shape;
@@ -24,7 +25,7 @@ columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an(build,contaminant);
 fin = time();
-print(x_vals[0]);
+print(x_vals);
 # Normalize data
 min_max_scaler = preprocessing.MinMaxScaler()
 x_vals= min_max_scaler.fit_transform(x_vals)
