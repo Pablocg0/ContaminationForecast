@@ -43,7 +43,7 @@ def estationsGpu():
         estation += [x];
         print(estation);
         data = FormatData.readData(start,endDate,estation,contaminant);
-        build = FormatData.buildClass(data,[est[0]],contaminant,24);
+        build = FormatData.buildClass2(data,[est[0]],contaminant,24,start,endDate);
         xy_values = an(data,build, contaminant);
         temp_loss = nng(xy_values[0],xy_values[1],xy_values[2],1000);
         loss_vec.append(temp_loss);
@@ -61,7 +61,7 @@ def iteration():
     start =startDate[0];
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
-    build = FormatData.buildClass(data,[est[10]],contaminant,24);
+    build = FormatData.buildClass2(data,[est[10]],contaminant,24,start,endDate);
     xy_values = an(data,build, contaminant);
     while i <= 3000:
         temp_loss = nn(xy_values[0],xy_values[1],xy_values[2],i);
@@ -82,7 +82,7 @@ def iterationGpu():
     start =startDate[0];
     estation= est[10];
     data = FormatData.readData(start,endDate,[estation],contaminant);
-    build = FormatData.buildClass(data,[est[10]],contaminant,24);
+    build = FormatData.buildClass2(data,[est[10]],contaminant,24,start,endDate);
     xy_values = an(data,build, contaminant);
     while i <= 3000:
         temp_loss = nng(xy_values[0],xy_values[1],xy_values[2],i);
