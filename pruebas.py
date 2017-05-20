@@ -13,7 +13,7 @@ contaminant = 'O3';
 loss_vec= [];
 est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MER','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
 startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','2007/07/20','1994/01/02','1990/08/07','2007/07/20','2011/07/05','1986/11/01','2015/01/01','2011/07/27','1986/01/17','1986/02/20','2012/02/20','2011/07/01','1994/01/02','1986/11/01','2012/02/20','1990/05/16','1986/11/22'];
-endDate = '2017/02/02';
+endDate = '2017/02/01';
 
 def estations():
     start =startDate[0];
@@ -54,7 +54,6 @@ def estationsGpu():
     plt.legend(loc='best')
     plt.savefig("estacionesGpu.png", dpi=600);
     plt.show();
-
 
 def iteration():
     i = 200
@@ -134,11 +133,44 @@ def tiempo():
     plt.savefig('tiempo.png',dpi=600);
     plt.show();
 
+def testData():
+    i= 0;
+    dataBase_time= [];
+    file_time=[];
+    while i <= 21:
+        station = est[i];
+        init_dataBase = time();
+        data = FormatData.readData(startDate[i],endDate,[est[i]],contaminant);
+        build = FormatData.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
+        xy_values = an(data,build, contaminant);
+        fin_dataBase= time();
+        init_fileTime = time();
+        name = station +'_'+contaminant;
+        data = df.read_csv('data/'+name+'.csv', delim_whitespace =True);
+        build = df.read_csv('data/'+name+'_pred.csv',delim_whitespace = True);
+        xy_values = an(data,build, contaminant);
+        fin_fileTime = time();
+        total_dataBase = fin_dataBase -init_dataBase;
+        total_file= fin_fileTime - init_fileTime;
+        dataBase_time.append(total_dataBase);
+        file_time.append(total_file);
+    plt.plot(total_file,'k-', label='time File');
+    plt.plot(total_dataBase, 'r-',label='time DataBase');
+    plt.title('DataBase vs File');
+    plt.xlabel('stations');
+    plt.ylabel('Time (second)');
+    plt.legend(loc ='best');
+    plt.savefig('tiempoDataBase.png',dpi=600);
+    plt.show();
+
+
+
 
 def main():
     print("1.Training time test using GPU vs CPU\n");
     print("2.Testing using GPU's \n");
     print("3.Testing using CPU \n");
+    print('4, Testing DataBase vs File')
     opt = int(input("Option to execute: "))
     if opt == 1:
         tiempo();
@@ -166,6 +198,8 @@ def main():
             iteration();
         else:
             print("Incorrect option");
+    elif opt == 4:
+        testData();
     else:
         print("Incorrect option");
 
