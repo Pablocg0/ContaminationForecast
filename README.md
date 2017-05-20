@@ -21,3 +21,23 @@ or
 ### sklearn
 
 `pip install -U scikit-learn`
+
+## Anaconda dependency installation
+
+### tensorflow
+
+ For the installation of tensorflow gpu visit:
+
+ https://www.tensorflow.org/install/install_linux#InstallingAnaconda
+
+ For tensorflow
+
+ `conda install -c jjhelmus tensorflow=0.12.0rc0`
+
+### pandas
+
+`conda install -c anaconda pandas=0.20.1`
+
+### sklearn
+
+`conda install -c anaconda scikit-learn=0.18.1`
