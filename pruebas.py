@@ -110,7 +110,6 @@ def tiempo():
     date = start + timedelta(hours = dy);
     while date <= end:
         sDate = date.strftime('%Y/%m/%d');
-        print(date);
         initData=time();
         data = FormatData.readData(start,date,[estation],contaminant);
         build = FormatData.buildClass2(data,[estation],contaminant,24,startDate[20],sDate);
