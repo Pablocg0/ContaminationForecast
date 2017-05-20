@@ -8,15 +8,16 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from time import time
 
-startDate='2015/01/10';
-endDate='2015/02/02';
-estations=['XAL'];
+startDate='1992/11/09';
+endDate='2017/02/01';
+estations=['BJU'];
 contaminant = 'O3';
 
 ini = time();
 data = FormatData.readData(startDate,endDate,estations,contaminant);
-build = FormatData.buildClass2(data,['XAL'],contaminant,24,startDate,endDate);
+build = FormatData.buildClass2(data,['BJU'],contaminant,24,startDate,endDate);
 #build = FormatData.buildClass(data,['XAL'],contaminant,24);
+print(build);
 
 x_vals = data.values;
 x = x_vals.shape;
@@ -25,7 +26,6 @@ columns = x[1];
 x_vals= x_vals[:,1:columns];
 y_vals = an(build,contaminant);
 fin = time();
-print(x_vals);
 # Normalize data
 min_max_scaler = preprocessing.MinMaxScaler()
 x_vals= min_max_scaler.fit_transform(x_vals)
@@ -116,13 +116,15 @@ for i in range(1000):
     if (i+1)%1000==0:
         print('Iteration: ' + str(i+1) + '. Loss = ' + str(temp_loss))
 
+saver = tf.train.Saver();
+saver.save(sess,'trainData/save')
 final = time();
 total_execution = final-initial;
 total_dta = fin-ini;
 print('tiempo de red:',total_dta);
 print('Tiempo de datos: ', total_execution);
 #Plot loss
-print(sess.run(final_output, feed_dict={x_data: np.array([[-1.0,-1.0,86.0,-1.0,1.5,55.0,31.0,2.0,50.0,-1.0]])}))
+print(sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
 plt.plot(loss_vec, 'k-', label='Train Loss')
 plt.plot(test_loss, 'r--', label='Test Loss')
 plt.title('Loss per Iteration')
