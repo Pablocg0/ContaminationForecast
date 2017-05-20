@@ -116,7 +116,7 @@ def tiempo():
         xy_values = an(data,build, contaminant);
         finData= time();
         initCpu = time();
-        temp_loss= nn(xy_values[0],xy_values[1],xy_values[2],1000);
+        temp_loss= nn(xy_values[0],xy_values[1],xy_values[2],1000,estation,contaminant);
         loss_vec.append(temp_loss);
         finCpu = time();
         initGpu = time();
