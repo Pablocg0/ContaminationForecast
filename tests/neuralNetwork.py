@@ -25,8 +25,8 @@ def init_bias(shape):
     bias=  tf.Variable(tf.random_normal(shape));
     return bias;
 
-def train(x_d,y_data, columns,iteraciones):
-
+def train(x_d,y_data, columns,iteraciones,station,contaminant):
+    name = 'train_'+station+'_'+contaminant;
     # Create graph session
     sess= tf.Session();
 
@@ -82,4 +82,6 @@ def train(x_d,y_data, columns,iteraciones):
 
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
+    saver = tf.train.Saver();
+    saver.save(sess,'trainData/'+station+'/'+name)
     return total_loss;
