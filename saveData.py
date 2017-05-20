@@ -12,8 +12,8 @@ while i <= 21:
     nameD = est[i]+'_'+contaminant+'.csv';
     nameB = est[i]+'_'+contaminant+'_pred.csv';
     data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
-    #build = fd.buildClass(data,[est[i]],contaminant,24);
     build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
+    print(data);
     data.to_csv('data/'+nameD, sep= '\t',encoding = 'utf-8');
     build.to_csv('data/'+nameB, sep= '\t',encoding = 'utf-8');
     i += 1;
