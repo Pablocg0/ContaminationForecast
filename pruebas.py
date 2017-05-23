@@ -60,6 +60,8 @@ def iteration():
     i = 200
     start =startDate[0];
     estation= est[10];
+    print(estation)
+    print(start)
     data = FormatData.readData(start,endDate,[estation],contaminant);
     build = FormatData.buildClass2(data,[est[10]],contaminant,24,start,endDate);
     xy_values = an(data,build, contaminant);
