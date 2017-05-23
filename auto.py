@@ -38,5 +38,5 @@ def prediction(station, date,contaminant):
     #    prediction=sess.run(final_output, feed_dict={x_data:x_vals})
     #print(prediction);
 
-#trainNeuralNetworks();
-prediction('BJU','2016/01/08','O3');
+trainNeuralNetworks();
+#prediction('BJU','2016/01/08','O3');
