@@ -17,7 +17,6 @@ ini = time();
 data = FormatData.readData(startDate,endDate,estations,contaminant);
 build = FormatData.buildClass2(data,['BJU'],contaminant,24,startDate,endDate);
 #build = FormatData.buildClass(data,['XAL'],contaminant,24);
-print(build);
 
 x_vals = data.values;
 x = x_vals.shape;
@@ -31,7 +30,6 @@ min_max_scaler = preprocessing.MinMaxScaler()
 x_vals= min_max_scaler.fit_transform(x_vals)
 y_vals = min_max_scaler.fit_transform(y_vals)
 
-print(y_vals)
 # Create graph session
 sess= tf.Session();
 
@@ -101,7 +99,7 @@ test_loss =[];
 
 # Training loop
 initial = time();
-for i in range(1000):
+for i in range(3000):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -124,12 +122,14 @@ total_dta = fin-ini;
 print('tiempo de red:',total_dta);
 print('Tiempo de datos: ', total_execution);
 #Plot loss
-print(sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
+pred= tf.argmax(final_output,1);
+print(sess.run([pred],feed_dict={x_data: np.array([[14.0,7.0,-6.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
+#print(sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
 plt.plot(loss_vec, 'k-', label='Train Loss')
-plt.plot(test_loss, 'r--', label='Test Loss')
+#plt.plot(test_loss, 'r--', label='Test Loss')
 plt.title('Loss per Iteration')
-plt.xlabel('Iterations')
+plt.xlabel('# Iterations')
 plt.ylabel('Loss')
 plt.legend(loc='best')
-plt.savefig('prue.png')
+plt.savefig('iteracionesp.png')
 plt.show()
