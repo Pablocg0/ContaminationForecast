@@ -64,6 +64,7 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
 
     # Initialize Variables
     init = tf.global_variables_initializer();
+    saver = tf.train.Saver();
     sess.run(init);
     loss_vec =[];
 
@@ -82,6 +83,6 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
 
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
-    saver = tf.train.Saver();
-    saver.save(sess,'trainData/'+station+'/'+name)
+
+    saver.save(sess,'trainData/'+station+'/'+name+'.ckpt')
     return total_loss;
