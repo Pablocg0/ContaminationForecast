@@ -10,13 +10,16 @@ from time import time
 
 startDate='1992/11/09';
 endDate='2017/02/01';
-estations=['BJU'];
+estations=['AJM'];
 contaminant = 'O3';
 
+name = estations[0] +'_'+contaminant;
 ini = time();
-data = FormatData.readData(startDate,endDate,estations,contaminant);
-build = FormatData.buildClass2(data,['BJU'],contaminant,24,startDate,endDate);
+#data = FormatData.readData(startDate,endDate,estations,contaminant);
+#build = FormatData.buildClass2(data,['BJU'],contaminant,24,startDate,endDate);
 #build = FormatData.buildClass(data,['XAL'],contaminant,24);
+data = df.read_csv('data/'+name+'.csv', delim_whitespace =True);
+build = df.read_csv('data/'+name+'_pred.csv',delim_whitespace = True);
 
 x_vals = data.values;
 x = x_vals.shape;
@@ -28,7 +31,8 @@ fin = time();
 # Normalize data
 min_max_scaler = preprocessing.MinMaxScaler()
 x_vals= min_max_scaler.fit_transform(x_vals)
-y_vals = min_max_scaler.fit_transform(y_vals)
+min_max_scaler2 = preprocessing.MinMaxScaler()
+y_vals = min_max_scaler2.fit_transform(y_vals)
 
 # Create graph session
 sess= tf.Session();
@@ -66,6 +70,10 @@ def fully_connected(input_layer,weight,biases):
     layer = tf.add(tf.matmul(input_layer,weight), biases);
     return tf.nn.sigmoid(layer);
 
+def final_connected(input_layer,weight,biases):
+    layer = tf.add(tf.matmul(input_layer,weight), biases);
+    return layer;
+
 #--------Create the first layer (size hidden nodes)--------
 # TODO ya recibe todas las columnas en la primera capa
 weight_1 = init_weight(shape=[columns-1,columns-1]);
@@ -99,7 +107,7 @@ test_loss =[];
 
 # Training loop
 initial = time();
-for i in range(3000):
+for i in range(1000):
     #
     # TODO deje los tres entrenamiento ya que el primero entrena, la segunda nos da el error del
     #entrenamiento y el tercero es el tercero es el error del test con lo que lleva de entrenamiento
@@ -122,14 +130,15 @@ total_dta = fin-ini;
 print('tiempo de red:',total_dta);
 print('Tiempo de datos: ', total_execution);
 #Plot loss
-pred= tf.argmax(final_output,1);
-print(sess.run([pred],feed_dict={x_data: np.array([[14.0,7.0,-6.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
-#print(sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}))
-plt.plot(loss_vec, 'k-', label='Train Loss')
+prediction =sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])})
+print(prediction);
+plt.plot(loss_vec, 'g-', label='Train Loss');
 #plt.plot(test_loss, 'r--', label='Test Loss')
-plt.title('Loss per Iteration')
-plt.xlabel('# Iterations')
-plt.ylabel('Loss')
+plt.title('Loss per Iteration',fontsize=20)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.xlabel('Iterations',fontsize=18)
+plt.ylabel('Loss',fontsize=18)
 plt.legend(loc='best')
 plt.savefig('iteracionesp.png')
 plt.show()
