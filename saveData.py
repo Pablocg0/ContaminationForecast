@@ -68,21 +68,33 @@ def separateDate(data):
     dates = data['date'];
     lenght = len(dates);
     years = np.ones((lenght,1))*-1;
+    sinYears = np.ones((lenght,1))*-1;
     months = np.ones((lenght,1))*-1;
+    sinMonths = np.ones((lenght,1))*-1;
     days = np.ones((lenght,1))*-1;
+    sinDays = np.ones((lenght,1))*-1;
     i  =0 ;
     for x in dates:
         d = datetime.strptime(x, "%Y-%m-%d")
         years[i] = d.year;
+        sinYears[i]= np.sin(d.year);
         months[i] = d.month
+        sinMonths[i] = np.sin(d.month)
         days[i] = d.day
+        sinDays[i]= np.sin(d.day);
         i += 1;
     dataYear = df.DataFrame(years, columns= ['year'])
     data['year'] = dataYear
+    dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])
+    data['sinYear'] = dataSinYear
     dataMonths = df.DataFrame(months, columns= ['month'])
     data['month'] = dataMonths
+    dataSinMonths = df.DataFrame(sinMonths, columns= ['sinMonth'])
+    data['sinMonth'] = dataSinMonths
     dataDay = df.DataFrame(days, columns= ['day'])
     data['day'] = dataDay
+    dataSinDay = df.DataFrame(sinDays, columns= ['sinDay'])
+    data['sinDay'] = dataSinDay
     print(data);
 
 def sep(data):
@@ -96,6 +108,5 @@ contaminant = 'O3';
 station = 'AJM'
 name = station +'_'+contaminant;
 data = df.read_csv('data/'+name+'.csv', delim_whitespace =True)
-sep(data);
-#separateDate(data);
+separateDate(data);
 #maxAndMinValues(data,station,contaminant);
