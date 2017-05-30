@@ -52,8 +52,9 @@ def maxAndMinValues(data,station,contaminant):
     x_vals= x_vals[:,1:columns];
     minx = x_vals.min(axis=0);
     maxx = x_vals.max(axis=0);
-    mixmax = df.DataFrame(minx , columns = ['MIN'],index=['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10']);
-    dMax = df.DataFrame(maxx, columns= ['MAX'],index=['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10']);
+    myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10'];
+    mixmax = df.DataFrame(minx , columns = ['MIN'],index=myIndex);
+    dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
     mixmax.to_csv('data/'+nameD, sep= '\t',encoding = 'utf-8');
     print(mixmax);
