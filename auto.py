@@ -12,7 +12,7 @@ contaminant = 'O3';
 def trainNeuralNetworks():
     """
     Function to train the neuralNetwork of the 23 stations,
-    save the training on file trainData/[nameStation]
+    save the training on file trainData/[nameStation].csv
     """
     i=0;
     while i <= 2:
@@ -25,6 +25,35 @@ def trainNeuralNetworks():
         nn(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
         i+=1;
 
+
+def normalize(data,station,contaminant):
+    """
+    Function to normalize an array of values with the minimum and the maximun that has been save in a .cvs fileName
+    :param data: data to normalize
+    :typr data: array
+    :param station : name station
+    :type station: string
+    :param contaminant: name of contaminant
+    :type contaminant: string
+    :return : with standard values
+    """
+    name = station+'_'+contaminant;
+    values = df.read_csv('data/'+name+'_MaxMin.csv',delim_whitespace=True);
+    maxx = values['MAX'].values;
+    minn = values['MIN'].values;
+    valNorm=[]
+    i= 0;
+    for x in data:
+        for a in x:
+            if a == -1:
+                norm =0.0 ;
+            else:
+                m = maxx[i];
+                mi = minn[i];
+                norm = (a-mi)/(m-mi);
+            valNorm.append(norm);
+            i+=1;
+    return valNorm;
 
 
 def init_weight(shape):
@@ -52,7 +81,7 @@ def fully_connected(input_layer,weight,biases):
     layer = tf.add(tf.matmul(input_layer,weight), biases);
     return tf.nn.sigmoid(layer);
 
-def prediction(station, date,contaminant):
+def prediction(station, date,contaminant,values):
     """
     Function to obtain a prediction of a neural network that has
     already been trained previously
@@ -100,7 +129,8 @@ def prediction(station, date,contaminant):
     saver = tf.train.Saver()
     with tf.Session() as sess:
         saver.restore(sess, 'trainData/'+station+'/'+name+'.ckpt'); #we load the training
-        print(sess.run(final_output, feed_dict={x_data: np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]])}));
+        print(sess.run(final_output, feed_dict={x_data:values}));
 
 #trainNeuralNetworks();
-prediction('AJM','2016/01/08','O3');
+values= normalize(np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]]),'AJM','O3')
+#prediction('AJM','2016/01/08','O3',values);
