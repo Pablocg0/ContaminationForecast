@@ -182,14 +182,13 @@ def testData2():
     while i <= 21 :
         s.append(est[i]);
         print(s)
-        #init_dataBase = time();
+        init_dataBase = time();
         #data = FormatData.readData(startDate[i],endDate,s,contaminant);
         #build = FormatData.buildClass2(data,s,contaminant,24,startDate[i],endDate);
         #xy_values = an(data,build, contaminant);
-        #fin_dataBase= time();
+        fin_dataBase= time();
         init_fileTime = time();
         for x in s:
-            print(x)
             station = x
             name = station +'_'+contaminant;
             data = df.read_csv('data/'+name+'.csv', delim_whitespace =True);
@@ -201,14 +200,13 @@ def testData2():
         dataBase_time.append(total_dataBase);
         file_time.append(total_file);
         i +=1;
-    print(s)
     plt.plot(file_time,'g-', label='time File');
     plt.plot(dataBase_time, 'r-',label='time DataBase');
     plt.title('DataBase vs File');
     plt.xlabel('stations');
     plt.ylabel('Time (second)');
     plt.legend(loc ='best');
-    plt.savefig('graficas/tiempoDataBase2.png',dpi=600);
+    plt.savefig('Graficas/tiempoDataBase2.png',dpi=600);
     plt.show();
 
 
