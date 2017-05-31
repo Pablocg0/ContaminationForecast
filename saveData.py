@@ -74,16 +74,25 @@ def separateDate(data):
     sinMonths = np.ones((lenght,1))*-1;
     days = np.ones((lenght,1))*-1;
     sinDays = np.ones((lenght,1))*-1;
+    wDay = np.ones((lenght,1))*-1;
+    sinWday = np.ones((lenght,1))*-1;
     i  =0 ;
     for x in dates:
         d = datetime.strptime(x, "%Y-%m-%d")
+        wD= weekday(d.year,d.month,d.day);
+        wDay[i]=wD[0];
+        sinWday[i]=wD[1];
         years[i] = d.year;
         sinYears[i]= np.sin(d.year);
         months[i] = d.month
-        sinMonths[i] = np.sin(d.month)
+        sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
         days[i] = d.day
-        sinDays[i]= np.sin(d.day);
+        sinDays[i]= (1+np.sin(((d.day-1)/23)*(2*np.pi)))/2
         i += 1;
+    weekD = df.DataFrame(wDay, columns= ['weekday'])
+    data['weekday']= weekD;
+    sinWeekD = df.DataFrame(wDay, columns= ['sinWeekday'])
+    data['sinWeekday']= sinWeekD;
     dataYear = df.DataFrame(years, columns= ['year'])
     data['year'] = dataYear
     dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])
@@ -98,16 +107,32 @@ def separateDate(data):
     data['sinDay'] = dataSinDay
     print(data);
 
-def sep(data):
-    falso =data['fecha']
-    d = falso.values
-    print(d);
-    dates = df.DataFrame(falso, columns=['fecha', 'hora']);
-    print(dates['fecha']);
 
-contaminant = 'O3';
-station = 'AJM'
-name = station +'_'+contaminant;
-data = df.read_csv('data/'+name+'.csv', delim_whitespace =True)
-separateDate(data);
+def weekday(year,month,day):
+    """
+    Function to take day of the week using the congruence of Zeller , 1 is Sunday
+    :param year: year of the date
+    :type year: int
+    :param month: month of the date
+    :type month: int
+    :param day: day of the date
+    :type day:int
+    :return: int, 1 is Sunday
+    """
+    a = (14-month)/12;
+    a = int(a);
+    y = year-a;
+    m = month+12*a-2;
+    week = (day+y+int(y/4)-int(y/100)+int(y/400)+int((31*m)/12))%7;
+    Week = week +1;
+    sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
+    return [week,sinWeek]
+
+
+weekday(2007,5,25);
+#contaminant = 'O3';
+#station = 'AJM'
+#name = station +'_'+contaminant;
+#data = df.read_csv('data/'+name+'.csv', delim_whitespace =True)
+#separateDate(data);
 #maxAndMinValues(data,station,contaminant);
