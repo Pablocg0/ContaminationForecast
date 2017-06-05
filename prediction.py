@@ -8,12 +8,12 @@ def normalize(data,station,contaminant):
     """
     Function to normalize an array of values with the minimum and the maximun that has been save in a .cvs fileName
     :param data: data to normalize
-    :typr data: array
+    :type data: array
     :param station : name station
     :type station: string
     """
     name = station+'_'+contaminant;
-    values = df.read_csv('data/'+name+'_MaxMin.csv',delim_whitespace=True);
+    values = df.read_csv('data/'+name+'_MaxMin.csv');
     maxx = values['MAX'].values;
     minn = values['MIN'].values;
     valNorm=[]
@@ -36,7 +36,6 @@ def init_weight(shape):
     Function for the define Variable function weight
     :param shape: Matrix containing weight
     :type shape : matrix float32
-
     :return: matrix weight
     """
     weight = tf.Variable(tf.random_normal(shape));
