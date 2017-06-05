@@ -156,8 +156,8 @@ def testData():
         fin_dataBase= time();
         init_fileTime = time();
         name = station +'_'+contaminant;
-        data = df.read_csv('data/'+name+'.csv', delim_whitespace =True);
-        build = df.read_csv('data/'+name+'_pred.csv',delim_whitespace = True);
+        data = df.read_csv('data/'+name+'.csv');
+        build = df.read_csv('data/'+name+'_pred.csv');
         xy_values = an(data,build, contaminant);
         fin_fileTime = time();
         total_dataBase = fin_dataBase -init_dataBase;
@@ -183,17 +183,17 @@ def testData2():
         s.append(est[i]);
         print(s)
         init_dataBase = time();
-        #data = FormatData.readData(startDate[i],endDate,s,contaminant);
-        #build = FormatData.buildClass2(data,s,contaminant,24,startDate[i],endDate);
+        data = FormatData.readData(startDate[i],endDate,s,contaminant);
+        build = FormatData.buildClass2(data,s,contaminant,24,startDate[i],endDate);
         #xy_values = an(data,build, contaminant);
         fin_dataBase= time();
         init_fileTime = time();
         for x in s:
             station = x
             name = station +'_'+contaminant;
-            data = df.read_csv('data/'+name+'.csv', delim_whitespace =True);
-            build = df.read_csv('data/'+name+'_pred.csv',delim_whitespace = True);
-            xy_values = an(data,build, contaminant);
+            data = df.read_csv('data/'+name+'.csv');
+            build = df.read_csv('data/'+name+'_pred.csv');
+            #xy_values = an(data,build, contaminant);
         fin_fileTime = time();
         total_dataBase = fin_dataBase -init_dataBase;
         total_file= fin_fileTime - init_fileTime;
