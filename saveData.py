@@ -29,9 +29,11 @@ def saveData():
         nameB = est[i]+'_'+contaminant+'_pred.csv';
         data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
         build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
-        print(data);
-        data.to_csv('data/'+nameD, sep= '\t',encoding = 'utf-8');# save the data in file "data/[station_contaminant].csv"
-        build.to_csv('data/'+nameB, sep= '\t',encoding = 'utf-8');# save the data in file "data/[station_contaminant_pred].csv]
+        dataTemp = separateDate(data);
+        maxAndMinValues(dataTemp,est[i],contaminant)
+        data = dataTemp;
+        data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+        build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
 
 
@@ -46,18 +48,19 @@ def maxAndMinValues(data,station,contaminant):
     :type contaminant : string
     """
     nameD = station+'_'+contaminant+'_MaxMin'+'.csv';
+    dt = data;
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
     x_vals= x_vals[:,1:columns];
     minx = x_vals.min(axis=0);
     maxx = x_vals.max(axis=0);
-    myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10'];
+    myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10','weekday','sinWeekday','year','month','sinMonths','day','sinDay'];
     mixmax = df.DataFrame(minx , columns = ['MIN'],index=myIndex);
     dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
-    mixmax.to_csv('data/'+nameD, sep= '\t',encoding = 'utf-8');
-    print(mixmax);
+    mixmax.to_csv('data/'+nameD,encoding = 'utf-8',index=False);
+    #print(mixmax);
 
 
 def separateDate(data):
@@ -66,7 +69,7 @@ def separateDate(data):
     :parama data: DataFrame that contains the dates
     :type data: DataFrame
     """
-    dates = data['date'];
+    dates = data['fecha'];
     lenght = len(dates);
     years = np.ones((lenght,1))*-1;
     sinYears = np.ones((lenght,1))*-1;
@@ -78,12 +81,13 @@ def separateDate(data):
     sinWday = np.ones((lenght,1))*-1;
     i  =0 ;
     for x in dates:
-        d = datetime.strptime(x, "%Y-%m-%d")
+        d =x
+        #d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
         wD= weekday(d.year,d.month,d.day);
         wDay[i]=wD[0];
         sinWday[i]=wD[1];
         years[i] = d.year;
-        sinYears[i]= np.sin(d.year);
+        #sinYears[i]= np.sin(d.year);
         months[i] = d.month
         sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
         days[i] = d.day
@@ -91,12 +95,12 @@ def separateDate(data):
         i += 1;
     weekD = df.DataFrame(wDay, columns= ['weekday'])
     data['weekday']= weekD;
-    sinWeekD = df.DataFrame(wDay, columns= ['sinWeekday'])
+    sinWeekD = df.DataFrame(sinWday, columns= ['sinWeekday'])
     data['sinWeekday']= sinWeekD;
     dataYear = df.DataFrame(years, columns= ['year'])
     data['year'] = dataYear
-    dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])
-    data['sinYear'] = dataSinYear
+    #dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data);
+    #data['sinYear'] = dataSinYear
     dataMonths = df.DataFrame(months, columns= ['month'])
     data['month'] = dataMonths
     dataSinMonths = df.DataFrame(sinMonths, columns= ['sinMonth'])
@@ -105,7 +109,7 @@ def separateDate(data):
     data['day'] = dataDay
     dataSinDay = df.DataFrame(sinDays, columns= ['sinDay'])
     data['sinDay'] = dataSinDay
-    print(data);
+    return data;
 
 
 def weekday(year,month,day):
@@ -129,10 +133,11 @@ def weekday(year,month,day):
     return [week,sinWeek]
 
 
-weekday(2007,5,25);
+saveData();
+#weekday(2007,5,25);
 #contaminant = 'O3';
 #station = 'AJM'
 #name = station +'_'+contaminant;
-#data = df.read_csv('data/'+name+'.csv', delim_whitespace =True)
+#data = df.read_csv('data/'+name+'.csv')
 #separateDate(data);
 #maxAndMinValues(data,station,contaminant);
