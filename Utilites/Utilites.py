@@ -36,10 +36,10 @@ def prepro(data,build,contaminant):
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
-    x_vals= x_vals[:,1:columns];
+    x_val= x_vals[:,1:columns];
     y_vals = converToArray(build,contaminant);
     # Normalize data
     min_max_scaler = preprocessing.MinMaxScaler()
-    x_vals= min_max_scaler.fit_transform(x_vals)
+    x_val= min_max_scaler.fit_transform(x_val)
     y_vals = min_max_scaler.fit_transform(y_vals)
-    return [x_vals, y_vals,columns];
+    return [x_val, y_vals,columns];
