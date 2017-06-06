@@ -59,8 +59,7 @@ def maxAndMinValues(data,station,contaminant):
     mixmax = df.DataFrame(minx , columns = ['MIN'],index=myIndex);
     dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
-    mixmax.to_csv('data/'+nameD,encoding = 'utf-8',index=False);
-    #print(mixmax);
+    mixmax.to_csv('data/'+nameD,encoding = 'utf-8');
 
 
 def separateDate(data):
