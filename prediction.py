@@ -19,15 +19,14 @@ def normalize(data,station,contaminant):
     valNorm=[]
     i= 0;
     for x in data:
-        for a in x:
-            if a == -1:
-                norm =0.0 ;
-            else:
-                m = maxx[i];
-                mi = minn[i];
-                norm = (a-mi)/(m-mi);
-            valNorm.append(norm);
-            i+=1;
+        if x == -1:
+            norm =0.0 ;
+        else:
+            m = maxx[i];
+            mi = minn[i];
+            norm = (x-mi)/(m-mi);
+        valNorm.append(norm);
+        i+=1;
     return valNorm;
 
 
@@ -55,25 +54,24 @@ def fully_connected(input_layer,weight,biases):
     layer = tf.add(tf.matmul(input_layer,weight), biases);
     return tf.nn.sigmoid(layer);
 
-def prediction(station, date,contaminant,values):
+def prediction(station,contaminant,arrayPred):
     """
     Function to obtain a prediction of a neural network that has
     already been trained previously
     :param station: station name for the prediction
     :type station: string
-    :param date: date for the prediction
-    :type date: string format Years/month/day
-    :param contaminant: contaminant for the prediction
+    :param contaminant: contaminant for the predictiondate
     :type contaminant: string
     :return : value for the prediction
     """
+    result =[]
     name = 'train_'+station+'_'+contaminant+'';
-    data = df.read_csv('data/'+station+'_'+contaminant+'.csv', delim_whitespace =True);
+    data = df.read_csv('data/'+station+'_'+contaminant+'.csv');
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
-    x_vals= x_vals[:,1:columns];
-    print(x_vals);
+    #x_vals= x_vals[:,1:columns];
+    #print(x_vals);
 
     x_data = tf.placeholder(shape=[None,columns-1],dtype=tf.float32);
     y_target= tf.placeholder(shape=[None,1],dtype =tf.float32);
@@ -103,8 +101,8 @@ def prediction(station, date,contaminant,values):
     saver = tf.train.Saver()
     with tf.Session() as sess:
         saver.restore(sess, 'trainData/'+station+'/'+name+'.ckpt'); #we load the training
-        print(sess.run(final_output, feed_dict={x_data:values}));
-
-
-values= normalize(np.array([[14.0,7.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,3.0,21.0]]),'AJM','O3')
-#prediction('AJM','2016/01/08','O3',values);
+        #print(sess.run(final_output, feed_dict={x_data:values}));
+        for x in arrayPred:
+            r = sess.run(final_output, feed_dict={x_data:x})
+            result.append(r[0,0])
+        return result
