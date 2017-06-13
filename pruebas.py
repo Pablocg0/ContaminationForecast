@@ -5,16 +5,15 @@ from Utilites.Utilites import prepro as an
 from datetime import datetime, timedelta
 import pandas as df
 import matplotlib
-matplotlib.use('agg')
+#matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from time import time
 
 contaminant = 'O3';
 loss_vec= [];
-est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MER','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
-startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','2007/07/20','1994/01/02','1990/08/07','2007/07/20','2011/07/05','1986/11/01','2015/01/01','2011/07/27','1986/01/17','1986/02/20','2012/02/20','2011/07/01','1994/01/02','1986/11/01','2012/02/20','1990/05/16','1986/11/22'];
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
 endDate = '2017/02/01';
-
 
 def estations():
     start =startDate[0];
@@ -25,14 +24,17 @@ def estations():
         data = FormatData.readData(start,endDate,estation,contaminant);
         build = FormatData.buildClass2(data,[est[0]],contaminant,24,start,endDate);
         xy_values = an(data,build, contaminant);
-        temp_loss = nn(xy_values[0],xy_values[1],xy_values[2],1000);
+        temp_loss = nn(xy_values[0],xy_values[1],xy_values[2],1000,est[0],contaminant);
         loss_vec.append(temp_loss);
     print(loss_vec);
+    plt.figure(figsize=(12.2,6.4))
     plt.plot(loss_vec, 'k-', label='Loss')
     plt.title('Error aumentando el numero de estaciones')
     plt.xlabel('Numero de estaciones')
     plt.ylabel('Loss')
     plt.legend(loc='best')
+    location = np.range(len(est));
+    plt.xticks(location,est,rotation='vertical');
     plt.savefig("estaciones.png", dpi=600);
     plt.show();
 
