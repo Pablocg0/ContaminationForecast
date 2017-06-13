@@ -105,4 +105,5 @@ def prediction(station,contaminant,arrayPred):
         for x in arrayPred:
             r = sess.run(final_output, feed_dict={x_data:x})
             result.append(r[0,0])
+        sess.close();
         return result
