@@ -2,11 +2,12 @@ from Utilites.FormatData import FormatData as fd
 from Utilites.Utilites import converToArray as ut
 import pandas as df
 import os
+import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
-est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MER','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
-startDate =['2015/01/01','2013/01/26','1992/11/09','2011/07/01','2014/08/01','2007/07/20','1994/01/02','1990/08/07','2007/07/20','2011/07/05','1986/11/01','2015/01/01','2011/07/27','1986/01/17','1986/02/20','2012/02/20','2011/07/01','1994/01/02','1986/11/01','2012/02/20','1990/05/16','1986/11/22'];
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
 contaminant = 'O3';
 endDate = '2017/02/01';
 
@@ -35,6 +36,22 @@ def saveData():
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
+
+def allSaveData():
+    """
+    Function for the save data in the type file .csv
+    """
+    nameD = 'allData'+'_'+contaminant+'.csv';
+    nameB = 'allData'+'_'+contaminant+'_pred.csv';
+    data = fd.readData(startDate[0],endDate,est,contaminant);
+    build = fd.buildClass2(data,[est[0]],contaminant,24,startDate[0],endDate);
+    print('listo')
+    dataTemp = separateDate(data);
+    maxAndMinValues(dataTemp,'allData',contaminant)
+    data = dataTemp;
+    print('listo2')
+    data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+    build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
 
 
 def maxAndMinValues(data,station,contaminant):
@@ -133,10 +150,4 @@ def weekday(year,month,day):
 
 
 saveData();
-#weekday(2007,5,25);
-#contaminant = 'O3';
-#station = 'AJM'
-#name = station +'_'+contaminant;
-#data = df.read_csv('data/'+name+'.csv')
-#separateDate(data);
-#maxAndMinValues(data,station,contaminant);
+#allSaveData();
