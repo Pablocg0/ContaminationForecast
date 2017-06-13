@@ -85,4 +85,5 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
             total_loss = temp_loss;
 
     saver.save(sess,'trainData/'+station+'/'+name+'.ckpt')
+    sess.close()
     return total_loss;
