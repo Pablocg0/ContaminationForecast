@@ -1,10 +1,10 @@
-from Utilites.Utilites import prepro as an
+from Utilites.Utilites import prepro2 as an
 from Utilites.FormatData import FormatData as fd
 from tests.neuralNetwork import train as nn
 import pandas as df
 
 
-est =['AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','IZT','LPR','MER','MGH','NEZ','PED','SAG','SFE','SJA','TAH','TLA','UAX','UIZ','XAL'];
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 contaminant = 'O3';
 
 
@@ -14,7 +14,7 @@ def trainNeuralNetworks():
     save the training on file trainData/[nameStation].csv
     """
     i=0;
-    while i <= 2:
+    while i <= 21:
         station = est[i];
         print(station);
         name = station +'_'+contaminant; #name the file with the data
