@@ -43,3 +43,12 @@ def prepro(data,build,contaminant):
     x_val= min_max_scaler.fit_transform(x_val)
     y_vals = min_max_scaler.fit_transform(y_vals)
     return [x_val, y_vals,columns];
+
+
+def prepro2(data,build,contaminant):
+    x_vals = data.values;
+    x = x_vals.shape;
+    columns = x[1];
+    x_val= x_vals[:,1:columns];
+    y_vals = converToArray(build,contaminant);
+    return [x_val, y_vals,columns];
