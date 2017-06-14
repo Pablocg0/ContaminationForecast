@@ -5,6 +5,7 @@ from Utilites.Utilites import prepro as an
 from datetime import datetime, timedelta
 import pandas as df
 import matplotlib
+import numpy as np
 #matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from time import time
@@ -167,12 +168,15 @@ def testData():
         dataBase_time.append(total_dataBase);
         file_time.append(total_file);
         i+=1;
+    plt.figure(figsize=(12.2,6.4))
     plt.plot(file_time,'k-', label='time File');
     plt.plot(dataBase_time, 'r-',label='time DataBase');
     plt.title('DataBase vs File');
     plt.xlabel('stations');
     plt.ylabel('Time (second)');
     plt.legend(loc ='best');
+    location = np.arange(len(est));
+    plt.xticks(location,est,fontsize=7,rotation='vertical');
     plt.savefig('tiempoDataBase.png',dpi=600);
     plt.show();
 
@@ -202,12 +206,15 @@ def testData2():
         dataBase_time.append(total_dataBase);
         file_time.append(total_file);
         i +=1;
+    plt.figure(figsize=(12.2,6.4))
     plt.plot(file_time,'g-', label='time File');
     plt.plot(dataBase_time, 'r-',label='time DataBase');
     plt.title('DataBase vs File');
     plt.xlabel('stations');
     plt.ylabel('Time (second)');
     plt.legend(loc ='best');
+    location = np.arange(len(est));
+    plt.xticks(location,est,fontsize=7,rotation='vertical');
     plt.savefig('Graficas/tiempoDataBase2.png',dpi=600);
     plt.show();
 
