@@ -3,6 +3,7 @@ import netCDF4 as nc4
 import NewBBOX as ne
 
 net = Dataset('NewFile.nc');
+print(net)
 
 variables=['velocity'];
 
@@ -25,6 +26,7 @@ print(maxLAT);
 print('El siguiente es el intervalo de longitudes disponible \n');
 print(minLON);
 print(maxLON);
+print('\n')
 
 
 minlat=19;
@@ -38,7 +40,6 @@ for i in variables:
     var= net.variables[i][:]
     celda.append(var);
     result = ne.NewBBOX(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
-    print(result);
     var_cut.append(result[0]);
 
 newLAT = result[1];

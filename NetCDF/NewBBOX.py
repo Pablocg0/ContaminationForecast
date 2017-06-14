@@ -2,27 +2,35 @@ def NewBBOX(currVar,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon):
     for i in range(LONsize):
         if LON[i] == minlon:
             lon1= i;
+            break
         elif LON[i] > minlon:
             lon1=i-1;
+            break
 
     for i in range(LONsize):
         if LON[i] == maxlon:
             lon2 = i;
+            break
         elif LON[i]>maxlon:
             lon2=i;
+            break
 
     for j in range(LATsize):
         if LAT[j] == minlat:
             lat1=j;
+            break
         elif LAT[j] > minlat:
             lat1= j-1;
+            break
 
 
     for j in range(LATsize):
         if LAT[j] == maxlat:
             lat2= j
+            break
         elif LAT[j] > maxlat:
             lat2= j;
+            break
 
     newLAT = LAT[lat1:lat2];
     newLON = LON[lon1:lon2];
