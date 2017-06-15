@@ -1,6 +1,7 @@
 from Utilites.Utilites import prepro2 as an
 from Utilites.FormatData import FormatData as fd
-from tests.neuralNetwork import train as nn
+from NNSystem.neuralNetwork import train as nn
+from NNSystem.neuralNetworkGPU import train as nng
 import pandas as df
 
 
@@ -30,7 +31,7 @@ def trainOne():
     data = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
     build = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
     xy_values = an(data,build, contaminant); # preprocessing
-    nn(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
+    nng(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
 
 
 
