@@ -1,7 +1,7 @@
 from Utilites.Utilites import prepro2 as an
 from Utilites.FormatData import FormatData as fd
 from NNSystem.neuralNetwork import train as nn
-from NNSystem.neuralNetworkGPU import train as nng
+from NNSystem.neuralNetworkGpu import train as nng
 import pandas as df
 
 
