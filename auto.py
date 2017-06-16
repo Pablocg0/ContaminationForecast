@@ -1,4 +1,4 @@
-from Utilites.Utilites import prepro2 as an
+from Utilites.Utilites import prepro as an
 from Utilites.FormatData import FormatData as fd
 from NNSystem.neuralNetwork import train as nn
 from NNSystem.neuralNetworkGpu import train as nng
@@ -35,5 +35,5 @@ def trainOne():
 
 
 
-trainNeuralNetworks();
+#trainNeuralNetworks();
 trainOne();
