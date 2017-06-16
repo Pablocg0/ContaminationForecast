@@ -46,12 +46,12 @@ def trial(station):
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
     plt.plot(inf,'g-', label='Real value');
-    plt.plot(real, 'r-',label='Prediction');
-    plt.title('NN Predection'+' '+ station +' '+ contaminant);
+    plt.plot(real, 'r-',label='NN Predection');
+    plt.title(nombreEst(station) +' '+ contaminant);
     plt.xlabel('Days');
     plt.ylabel('PPM');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=6,rotation='vertical');
+    plt.xticks(location,labels,fontsize=8,rotation=70);
     #plt.xlim(0,600)
     plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
     plt.show();
@@ -81,12 +81,12 @@ def trialAllData():
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
     plt.plot(inf,'g-', label='Real value');
-    plt.plot(real, 'r-',label='Prediction');
-    plt.title('NN Predection'+' '+ station +' '+ contaminant);
+    plt.plot(real, 'r-',label='NN Predection');
+    plt.title(nombreEst('AJM') +' '+ contaminant);
     plt.xlabel('Days');
     plt.ylabel('PPM');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=6,rotation='vertical');
+    plt.xticks(location,labels,fontsize=6,rotation=70);
     #plt.xlim(0,600)
     plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
     plt.show();
@@ -110,12 +110,14 @@ def xlabel(data):
     location=[];
     dates = data['fecha'];
     i =0;
+    m = 1;
     for x in dates:
-        d =x
-        if d.hour == 0:
-            f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day)
-            fechas.append(f)
+        d =x;
+        if d.hour == 0 && d.month = m:
+            f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day);
+            fechas.append(f);
             location.append(i);
+            m +=1;
         i+=1;
     return [fechas,location];
 
@@ -216,8 +218,53 @@ def weekday(year,month,day):
     sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
     return [week,sinWeek]
 
+def nombreEst(station):
+    if station == 'AJM':
+        return 'Ajusco Medio';
+    elif station == 'MGH':
+        return 'Miguel Hidalgo';
+    elif station == 'CCA':
+        return 'Centro de Ciencias de la Atmosfera';
+    elif station == 'SFE':
+        return 'Santa Fe';
+    elif station == 'UAX':
+        return 'UAM Xochimilco';
+    elif station == 'CUA':
+        return 'Cuajimalpa';
+    elif station == 'NEZ':
+        return 'Nezahualcóyotl';
+    elif station == 'CAM':
+        return 'Camarones';
+    elif station == 'LPR':
+        return 'La Presa';
+    elif station == 'SJA':
+        return 'San Juan Aragón';
+    elif station == 'CHO':
+        return 'Chalco';
+    elif station == 'IZT':
+        return 'Iztacalco';
+    elif station == 'SAG':
+        return 'San Agustín';
+    elif station == 'TAH':
+        return 'Tlahuac';
+    elif station == 'ATI':
+        return 'Atizapan';
+    elif station == 'FAC':
+        return 'FES Acatlán';
+    elif station == 'UIZ':
+        return 'UAM Iztapalapa';
+    elif station == 'MER':
+        return 'Merced';
+    elif station == 'PED':
+        return 'Pedregal';
+    elif station == 'TLA':
+        return 'tlalnepantla';
+    elif station == 'BJU':
+        return 'Benito Juárez';
+    elif station == 'XAL':
+        return 'Xalostoc';
 
 
 #desNorm(est[1],contaminant);
 #trial();
-totalPredection();
+#totalPredection();
