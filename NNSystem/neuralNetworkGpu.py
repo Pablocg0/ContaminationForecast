@@ -4,33 +4,33 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
 
 
+def init_weight(shape):
+    """
+    Function for the define Variable function weight
+    :param shape: Matrix containing weight
+    :type shape : matrix float32
+
+    :return: matrix weight
+    """
+    with tf.device("/cpu:0"):
+        weight = tf.Variable(tf.random_normal(shape));
+        return weight;
+
+def init_bias(shape):
+    """
+    Function for the define Variable function weight
+    :param shape: Matrix containing bias
+    :type shape : matrix float32
+    :return: matrix bias
+    """
+    with tf.device("/cpu:0"):
+        bias=  tf.Variable(tf.random_normal(shape));
+        return bias;
+
 def train(x_d,y_data, columns,iteraciones,station,contaminant):
     name = 'train_'+station+'_'+contaminant;
     # Create graph session
     sess= tf.Session();
-
-    def init_bias(shape):
-        """
-        Function for the define Variable function weight
-        :param shape: Matrix containing bias
-        :type shape : matrix float32
-        :return: matrix bias
-        """
-        with tf.device("/cpu:0"):
-            bias=  tf.Variable(tf.random_normal(shape));
-            return bias;
-
-    def init_weight(shape):
-        """
-        Function for the define Variable function weight
-        :param shape: Matrix containing weight
-        :type shape : matrix float32
-
-        :return: matrix weight
-        """
-        with tf.device("/cpu:0"):
-            weight = tf.Variable(tf.random_normal(shape));
-            return weight;
 
     # Initialize placeholders
     with tf.device("/cpu:0"):
