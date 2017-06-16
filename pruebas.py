@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import pandas as df
 import matplotlib
 import numpy as np
-#matplotlib.use('agg')
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from time import time
 
