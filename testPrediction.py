@@ -57,6 +57,47 @@ def trial(station):
     plt.clf();
 
 
+def trialAllData():
+    sta = 'allData'
+    d = infor2('2016/01/01','2016/12/31',est,contaminant);
+    dat = d[0]
+    data = separateDate(dat);
+    l = xlabel(dat)
+    labels=l[0];
+    location =l[1];
+    build=d[1];
+    arrayPred = []
+    nameColumn ='cont_otres_' + 'AJM'+'_delta';
+    inf= build[nameColumn].values
+    index = data.index.values
+    for x in index:
+        pred = data.ix[x].values
+        valPred = pred[1:];
+        valNorm= pre.normalize(valPred,sta,contaminant);
+        arrayPred.append(convert(valNorm));
+    result = pre.prediction(sta,contaminant,arrayPred);
+    real = desNorm(result,sta,contaminant);
+    plt.figure(figsize=(12.2,6.4))
+    plt.plot(inf,'g-', label='Real value');
+    plt.plot(real, 'r-',label='Prediction');
+    plt.title('NN Predection'+' '+ station +' '+ contaminant);
+    plt.xlabel('Days');
+    plt.ylabel('PPM');
+    plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=6,rotation='vertical');
+    #plt.xlim(0,600)
+    plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
+    plt.show();
+    plt.clf();
+
+
+
+def infor2(start,end,station,contaminant):
+    data = fd.readData(start,end,station,contaminant);
+    build = fd.buildClass2(data,station,contaminant,24,start,end);
+    return [data,build]
+
+
 def infor(start,end,station,contaminant):
     data = fd.readData(start,end,[station],contaminant);
     build = fd.buildClass2(data,[station],contaminant,24,start,end);
