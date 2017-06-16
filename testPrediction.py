@@ -59,6 +59,7 @@ def trial(station):
 
 
 def trialAllData():
+    station= 'allData'
     sta = 'allData'
     d = infor2('2016/01/01','2016/12/31',est,contaminant);
     dat = d[0]
@@ -121,7 +122,8 @@ def xlabel(data):
 
 
 def convert(data):
-    vl = np.ones([1,17]);
+    size = len(data);
+    vl = np.ones([1,size]);
     i = 0;
     for x in data:
         vl[0,i]= x
