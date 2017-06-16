@@ -18,9 +18,10 @@ endDate = '2017/02/01 00:00:00';
 
 
 def totalPredection():
-    for x in est:
-        print(x);
-        trial(x);
+    trialAllData()
+    #for x in est:
+    #    print(x);
+    #    trial(x);
 
 
 def trial(station):
