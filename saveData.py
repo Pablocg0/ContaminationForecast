@@ -29,7 +29,7 @@ def saveData():
         nameD = est[i]+'_'+contaminant+'.csv';
         nameB = est[i]+'_'+contaminant+'_pred.csv';
         data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
-        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
+        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);    
         dataTemp = separateDate(data);
         maxAndMinValues(dataTemp,est[i],contaminant)
         data = dataTemp;
@@ -72,9 +72,9 @@ def maxAndMinValues(data,station,contaminant):
     x_vals= x_vals[:,1:columns];
     minx = x_vals.min(axis=0);
     maxx = x_vals.max(axis=0);
-    myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10','weekday','sinWeekday','year','month','sinMonths','day','sinDay'];
-    mixmax = df.DataFrame(minx , columns = ['MIN'],index=myIndex);
-    dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
+    #myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10','weekday','sinWeekday','year','month','sinMonths','day','sinDay'];
+    mixmax = df.DataFrame(minx , columns = ['MIN']);
+    dMax = df.DataFrame(maxx, columns= ['MAX']);
     mixmax['MAX']= dMax;
     mixmax.to_csv('data/'+nameD,encoding = 'utf-8');
 
