@@ -40,16 +40,15 @@ class FormatData(object):
                 #query the values in the gives rangefrom Utilites.FormatData import FormatData as fdfrom Utilites.FormatData import FormatData as fd
                 if tempDataValues.empty:
                     #if the query is empty fill it will -1
-                    tempData = pd.DataFrame(np.ones((numberows,1))*-1,columns= [name]);
-                    allData[name]= tempData;
-                    print(name);
-                else:
-                    print(len(tempDataValues));
+                    #tempData = pd.DataFrame(np.ones((numberows,1))*-1,columns= [name]);
+                    #allData[name]= tempData;
+                elif not tempDataValues.empty:
                     allData = allData.merge(tempDataValues,how='left',on='fecha')
                     #allData[name]=tempDataValues[y+'_'+x.lower()];
         conn.commit();
         cur.close();
         #The connection to the database is closed
+        #allData=allData.dropna();
         #return allData.fillna(value=-1);
         return allData.fillna(allData.mean());
 
@@ -94,7 +93,7 @@ class FormatData(object):
                     values[x,0]=tempValue[0,0];
                     x=x+1;
                 else:
-                    values[x,0]=-1;
+                    values[x,0]=np.nan;
                     x=x+1;
                 temBuild= pd.DataFrame(values,columns=[name]);
             x=0;
@@ -102,6 +101,7 @@ class FormatData(object):
         conn.commit();
         cur.close();
         #The connection to the database is closed
+        build.dropna();
         return build.fillna(value=-1);
 
     def buildClass2(allData,estation,contaminant,delta,startDate, endDate):
@@ -131,4 +131,4 @@ class FormatData(object):
         conn.commit();
         cur.close();
         #The connection to the database is closed
-        return build.fillna(value=-1);
+        return build.fillna(buil.mean());
