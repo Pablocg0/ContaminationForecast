@@ -18,10 +18,11 @@ endDate = '2017/02/01 00:00:00';
 
 
 def totalPredection():
-    trialAllData()
-    #for x in est:
-    #    print(x);
-    #    trial(x);
+    #trialAllData()
+    #trial('ATI');
+    for x in est:
+       print(x);
+       trial(x);
 
 
 def trial(station):
@@ -51,11 +52,12 @@ def trial(station):
     plt.xlabel('Days');
     plt.ylabel('PPM');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=8,rotation=70);
+    plt.xticks(location,labels,fontsize=8,rotation=80);
     #plt.xlim(0,600)
     plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
     plt.show();
     plt.clf();
+    plt.close()
 
 
 def trialAllData():
@@ -113,7 +115,7 @@ def xlabel(data):
     m = 1;
     for x in dates:
         d =x;
-        if d.hour == 0 && d.month = m:
+        if d.hour == 0 and  d.month == m:
             f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day);
             fechas.append(f);
             location.append(i);
@@ -267,4 +269,5 @@ def nombreEst(station):
 
 #desNorm(est[1],contaminant);
 #trial();
-#totalPredection();
+totalPredection();
+#trialAllData();
