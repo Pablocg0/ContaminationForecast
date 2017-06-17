@@ -42,13 +42,16 @@ class FormatData(object):
                     #if the query is empty fill it will -1
                     tempData = pd.DataFrame(np.ones((numberows,1))*-1,columns= [name]);
                     allData[name]= tempData;
+                    print(name);
                 else:
+                    print(len(tempDataValues));
                     allData = allData.merge(tempDataValues,how='left',on='fecha')
                     #allData[name]=tempDataValues[y+'_'+x.lower()];
         conn.commit();
         cur.close();
         #The connection to the database is closed
-        return allData.fillna(value=-1);
+        #return allData.fillna(value=-1);
+        return allData.fillna(allData.mean());
 
     def buildClass(allData,estation,contaminant,delta):
         """
