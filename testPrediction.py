@@ -31,11 +31,10 @@ def trial(station):
     sta = station
     name = sta +'_'+contaminant;
     temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
-    dat =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
     tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
     build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
-    data = separateDate(dat);
-    l = xlabel(dat)
+    l = xlabel(data)
     labels=l[0];
     location =l[1];
     arrayPred = []
@@ -140,10 +139,10 @@ def convert(data):
 
 def desNorm(data,station,contaminant):
     real=[];
-    mini = min(data);
-    maxi = max(data);
-    print(mini)
-    print(maxi)
+    #mini = min(data);
+    #maxi = max(data);
+    #print(mini)
+    #print(maxi)
     nameC = 'cont_otres_'+station.lower();
     name = station+'_'+contaminant;
     values = df.read_csv('data/'+name+'_MaxMin.csv');
@@ -151,8 +150,8 @@ def desNorm(data,station,contaminant):
     va = values[(values[index]==nameC)];
     maxx = va['MAX'].values[0];
     minn = va['MIN'].values[0];
-    print(maxx)
-    print(minn)
+    #print(maxx)
+    #print(minn)
     for x in data:
         realVal = (x*(maxx-minn))+minn
         real.append(realVal);
