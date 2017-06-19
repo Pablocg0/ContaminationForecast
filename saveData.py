@@ -6,36 +6,60 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
-est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
-startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
+
 contaminant = 'O3';
 endDate = '2017/02/01';
 
-def saveData():
+
+def saveData(listEstations,startDate):
     """
     Function for the save data in the type file .csv
     """
-    if not os.path.exists('data'): os.makedirs('data');
-    if not os.path.exists('trainData'): os.makedirs('trainData');
-    i=0;
-    while i<=21:
-        r = 'trainData/'+est[i];
-        if not os.path.exists(r): os.makedirs(r);
-        i+=1;
+    createFile();
+    est = listEstations;
+    tam = len(est) -1
     i = 0;
-    #we create the necesary folders to save the files in case of not existing
-    while i <= 21:
+    while i <=tam:#21
         print(est[i]);
+        print(startDate[i])
+        nameDelta = 'cont_otres_'+ est[i]+'_delta';
         nameD = est[i]+'_'+contaminant+'.csv';
         nameB = est[i]+'_'+contaminant+'_pred.csv';
-        data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
-        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);    
+        tempData = fd.readData(startDate[i],endDate,[est[i]],contaminant);
+        tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
+        temAllData= tempData.dropna(axis=1, how='all');
+        allD = temAllData.dropna(axis=0,how='any');
+        allD = allD.reset_index();
+        allD= allD.drop(labels='index',axis=1);
+        allData = allD.merge(tempBuild,how='left',on='fecha');
+        build = df.DataFrame(allData['fecha'],columns=['fecha']);
+        val = df.DataFrame(allData[nameDelta],columns=[nameDelta]);
+        build[nameDelta]= val;
+        data = allData.drop(labels=nameDelta, axis=1);
+        data = data.reset_index();
+        build = build.reset_index();
+        #data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
+        #build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
+        build = build.drop(labels='index',axis=1);
+        data = data.drop(labels='index',axis=1);
         dataTemp = separateDate(data);
         maxAndMinValues(dataTemp,est[i],contaminant)
         data = dataTemp;
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
+
+
+def createFile():
+    #we create the necesary folders to save the files in case of not existing
+    est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+    if not os.path.exists('data'): os.makedirs('data');
+    if not os.path.exists('trainData'): os.makedirs('trainData');
+    i=0;
+    while i<=21:#21
+        r = 'trainData/'+est[i];
+        if not os.path.exists(r): os.makedirs(r);
+        i+=1;
 
 def allSaveData():
     """
@@ -65,16 +89,18 @@ def maxAndMinValues(data,station,contaminant):
     :type contaminant : string
     """
     nameD = station+'_'+contaminant+'_MaxMin'+'.csv';
-    dt = data;
+    Index = data.columns;
+    myIndex =Index.values
+    myIndex = myIndex[1:]
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
     x_vals= x_vals[:,1:columns];
-    minx = x_vals.min(axis=0);
+    minx = x_vals.min(axis=0)
     maxx = x_vals.max(axis=0);
     #myIndex = ['pmco','pm2' ,'nox' ,'co2' ,'co' ,'no2' ,'no' ,'o3' ,'so2', 'pm10','weekday','sinWeekday','year','month','sinMonths','day','sinDay'];
-    mixmax = df.DataFrame(minx , columns = ['MIN']);
-    dMax = df.DataFrame(maxx, columns= ['MAX']);
+    mixmax = df.DataFrame(minx , columns = ['MIN'],index = myIndex);
+    dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
     mixmax.to_csv('data/'+nameD,encoding = 'utf-8');
 
@@ -86,7 +112,7 @@ def separateDate(data):
     :type data: DataFrame
     """
     dates = data['fecha'];
-    lenght = len(dates);
+    lenght = len(dates.index);
     years = np.ones((lenght,1))*-1;
     sinYears = np.ones((lenght,1))*-1;
     months = np.ones((lenght,1))*-1;
@@ -149,5 +175,13 @@ def weekday(year,month,day):
     return [week,sinWeek]
 
 
-saveData();
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
+startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
+#startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
+est1 =['CHO']
+est2 =['BJU']
+startDate1=['2007/07/20']
+startDate2=['1986/01/12']
+#saveData(est,startDate);
+saveData(est1,startDate1)
 #allSaveData();
