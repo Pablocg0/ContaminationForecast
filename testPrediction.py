@@ -12,8 +12,10 @@ from time import time
 
 contaminant = 'O3';
 loss_vec= [];
-est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
-startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
+startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
+#est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+#startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
 endDate = '2017/02/01 00:00:00';
 
 
@@ -27,13 +29,15 @@ def totalPredection():
 
 def trial(station):
     sta = station
-    d = infor('2016/01/01','2016/12/31',sta,contaminant);
-    dat = d[0]
+    name = sta +'_'+contaminant;
+    temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
+    dat =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
+    build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
     data = separateDate(dat);
     l = xlabel(dat)
     labels=l[0];
     location =l[1];
-    build=d[1];
     arrayPred = []
     nameColumn ='cont_otres_' + sta+'_delta';
     inf= build[nameColumn].values
@@ -114,7 +118,7 @@ def xlabel(data):
     i =0;
     m = 1;
     for x in dates:
-        d =x;
+        d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
         if d.hour == 0 and  d.month == m:
             f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day);
             fechas.append(f);
@@ -140,11 +144,13 @@ def desNorm(data,station,contaminant):
     maxi = max(data);
     print(mini)
     print(maxi)
+    nameC = 'cont_otres_'+station.lower();
     name = station+'_'+contaminant;
     values = df.read_csv('data/'+name+'_MaxMin.csv');
-    val = values.xs(7).values;
-    maxx = val[2]; #s600
-    minn = val[1]; #-110
+    index = values.columns[0];
+    va = values[(values[index]==nameC)];
+    maxx = va['MAX'].values[0];
+    minn = va['MIN'].values[0];
     print(maxx)
     print(minn)
     for x in data:
@@ -152,73 +158,6 @@ def desNorm(data,station,contaminant):
         real.append(realVal);
     return real;
 
-def separateDate(data):
-    """
-    Function to separate the date in year, month ,day and the function sine of each one of them
-    :parama data: DataFrame that contains the dates
-    :type data: DataFrame
-    """
-    dates = data['fecha'];
-    lenght = len(dates);
-    years = np.ones((lenght,1))*-1;
-    sinYears = np.ones((lenght,1))*-1;
-    months = np.ones((lenght,1))*-1;
-    sinMonths = np.ones((lenght,1))*-1;
-    days = np.ones((lenght,1))*-1;
-    sinDays = np.ones((lenght,1))*-1;
-    wDay = np.ones((lenght,1))*-1;
-    sinWday = np.ones((lenght,1))*-1;
-    i  =0 ;
-    for x in dates:
-        d =x
-        wD= weekday(d.year,d.month,d.day);
-        wDay[i]=wD[0];
-        sinWday[i]=wD[1];
-        years[i] = d.year;
-        #sinYears[i]= np.sin(d.year);
-        months[i] = d.month
-        sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
-        days[i] = d.day
-        sinDays[i]= (1+np.sin(((d.day-1)/23)*(2*np.pi)))/2
-        i += 1;
-    weekD = df.DataFrame(wDay, columns= ['weekday'])
-    data['weekday']= weekD;
-    sinWeekD = df.DataFrame(sinWday, columns= ['sinWeekday'])
-    data['sinWeekday']= sinWeekD;
-    dataYear = df.DataFrame(years, columns= ['year'])
-    data['year'] = dataYear
-    #dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data);
-    #data['sinYear'] = dataSinYear
-    dataMonths = df.DataFrame(months, columns= ['month'])
-    data['month'] = dataMonths
-    dataSinMonths = df.DataFrame(sinMonths, columns= ['sinMonth'])
-    data['sinMonth'] = dataSinMonths
-    dataDay = df.DataFrame(days, columns= ['day'])
-    data['day'] = dataDay
-    dataSinDay = df.DataFrame(sinDays, columns= ['sinDay'])
-    data['sinDay'] = dataSinDay
-    return data;
-
-
-def weekday(year,month,day):
-    """
-    Function to take day of the week using the congruence of Zeller , 1 is Sunday
-    :param year: year of the date
-    :type year: int
-    :param month: month of the date
-    :type month: int
-    :param day: day of the date
-    :type day:int
-    :return: int, 1 is Sunday
-    """
-    a = (14-month)/12;
-    a = int(a);
-    y = year-a;
-    m = month+12*a-2;
-    week = (day+y+int(y/4)-int(y/100)+int(y/400)+int((31*m)/12))%7;
-    Week = week +1;
-    sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
-    return [week,sinWeek]
 
 def nombreEst(station):
     if station == 'AJM':
