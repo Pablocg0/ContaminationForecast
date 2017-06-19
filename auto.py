@@ -5,7 +5,8 @@ from NNSystem.neuralNetworkGpu import train as nng
 import pandas as df
 
 
-est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+#est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 contaminant = 'O3';
 
 
@@ -14,8 +15,9 @@ def trainNeuralNetworks():
     Function to train the neuralNetwork of the 23 stations,
     save the training on file trainData/[nameStation].csv
     """
+    tam = len(est) -1
     i=0;
-    while i <= 21:
+    while i <= tam:
         station = est[i];
         print(station);
         name = station +'_'+contaminant; #name the file with the data
