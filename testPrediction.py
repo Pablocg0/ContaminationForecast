@@ -190,7 +190,7 @@ def desNorm(data,station,contaminant):
     return real;
 
 def infor(start,end,station,contaminant):
-     data = fd.readData(start,end,[station],contaminant);
+     data = fd.readDataTest(start,end,[station],contaminant);
      build = fd.buildClass2(data,[station],contaminant,24,start,end);
      return [data,build]
 
