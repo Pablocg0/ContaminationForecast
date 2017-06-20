@@ -250,6 +250,6 @@ est2 =['BJU']
 #trial();
 totalPredection(est1);
 totalPredection(est2);
-#totalPredection(est);
+totalPredection(est);
 #totalPredectionNoNorm();
 #trialAllData();
