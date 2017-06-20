@@ -21,15 +21,11 @@ endDate = '2017/02/01 00:00:00';
 
 
 def totalPredection():
-    #trialAllData()
-    #trial('ATI');
     for x in est:
        print(x);
        trial(x);
 
 def totalPredectionNoNorm():
-    #trialAllData()
-    #trial('ATI');
     for x in est:
        print(x);
        trialNoNormalized(x);
@@ -252,9 +248,78 @@ def obtMax(station,contaminant):
     maxx = va['MAX'].values[0];
     return maxx;
 
+def separateDate(data):
+    """
+    Function to separate the date in year, month ,day and the function sine of each one of them
+    :parama data: DataFrame that contains the dates
+    :type data: DataFrame
+    """
+    dates = data['fecha'];
+    lenght = len(dates.index);
+    years = np.ones((lenght,1))*-1;
+    sinYears = np.ones((lenght,1))*-1;
+    months = np.ones((lenght,1))*-1;
+    sinMonths = np.ones((lenght,1))*-1;
+    days = np.ones((lenght,1))*-1;
+    sinDays = np.ones((lenght,1))*-1;
+    wDay = np.ones((lenght,1))*-1;
+    sinWday = np.ones((lenght,1))*-1;
+    i  =0 ;
+    for x in dates:
+        d =x
+        #d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
+        wD= weekday(d.year,d.month,d.day);
+        wDay[i]=wD[0];
+        sinWday[i]=wD[1];
+        years[i] = d.year;
+        #sinYears[i]= np.sin(d.year);
+        months[i] = d.month
+        sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
+        days[i] = d.day
+        sinDays[i]= (1+np.sin(((d.day-1)/23)*(2*np.pi)))/2
+        i += 1;
+    weekD = df.DataFrame(wDay, columns= ['weekday'])
+    data['weekday']= weekD;
+    sinWeekD = df.DataFrame(sinWday, columns= ['sinWeekday'])
+    data['sinWeekday']= sinWeekD;
+    dataYear = df.DataFrame(years, columns= ['year'])
+    data['year'] = dataYear
+    #dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data);
+    #data['sinYear'] = dataSinYear
+    dataMonths = df.DataFrame(months, columns= ['month'])
+    data['month'] = dataMonths
+    dataSinMonths = df.DataFrame(sinMonths, columns= ['sinMonth'])
+    data['sinMonth'] = dataSinMonths
+    dataDay = df.DataFrame(days, columns= ['day'])
+    data['day'] = dataDay
+    dataSinDay = df.DataFrame(sinDays, columns= ['sinDay'])
+    data['sinDay'] = dataSinDay
+    return data;
+
+
+def weekday(year,month,day):
+    """
+    Function to take day of the week using the congruence of Zeller , 1 is Sunday
+    :param year: year of the date
+    :type year: int
+    :param month: month of the date
+    :type month: int
+    :param day: day of the date
+    :type day:int
+    :return: int, 1 is Sunday
+    """
+    a = (14-month)/12;
+    a = int(a);
+    y = year-a;
+    m = month+12*a-2;
+    week = (day+y+int(y/4)-int(y/100)+int(y/400)+int((31*m)/12))%7;
+    Week = week +1;
+    sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
+    return [week,sinWeek]
+
 
 #desNorm(est[1],contaminant);
 #trial();
-#totalPredection();
-totalPredectionNoNorm();
+totalPredection();
+#totalPredectionNoNorm();
 #trialAllData();
