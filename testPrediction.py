@@ -148,7 +148,8 @@ def xlabel(data):
     i =0;
     m = 1;
     for x in dates:
-        d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
+        #d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
+        d=x;
         if d.hour == 0 and  d.month == m:
             f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day);
             fechas.append(f);
