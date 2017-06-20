@@ -1,4 +1,4 @@
-from Utilites.Utilites import prepro2 as an
+from Utilites.Utilites import prepro as an
 from Utilites.FormatData import FormatData as fd
 from NNSystem.neuralNetwork import train as nn
 from NNSystem.neuralNetworkGpu import train as nng
@@ -11,7 +11,7 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 contaminant = 'O3';
 
 
-def trainNeuralNetworks():
+def trainNeuralNetworks(est):
     """
     Function to train the neuralNetwork of the 23 stations,
     save the training on file trainData/[nameStation].csv
@@ -65,6 +65,10 @@ def obtMax(station,contaminant):
 
 
 
-#trainNeuralNetworks();
-trainNeuralNetworksNoNormalized()
+
+est1 =['CHO']
+est2 =['BJU']
+trainNeuralNetworks(est1);
+trainNeuralNetworks(est2);
+#trainNeuralNetworksNoNormalized()
 #trainOne();
