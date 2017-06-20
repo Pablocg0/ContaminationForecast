@@ -2,9 +2,11 @@ from netCDF4 import Dataset
 import netCDF4 as nc4
 import NewBBOX as ne
 
-net = Dataset('NewFile.nc');
-print(net)
+#net = Dataset('NewFile.nc');
+net = Dataset('wrfout_d02_2017-06-06_00.nc')
 
+print(net)
+"""
 variables=['velocity'];
 
 LON = net.variables['Longitude'][:];
@@ -71,3 +73,4 @@ files.close();
 
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
+"""
