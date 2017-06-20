@@ -37,13 +37,14 @@ def totalPredectionNoNorm():
 def trial(station):
     sta = station
     name = sta +'_'+contaminant;
-    temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
-    data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
-    tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
-    build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
+    d = infor('2016/01/01','2016/12/31',sta,contaminant);
+    dat = d[0]
+    dat = dat.fillna(value = -1);
+    data = separateDate(dat);
     l = xlabel(data)
     labels=l[0];
     location =l[1];
+    build=d[1];
     arrayPred = []
     nameColumn ='cont_otres_' + sta+'_delta';
     inf= build[nameColumn].values
@@ -191,6 +192,10 @@ def desNorm(data,station,contaminant):
         real.append(realVal);
     return real;
 
+def infor(start,end,station,contaminant):
+     data = fd.readData(start,end,[station],contaminant);
+     build = fd.buildClass2(data,[station],contaminant,24,start,end);
+     return [data,build]
 
 def nombreEst(station):
     if station == 'AJM':
