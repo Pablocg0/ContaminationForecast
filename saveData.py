@@ -50,6 +50,46 @@ def saveData(listEstations,startDate):
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
 
+def saveData2(listEstations,startDate):
+    """
+    Function for the save data in the type file .csv
+    """
+    createFile();
+    est = listEstations;
+    tam = len(est) -1
+    i = 0;
+    while i <=tam:#21
+        print(est[i]);
+        print(startDate[i])
+        nameDelta = 'cont_otres_'+ est[i]+'_delta';
+        nameD = est[i]+'_'+contaminant+'.csv';
+        nameB = est[i]+'_'+contaminant+'_pred.csv';
+        tempData = fd.readData(startDate[i],endDate,[est[i]],contaminant);
+        tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
+        temAllData= tempData.dropna(axis=1, how='all');
+        #allD = temAllData.dropna(axis=0,how='any');
+        allD = temAllData.fillna(value=-1);
+        allD = allD.reset_index();
+        allD= allD.drop(labels='index',axis=1);
+        allData = allD.merge(tempBuild,how='left',on='fecha');
+        build = df.DataFrame(allData['fecha'],columns=['fecha']);
+        val = df.DataFrame(allData[nameDelta],columns=[nameDelta]);
+        build[nameDelta]= val;
+        data = allData.drop(labels=nameDelta, axis=1);
+        data = data.reset_index();
+        build = build.reset_index();
+        #data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
+        #build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
+        build = build.drop(labels='index',axis=1);
+        data = data.drop(labels='index',axis=1);
+        dataTemp = separateDate(data);
+        maxAndMinValues(dataTemp,est[i],contaminant)
+        data = dataTemp;
+        data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+        build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
+        i += 1;
+
+
 
 def createFile():
     #we create the necesary folders to save the files in case of not existing
@@ -183,7 +223,7 @@ est1 =['CHO']
 est2 =['BJU']
 startDate1=['2007/07/20']
 startDate2=['1986/01/12']
-#saveData(est,startDate);
-saveData(est1,startDate1)
-saveData(est2,startDate2)
+saveData(est,startDate);
+saveData2(est1,startDate1)
+saveData2(est2,startDate2)
 #allSaveData();
