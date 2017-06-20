@@ -70,5 +70,7 @@ est1 =['CHO']
 est2 =['BJU']
 trainNeuralNetworks(est1);
 trainNeuralNetworks(est2);
+trainNeuralNetworks(est);
+
 #trainNeuralNetworksNoNormalized()
 #trainOne();
