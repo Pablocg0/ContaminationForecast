@@ -1,6 +1,7 @@
 from Utilites.FormatData import FormatData as fd
 from datetime import datetime, timedelta
 import prediction as pre
+import predictionMAX as prem
 import pandas as df
 import numpy as np
 import matplotlib
@@ -26,6 +27,12 @@ def totalPredection():
        print(x);
        trial(x);
 
+def totalPredectionNoNorm():
+    #trialAllData()
+    #trial('ATI');
+    for x in est:
+       print(x);
+       trial(x);
 
 def trial(station):
     sta = station
@@ -63,13 +70,52 @@ def trial(station):
     plt.close()
 
 
+def trialNoNormalized(station):
+    sta = station
+    name = sta +'_'+contaminant;
+    temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
+    data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
+    build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
+    maxx = obtMax(station,contaminant);
+    l = xlabel(data)
+    labels=l[0];
+    location =l[1];
+    arrayPred = []
+    nameColumn ='cont_otres_' + sta+'_delta';
+    inf= build[nameColumn].values
+    index = data.index.values
+    for x in index:
+        pred = data.ix[x].values
+        valPred = pred[1:];
+        #valNorm= pre.normalize(valPred,sta,contaminant);
+        arrayPred.append(convert(valNorm));
+    result = prem.prediction(sta,contaminant,arrayPred,maxx);
+    real = desNorm(result,sta,contaminant);
+    plt.figure(figsize=(12.2,6.4))
+    plt.plot(inf,'g-', label='Real value');
+    plt.plot(real, 'r-',label='NN Predection');
+    plt.title(nombreEst(station) +' '+ contaminant);
+    plt.xlabel('Days');
+    plt.ylabel('PPM');
+    plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=8,rotation=80);
+    #plt.xlim(0,600)
+    plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
+    plt.show();
+    plt.clf();
+    plt.close()
+
+
 def trialAllData():
     station= 'allData'
     sta = 'allData'
-    d = infor2('2016/01/01','2016/12/31',est,contaminant);
-    dat = d[0]
-    data = separateDate(dat);
-    l = xlabel(dat)
+    name = sta +'_'+contaminant;
+    temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
+    data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
+    build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
+    l = xlabel(data)
     labels=l[0];
     location =l[1];
     build=d[1];
@@ -97,18 +143,6 @@ def trialAllData():
     plt.show();
     plt.clf();
 
-
-
-def infor2(start,end,station,contaminant):
-    data = fd.readData(start,end,station,contaminant);
-    build = fd.buildClass2(data,station,contaminant,24,start,end);
-    return [data,build]
-
-
-def infor(start,end,station,contaminant):
-    data = fd.readData(start,end,[station],contaminant);
-    build = fd.buildClass2(data,[station],contaminant,24,start,end);
-    return [data,build]
 
 def xlabel(data):
     fechas = [];
@@ -204,8 +238,18 @@ def nombreEst(station):
     elif station == 'XAL':
         return 'Xalostoc';
 
+def obtMax(station,contaminant):
+    nameC = 'cont_otres_'+station.lower();
+    name = station+'_'+contaminant;
+    values = df.read_csv('data/'+name+'_MaxMin.csv');
+    index = values.columns[0];
+    va = values[(values[index]==nameC)];
+    maxx = va['MAX'].values[0];
+    return maxx;
+
 
 #desNorm(est[1],contaminant);
 #trial();
-totalPredection();
+#totalPredection();
+totalPredectionNoNorm();
 #trialAllData();
