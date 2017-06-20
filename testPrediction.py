@@ -1,7 +1,7 @@
 from Utilites.FormatData import FormatData as fd
 from datetime import datetime, timedelta
 import prediction as pre
-import predictionMAX as prem
+import predictionMax as prem
 import pandas as df
 import numpy as np
 import matplotlib
@@ -32,7 +32,7 @@ def totalPredectionNoNorm():
     #trial('ATI');
     for x in est:
        print(x);
-       trial(x);
+       trialNoNormalized(x);
 
 def trial(station):
     sta = station
@@ -89,7 +89,7 @@ def trialNoNormalized(station):
         pred = data.ix[x].values
         valPred = pred[1:];
         #valNorm= pre.normalize(valPred,sta,contaminant);
-        arrayPred.append(convert(valNorm));
+        arrayPred.append(convert(valPred));
     result = prem.prediction(sta,contaminant,arrayPred,maxx);
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
