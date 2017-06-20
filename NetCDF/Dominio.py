@@ -3,7 +3,7 @@ import netCDF4 as nc4
 import NewBBOX as ne
 
 #net = Dataset('NewFile.nc');
-net = Dataset('wrfout_d02_2017-06-06_00.nc')
+net = Dataset('/home/pablo/DATA/wrfout_d02_2017-06-06_00.nc')
 
 print(net)
 """
