@@ -28,7 +28,8 @@ def saveData(listEstations,startDate):
         tempData = fd.readData(startDate[i],endDate,[est[i]],contaminant);
         tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
         temAllData= tempData.dropna(axis=1, how='all');
-        allD = temAllData.dropna(axis=0,how='any');
+        #allD = temAllData.dropna(axis=0,how='any');
+        allD = temAllData.fillna(value=-1);
         allD = allD.reset_index();
         allD= allD.drop(labels='index',axis=1);
         allData = allD.merge(tempBuild,how='left',on='fecha');
@@ -182,6 +183,7 @@ est1 =['CHO']
 est2 =['BJU']
 startDate1=['2007/07/20']
 startDate2=['1986/01/12']
-saveData(est,startDate);
-#saveData(est1,startDate1)
+#saveData(est,startDate);
+saveData(est1,startDate1)
+saveData(est2,startDate2)
 #allSaveData();
