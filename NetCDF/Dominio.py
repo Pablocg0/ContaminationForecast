@@ -5,7 +5,12 @@ import NewBBOX as ne
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/wrfout_d02_2017-06-06_00.nc')
 
-print(net)
+lla = net.variables.keys();
+
+for x in lla:
+    print(x)
+    temp = net.variables[x][:];
+    print(temp);
 """
 variables=['velocity'];
 
