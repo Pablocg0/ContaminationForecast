@@ -20,7 +20,7 @@ startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','20
 endDate = '2017/02/01 00:00:00';
 
 
-def totalPredection():
+def totalPredection(est):
     for x in est:
        print(x);
        trial(x);
@@ -244,8 +244,12 @@ def obtMax(station,contaminant):
     return maxx;
 
 
+est1 =['CHO']
+est2 =['BJU']
 #desNorm(est[1],contaminant);
 #trial();
-#totalPredection();
-totalPredectionNoNorm();
+totalPredection(est1);
+totalPredection(est2);
+#totalPredection(est);
+#totalPredectionNoNorm();
 #trialAllData();
