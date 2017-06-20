@@ -81,7 +81,7 @@ class FormatData(object):
                 tempDataValues = pd.read_sql_query("""SELECT fecha, val  as {0} FROM {1} WHERE id_est = '{2}' AND fecha >= '{3}' AND fecha <= '{4}'ORDER BY fecha ASC;""".format(name,y,x, startDate, endDate),conn);
                 #query the values in the gives rangefrom Utilites.FormatData import FormatData as fdfrom Utilites.FormatData import FormatData as fd
                 if tempDataValues.empty:
-                    if the query is empty fill it will -1
+                    #if the query is empty fill it will -1
                     tempData = pd.DataFrame(np.ones((numberows,1))*-1,columns= [name]);
                     allData[name]= tempData;
                 elif not tempDataValues.empty:
