@@ -30,6 +30,8 @@ for i in variables:
 
 for x in var_cut:
     print(len(x));
+    conver1D(x);
+
 
 """
 newLAT = result[1];
@@ -66,3 +68,8 @@ files.close();
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
 """
+def conver1D(array):
+    i = 0
+    for i in range(24):
+        tempData = array[i]
+        print(tempData);
