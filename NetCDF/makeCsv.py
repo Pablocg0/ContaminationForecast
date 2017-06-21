@@ -44,9 +44,14 @@ def makeCsv(net):
         temp= conver1D(x);
         print(len(temp[0]));
 
+(foobar){10} --> encuentra cadenas que contienen 8, 9 o 10 instancias de 'foobar'
 
 def readFiles():
-    for x in listdir('/home/pablo/DATA/')
-    print(x);
+    dirr = '/home/pablo/DATA/'
+    name = 'Dom1_'
+    patron = re.compile(name+'*.nc')
+    for x in listdir(dirr):
+        if patron.match(x) != None:
+            print(dirr + x);
 
 readFiles();
