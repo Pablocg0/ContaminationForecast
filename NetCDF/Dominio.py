@@ -59,7 +59,7 @@ vartime= files.createVariable('Time','float32','TIME');
 
 new_vars=[]
 for i in range(len(variables)):
-    var_temp = files.createVariable(variables[i],'float32', ('Time','newLON','newLAT'));
+    var_temp = files.createVariable(variables[i],'float32', ('TIME','newLON','newLAT'));
     new_vars.append(var_temp);
 
 vartime[:] = TIME
