@@ -3,11 +3,16 @@ import netCDF4 as nc4
 import NewBBOX as ne
 
 def conver1D(array):
+    array1D = [];
+    total = [];
     i = 0
     for i in range(24):
         tempData = array[i]
-        print(tempData);
-
+        for x in tempData:
+            for s in x:
+                array1D.append(s);
+            print(array1D);
+        total.append(array1D);
 
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
@@ -25,7 +30,7 @@ TIMEsize = len(TIME);
 minlat=19.4284700;
 maxlat=20;
 minlon=-99.1276600;
-maxlon=-97;
+maxlon=-98;
 
 celda = [];
 var_cut=[];
