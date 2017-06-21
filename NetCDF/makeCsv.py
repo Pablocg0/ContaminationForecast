@@ -48,3 +48,5 @@ def makeCsv(net):
 def readFiles():
     for x in listdir('/home/pablo/DATA/')
     print(x);
+
+readFiles();
