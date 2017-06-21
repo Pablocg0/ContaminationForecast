@@ -6,11 +6,10 @@ import NewBBOX as ne
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
 
 lla = net.variables.keys();
+print(lla);
 
-for x in lla:
-    print(x)
-    temp = net.variables[x][:];
-    print(temp);
+print(net.variables['Longitud'][:]);
+
 """
 variables=['velocity'];
 
