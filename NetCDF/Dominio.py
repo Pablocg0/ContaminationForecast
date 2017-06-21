@@ -2,18 +2,6 @@ from netCDF4 import Dataset
 import netCDF4 as nc4
 import NewBBOX as ne
 
-def conver1D(array):
-    array1D = [];
-    total = [];
-    i = 0
-    for i in range(24):
-        tempData = array[i]
-        for x in tempData:
-            for s in x:
-                array1D.append(s);
-        total.append(array1D)
-    return total;
-
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
 
@@ -40,13 +28,6 @@ for i in variables:
     result = ne.NewBBOX(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
     var_cut.append(result[0]);
 
-for x in var_cut:
-    temp= conver1D(x);
-    print(len(temp[0]));
-
-
-
-"""
 newLAT = result[1];
 newLON = result[2];
 NewFileName = 'NewFileVars.nc';
@@ -80,4 +61,3 @@ files.close();
 
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
-"""
