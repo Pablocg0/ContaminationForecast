@@ -60,16 +60,17 @@ vartime= files.createVariable('Time','float32','TIME');
 new_vars=[]
 for i in range(len(variables)):
     var_temp = files.createVariable(variables[i],'float32', ('TIME','newLON','newLAT'));
+    var_temp = var_cut[i];
     new_vars.append(var_temp);
 
 vartime[:] = TIME
 varlon[:] = newLON;
 varlat[:] = newLAT;
 
-i = 0;
-for x in range(len(new_vars)):
-    new_vars[x] = var_cut[x];
-    i+=1;
+#i = 0;
+#for x in range(len(new_vars)):
+#    new_vars[x] = var_cut[x];
+#    i+=1;
 
 files.close();
 
