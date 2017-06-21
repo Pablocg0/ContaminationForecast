@@ -11,7 +11,8 @@ def conver1D(array):
         for x in tempData:
             for s in x:
                 array1D.append(s);
-        print(array1D);
+        total.append(array1D)
+    return total;
 
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
@@ -40,7 +41,9 @@ for i in variables:
     var_cut.append(result[0]);
 
 for x in var_cut:
-    conver1D(x);
+    temp= conver1D(x);
+    print(temp[0]);
+
 
 
 """
