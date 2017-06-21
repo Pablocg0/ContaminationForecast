@@ -5,20 +5,15 @@ import NewBBOX as ne
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
 
-lla = net.variables.keys();
-print(lla);
-
-print(net.variables['Longitud'][:]);
-
-"""
-variables=['velocity'];
+variables=['Uat10','Vat10',PREC2];
 
 LON = net.variables['Longitude'][:];
 LAT = net.variables['Latitude'][:];
-
+TIME = net.variables['Time'][:];
 
 LONsize = len(LON);
 LATsize = len(LAT);
+TIMEsize = len(TIME);
 
 minLON = min(LON);
 maxLON = max(LON);
@@ -35,10 +30,10 @@ print(maxLON);
 print('\n')
 
 
-minlat=19;
-maxlat=31;
-minlon=-96;
-maxlon=-90;
+minlat=19.4284700;
+maxlat=20;
+minlon=-99.1276600;
+maxlon=-97;
 
 celda = [];
 var_cut=[];
@@ -56,15 +51,18 @@ files = nc4.Dataset(NewFileName,'w',format='NETCDF4');
 
 files.createDimension('newLON', len(newLON));
 files.createDimension('newLAT',len(newLAT));
+files.createDimension('TIME', TIMEsize);
 
 varlon= files.createVariable('Longitude','float32','newLON');
 varlat= files.createVariable('Latitude','float32','newLAT');
+vartime= files.createVariable('Time','float32','TIME');
 
 new_vars=[]
 for i in range(len(variables)):
-    var_temp = files.createVariable(variables[i],'float32', ('newLON','newLAT'));
+    var_temp = files.createVariable(variables[i],'float32', ('Time','newLON','newLAT'));
     new_vars.append(var_temp);
 
+vartime[:] = TIME
 varlon[:] = newLON;
 varlat[:] = newLAT;
 
@@ -77,4 +75,3 @@ files.close();
 
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
-"""
