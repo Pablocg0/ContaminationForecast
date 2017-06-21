@@ -5,7 +5,7 @@ import NewBBOX as ne
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
 
-variables=['Uat10','Vat10',PREC2];
+variables=['Uat10','Vat10','PREC2'];
 
 LON = net.variables['Longitude'][:];
 LAT = net.variables['Latitude'][:];
@@ -14,21 +14,6 @@ TIME = net.variables['Time'][:];
 LONsize = len(LON);
 LATsize = len(LAT);
 TIMEsize = len(TIME);
-
-minLON = min(LON);
-maxLON = max(LON);
-minLAT = min(LAT);
-maxLAT = max(LAT);
-
-print('El siguiente es el intervalo de latitudes disponible: \n');
-print(minLAT);
-print(maxLAT);
-
-print('El siguiente es el intervalo de longitudes disponible \n');
-print(minLON);
-print(maxLON);
-print('\n')
-
 
 minlat=19.4284700;
 maxlat=20;
@@ -43,6 +28,10 @@ for i in variables:
     result = ne.NewBBOX(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
     var_cut.append(result[0]);
 
+for x in var_cut:
+    print(len(x));
+
+"""
 newLAT = result[1];
 newLON = result[2];
 NewFileName = 'NewFileVars.nc';
@@ -76,3 +65,4 @@ files.close();
 
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
+"""
