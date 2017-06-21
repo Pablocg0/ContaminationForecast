@@ -42,7 +42,7 @@ for i in variables:
 
 for x in var_cut:
     temp= conver1D(x);
-    print(temp[0]);
+    print(len(temp[0]));
 
 
 
