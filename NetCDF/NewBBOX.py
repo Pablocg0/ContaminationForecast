@@ -42,7 +42,7 @@ def NewBBOX(currVar,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon):
     if VarSize == 2:
         newVar = currVar[lon1:lon2,lat1:lat2];
     elif VarSize == 3:
-        newVar = currVar[lon1:lon2,lat1:lat2,:];
+        newVar = currVar[:,lon1:lon2,lat1:lat2];
     elif VarSize == 4:
         newVar = currVar[lon1:lon2,lat1:lat2,:,:];
 
