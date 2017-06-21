@@ -2,6 +2,13 @@ from netCDF4 import Dataset
 import netCDF4 as nc4
 import NewBBOX as ne
 
+def conver1D(array):
+    i = 0
+    for i in range(24):
+        tempData = array[i]
+        print(tempData);
+
+
 #net = Dataset('NewFile.nc');
 net = Dataset('/home/pablo/DATA/Dom1_2017-06-13.nc')
 
@@ -68,8 +75,3 @@ files.close();
 f=nc4.Dataset('NewFileVars.nc','r');
 print(f);
 """
-def conver1D(array):
-    i = 0
-    for i in range(24):
-        tempData = array[i]
-        print(tempData);
