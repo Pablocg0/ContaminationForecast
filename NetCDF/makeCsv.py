@@ -105,7 +105,7 @@ def makeCsv(net,date):
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
-        allData.to_csv('data/NetCDF/'+name,encoding='utf-8',index= False);
+        allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
 
 
 def readFiles():
