@@ -5,6 +5,7 @@ import netCDF4 as nc4
 import NewBBOX as ne
 from os import listdir
 import numpy as np
+from pandas import concat
 import re
 
 
@@ -30,7 +31,7 @@ def makeDates(date):
         listDates.append(d);
     allData = df.DataFrame(listDates,columns=['fecha']);
     return allData;
-print(allData);
+
 
 def nameColumns(name,numbColumns):
     namesColumns=[];
@@ -78,7 +79,7 @@ def makeCsv(net,date):
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
-        allData.to_csv('data/NetCDF/'+name,encoding='utf-8',index= False);
+        allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
         #print(allData);
 
 
@@ -91,9 +92,7 @@ def readFiles():
     for x in listdir(dirr):
         if patron.match(x) != None:
             ls= dirr +x;
-            print(ls);
             f = patron2.findall(x);
-            print(f[0]);
             net = Dataset(ls);
             makeCsv(net,f[0]);
 
