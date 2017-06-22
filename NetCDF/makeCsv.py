@@ -29,9 +29,8 @@ def makeDates(date):
         d = d + timedelta(hours=1);
         listDates.append(d);
     allData = df.DataFrame(listDates,columns=['fecha']);
-    print(allData);
     return allData;
-
+print(allData);
 
 def nameColumns(name,numbColumns):
     namesColumns=[];
@@ -42,7 +41,7 @@ def nameColumns(name,numbColumns):
 
 
 def makeCsv(net,date):
-    allData = makeDates(date);
+    framesDates = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -77,7 +76,8 @@ def makeCsv(net,date):
         dataMatrix= np.array(temp);
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
-        print(tempFrame);
+        allData = concat([framesDates,tempFrame], axis=1);
+        print(allData);
 
 
 def readFiles():
@@ -95,5 +95,5 @@ def readFiles():
             net = Dataset(ls);
             makeCsv(net,f[0]);
 
-#readFiles();
+readFiles();
 #makeDates('2017-06-13');
