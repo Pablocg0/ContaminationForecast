@@ -84,10 +84,10 @@ def makeCsv(net,date):
     LONsize = len(LON);
     LATsize = len(LAT);
 
-    minlat=19.4284700;
-    maxlat=20;
-    minlon=-99.1276600;
-    maxlon=-98;
+    minlat=19.8 # 19.4284700;
+    maxlat=-19.033333#20;
+    minlon=-99.933333#-99.127660;
+    maxlon=99.366667#-98;
 
     celda = [];
     var_cut=[];
