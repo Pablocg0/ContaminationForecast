@@ -32,6 +32,15 @@ def makeDates(date):
     print(allData);
     return allData;
 
+
+def nameColumns(name,numbColumns):
+    namesColumns=[];
+    for i in range(numbColumns):
+        nColumn = name+'_'+str(i);
+        namesColumns.append(nColumn);
+    return namesColumns;
+
+
 def makeCsv(net,date):
     allData = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
@@ -57,16 +66,18 @@ def makeCsv(net,date):
         result = ne.NewBBOX(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
         var_cut.append(result[0]);
 
-    for x in var_cut:
-        temp= conver1D(x);
-        dataMatrix = np.array(temp)
-        print(dataMatrix.shape);
-        print(len(temp[0]));
+    #for x in var_cut:
+    #    temp= conver1D(x);
+    #    dataMatrix = np.array(temp)
+    #    print(dataMatrix.shape);
+    #    print(len(temp[0]));
 
-    #for ls in range(len(var_cut)):
-    #    temp = conver1D(var_cut[ls]);
-    #    for xs in range(23):
-    #        tempData = temp[xs];
+    for ls in range(len(var_cut)):
+        temp = conver1D(var_cut[ls]);
+        dataMatrix= np.array(temp);
+        myIndex = nameColumns(variables[ls],len(temp[0]));
+        tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
+        print(tempFrame);
 
 
 def readFiles():
@@ -84,5 +95,5 @@ def readFiles():
             net = Dataset(ls);
             makeCsv(net,f[0]);
 
-readFiles();
+#readFiles();
 #makeDates('2017-06-13');
