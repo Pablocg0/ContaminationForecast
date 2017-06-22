@@ -41,7 +41,7 @@ def nameColumns(name,numbColumns):
 
 
 def makeCsv(net,date):
-    framesDates = makeDates(date);
+    allData = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -76,7 +76,7 @@ def makeCsv(net,date):
         dataMatrix= np.array(temp);
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
-        allData = concat([framesDates,tempFrame], axis=1);
+        allData = concat([allData,tempFrame], axis=1);
         print(allData);
 
 
