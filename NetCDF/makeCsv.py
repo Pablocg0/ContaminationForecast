@@ -1,7 +1,11 @@
+from datetime import datetime, timedelta
+import pandas as df
 from netCDF4 import Dataset
 import netCDF4 as nc4
 import NewBBOX as ne
 from os import listdir
+import numpy as np
+import re
 
 
 def conver1D(array):
@@ -16,7 +20,20 @@ def conver1D(array):
         total.append(array1D)
     return total;
 
-def makeCsv(net):
+def makeDates(date):
+    listDates = [];
+    date = date + ' 00:00:00';
+    d =datetime.strptime(date,'%Y-%m-%d %H:%M:%S');
+    listDates.append(d);
+    for x in range(23):
+        d = d + timedelta(hours=1);
+        listDates.append(d);
+    allData = df.DataFrame(listDates,columns=['fecha']);
+    print(allData);
+    return allData;
+
+def makeCsv(net,date):
+    allData = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -42,16 +59,30 @@ def makeCsv(net):
 
     for x in var_cut:
         temp= conver1D(x);
+        dataMatrix = np.array(temp)
+        print(dataMatrix.shape);
         print(len(temp[0]));
 
-(foobar){10} --> encuentra cadenas que contienen 8, 9 o 10 instancias de 'foobar'
+    #for ls in range(len(var_cut)):
+    #    temp = conver1D(var_cut[ls]);
+    #    for xs in range(23):
+    #        tempData = temp[xs];
+
 
 def readFiles():
     dirr = '/home/pablo/DATA/'
+    date = '\d\d\d\d-\d\d-\d\d'
     name = 'Dom1_'
-    patron = re.compile(name+'*.nc')
+    patron = re.compile(name+'.*')
+    patron2 = re.compile(date);
     for x in listdir(dirr):
         if patron.match(x) != None:
-            print(dirr + x);
+            ls= dirr +x;
+            print(ls);
+            f = patron2.findall(x);
+            print(f[0]);
+            net = Dataset(ls);
+            makeCsv(net,f[0]);
 
 readFiles();
+#makeDates('2017-06-13');
