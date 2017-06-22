@@ -74,10 +74,12 @@ def makeCsv(net,date):
     for ls in range(len(var_cut)):
         temp = conver1D(var_cut[ls]);
         dataMatrix= np.array(temp);
+        name = variables[ls]+'_'+date+'.csv'
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
-        print(allData);
+        allData.to_csv('data/NetCDF/'+name,encoding='utf-8',index= False);
+        #print(allData);
 
 
 def readFiles():
