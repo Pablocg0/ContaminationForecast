@@ -120,6 +120,7 @@ def readCsv(variables):
             print(x);
             tempData = df.read_csv(mypath+x);
             data = concat([data,tempData],axis=0);
+    data = data.reset_index();
     print(data);
 
 
