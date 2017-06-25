@@ -109,6 +109,20 @@ def makeCsv(net,date):
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
 
 
+def readCsv(variables):
+    mypath = '../data/NetCDF/';
+    patron = re.compile(mypath+'.*');
+    for x in listdir(mypath):
+        if patron.match(x) != None:
+            print(x);
+            tempData = df.read_csv(x);
+            print(tempData);
+
+
+
+
+
+
 def readFiles():
     """
     Function to read all NetCDF files that are in the specified path
@@ -128,4 +142,6 @@ def readFiles():
             makeCsv(net,f[0]);
 
 readFiles();
+variables=['Uat10','Vat10','PREC2'];
+readCsv(variables[0]);
 #makeDates('2017-06-13');
