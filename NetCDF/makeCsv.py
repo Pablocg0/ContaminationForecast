@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 import pandas as df
 from netCDF4 import Dataset
@@ -110,12 +111,13 @@ def makeCsv(net,date):
 
 
 def readCsv(variables):
+    variables = variables;
     mypath = '../data/NetCDF/';
-    patron = re.compile(mypath+'.*');
+    patron = re.compile(variables+'.*');
     for x in listdir(mypath):
         if patron.match(x) != None:
             print(x);
-            tempData = df.read_csv(x);
+            tempData = df.read_csv(mypath+x);
             print(tempData);
 
 
@@ -141,7 +143,7 @@ def readFiles():
             net = Dataset(ls);
             makeCsv(net,f[0]);
 
-readFiles();
+#readFiles();
 variables=['Uat10','Vat10','PREC2'];
-readCsv(variables[0]);
+readCsv(variables[2]);
 #makeDates('2017-06-13');
