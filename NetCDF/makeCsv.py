@@ -111,6 +111,7 @@ def makeCsv(net,date):
 
 
 def readCsv(variables):
+    data = df.DataFrame();
     variables = variables;
     mypath = '../data/NetCDF/';
     patron = re.compile(variables+'.*');
@@ -118,11 +119,8 @@ def readCsv(variables):
         if patron.match(x) != None:
             print(x);
             tempData = df.read_csv(mypath+x);
-            print(tempData);
-
-
-
-
+            data = concat([data,tempData],axis=0);
+    print(data);
 
 
 def readFiles():
