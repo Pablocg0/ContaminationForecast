@@ -119,11 +119,10 @@ def readCsv(variables):
         if patron.match(x) != None:
             print(x);
             tempData = df.read_csv(mypath+x);
-            print(tempData);
-            data = concat([data,tempData],axis=0);
+            data = concat([tempData,data],axis=0);
     data = data.reset_index();
     data= data.drop(labels='index',axis=1);
-    print(data);
+    data.to_csv(variables+'_total.csv',encoding='utf-8',index=False);
 
 
 def readFiles():
@@ -131,9 +130,10 @@ def readFiles():
     Function to read all NetCDF files that are in the specified path
     and named by the format Dom1_year-month-day.nc
     """
-    dirr = '/home/pablo/DATA/' #specified path
+    #dirr = '/home/pablo/DATA/' #specified path
+    dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
-    name = 'Dom1_'
+    name = 'Dom2_2016'
     patron = re.compile(name+'.*')
     patron2 = re.compile(date);
     for x in listdir(dirr):
@@ -144,7 +144,7 @@ def readFiles():
             net = Dataset(ls);
             makeCsv(net,f[0]);
 
-#readFiles();
+readFiles();
 variables=['Uat10','Vat10','PREC2'];
-readCsv(variables[2]);
+#readCsv(variables[0]);
 #makeDates('2017-06-13');
