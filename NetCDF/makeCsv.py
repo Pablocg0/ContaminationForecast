@@ -119,8 +119,10 @@ def readCsv(variables):
         if patron.match(x) != None:
             print(x);
             tempData = df.read_csv(mypath+x);
+            print(tempData);
             data = concat([data,tempData],axis=0);
     data = data.reset_index();
+    data= data.drop(labels='index',axis=1);
     print(data);
 
 
