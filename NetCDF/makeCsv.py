@@ -8,6 +8,7 @@ from os import listdir
 import numpy as np
 from pandas import concat
 import re
+import os
 
 
 def conver1D(array):
@@ -111,6 +112,7 @@ def makeCsv(net,date):
 
 
 def readCsv(variables):
+    os.makedirs('../data/totalData/');
     data = df.DataFrame();
     variables = variables;
     mypath = '../data/NetCDF/';
@@ -122,7 +124,7 @@ def readCsv(variables):
             data = concat([tempData,data],axis=0);
     data = data.reset_index();
     data= data.drop(labels='index',axis=1);
-    data.to_csv(variables+'_total.csv',encoding='utf-8',index=False);
+    data.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
 
 
 def readFiles():
@@ -131,9 +133,10 @@ def readFiles():
     and named by the format Dom1_year-month-day.nc
     """
     #dirr = '/home/pablo/DATA/' #specified path
+    os.makedirs('../data/NetCDF/');
     dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
-    name = 'Dom2_2016'
+    name = 'Dom2_'
     patron = re.compile(name+'.*')
     patron2 = re.compile(date);
     for x in listdir(dirr):
@@ -156,5 +159,7 @@ def checkFile(net,name,date):
 
 readFiles();
 variables=['Uat10','Vat10','PREC2'];
+for i in variables:
+    readCsv(x);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
