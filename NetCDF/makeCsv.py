@@ -142,7 +142,17 @@ def readFiles():
             print(ls);
             f = patron2.findall(x);
             net = Dataset(ls);
-            makeCsv(net,f[0]);
+            #makeCsv(net,f[0]);
+            checkFile(net,x,f[0]);
+
+def checkFile(net,name,date):
+    try:
+        net.variables['Longitude'][:];
+        net.variables['Latitude'][:];
+        makeCsv(net,date);
+    except KeyError:
+        print('error in file: ' + name);
+
 
 readFiles();
 variables=['Uat10','Vat10','PREC2'];
