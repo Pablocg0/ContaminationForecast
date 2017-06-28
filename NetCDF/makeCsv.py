@@ -78,6 +78,7 @@ def makeCsv(net,date):
     :param type: string
     """
     allData = makeDates(date);
+    date = allData;
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -110,8 +111,10 @@ def makeCsv(net,date):
         allData = allData.fillna(value=0);
         print(allData);
         meanAllData= allData.mean(axis= 1);
+        meanValues = meanAllData.as_matrix();
+        mean = concat([date,meanValues],axis=1);
         print(meanAllData);
-        print(meanAllData.as_matrix());
+        print(mean);
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
 
 
