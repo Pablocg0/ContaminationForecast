@@ -20,14 +20,20 @@ def conver1D(array):
     :return type: list float32
     """
     array1D = [];
-    total = [];
+    #total = [];
+    l = array.shape
+    total  = numpy.matrix([])
     i = 0
     for i in range(24):
+        print(i);
         tempData = array[i]
+        print(tempData);
         for x in tempData:
             for s in x:
                 array1D.append(s);
-        total.append(array1D)
+        print(array1D);
+    #total.append(array1D)
+    total = numpy.insert(total,i,array1D);
     return total;
 
 def makeDates(date):
@@ -108,6 +114,8 @@ def makeCsv(net,date):
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
         allData = allData.fillna(value=0);
+        meanAllData= allData.mean(axis= 0);
+        print(meanAllData);
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
 
 
