@@ -68,7 +68,7 @@ def nameColumns(name,numbColumns):
     return namesColumns;
 
 
-def makeCsv(net,date):
+def makeCsv(net,date,opt):
     """
     Function to create .csv files of some variables that are in a NetCDF file,
     the .cvs file is saved in the data/NetCDF path of the project
@@ -78,7 +78,7 @@ def makeCsv(net,date):
     :param type: string
     """
     allData = makeDates(date);
-    date = allData;
+    dateVal = allData;
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -109,17 +109,18 @@ def makeCsv(net,date):
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
         allData = allData.fillna(value=0);
-        print(allData);
         meanAllData= allData.mean(axis= 1);
         meanValues = meanAllData.as_matrix();
-        mean = concat([date,meanValues],axis=1);
-        print(meanAllData);
-        print(mean);
-        allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
+        mean = df.DataFrame(meanValues,columns=[variables[ls]+'_mean']);
+        dateVal[variables[ls]+'_mean']= mean;
+        if opt == 0:
+            allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
+        elif opt == 1:
+             dateVal.to_csv('../data/NetCDF/'+name,encoding = 'utf-8',index=False);
 
 
 def readCsv(variables):
-    os.makedirs('../data/totalData/');
+   # os.makedirs('../data/totalData/');
     data = df.DataFrame();
     variables = variables;
     mypath = '../data/NetCDF/';
@@ -134,13 +135,13 @@ def readCsv(variables):
     data.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
 
 
-def readFiles():
+def readFiles(opt):
     """
     Function to read all NetCDF files that are in the specified path
     and named by the format Dom1_year-month-day.nc
     """
     #dirr = '/home/pablo/DATA/' #specified path
-   # os.makedirs('../data/NetCDF/');
+    os.makedirs('../data/NetCDF/');
     dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
     name = 'Dom2_'
@@ -153,20 +154,20 @@ def readFiles():
             f = patron2.findall(x);
             net = Dataset(ls);
             #makeCsv(net,f[0]);
-            checkFile(net,x,f[0]);
+            checkFile(net,x,f[0],opt);
 
-def checkFile(net,name,date):
+def checkFile(net,name,date,opt):
     try:
         net.variables['Longitude'][:];
         net.variables['Latitude'][:];
-        makeCsv(net,date);
+        makeCsv(net,date,opt);
     except KeyError:
         print('error in file: ' + name);
 
 
-readFiles();
+#readFiles(1);
 variables=['Uat10','Vat10','PREC2'];
 for i in variables:
-    readCsv(x);
+    readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
