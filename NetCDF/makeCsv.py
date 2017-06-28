@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 import pandas as df
 from netCDF4 import Dataset
@@ -19,21 +18,16 @@ def conver1D(array):
     :return : list with the data
     :return type: list float32
     """
-    array1D = [];
-    #total = [];
     l = array.shape
-    total  = numpy.matrix([])
+    total  = np.zeros((0,l[1]*l[2]),dtype=np.float32);
     i = 0
     for i in range(24):
-        print(i);
         tempData = array[i]
-        print(tempData);
+        array1D=[];
         for x in tempData:
             for s in x:
                 array1D.append(s);
-        print(array1D);
-    #total.append(array1D)
-    total = numpy.insert(total,i,array1D);
+        total = np.insert(total,i,array1D,axis=0);
     return total;
 
 def makeDates(date):
@@ -108,14 +102,16 @@ def makeCsv(net,date):
 
     for ls in range(len(var_cut)):
         temp = conver1D(var_cut[ls]);
-        dataMatrix= np.array(temp);
+        dataMatrix= temp;
         name = variables[ls]+'_'+date+'.csv'
         myIndex = nameColumns(variables[ls],len(temp[0]));
         tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
         allData = concat([allData,tempFrame], axis=1);
         allData = allData.fillna(value=0);
-        meanAllData= allData.mean(axis= 0);
+        print(allData);
+        meanAllData= allData.mean(axis= 1);
         print(meanAllData);
+        print(meanAllData.as_matrix());
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
 
 
@@ -141,7 +137,7 @@ def readFiles():
     and named by the format Dom1_year-month-day.nc
     """
     #dirr = '/home/pablo/DATA/' #specified path
-    os.makedirs('../data/NetCDF/');
+   # os.makedirs('../data/NetCDF/');
     dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
     name = 'Dom2_'
