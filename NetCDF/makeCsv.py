@@ -77,8 +77,8 @@ def makeCsv(net,date,opt):
     :param date: initial date
     :param type: string
     """
-    allData = makeDates(date);
-    dateColumn = makeDates(date);
+    #allData = makeDates(date);
+    #dateColumn = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -102,13 +102,12 @@ def makeCsv(net,date,opt):
 
 
     for ls in range(len(var_cut)):
-        print(dateColumn)
-        saveData(var_cut[ls],dateColumn,variables[ls],date,opt);
+        saveData(var_cut[ls],variables[ls],date,opt);
 
 
-def saveData(var,dataV,variables,date,opt):
-    dateVal = dataV;
-    allData = dataV;
+def saveData(var,variables,date,opt):
+    dateVal = makeDates(date);
+    allData = makeDates(date);
     temp = conver1D(var);
     dataMatrix= temp;
     name = variables+'_'+date+'.csv'
