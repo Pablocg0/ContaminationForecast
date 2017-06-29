@@ -102,21 +102,28 @@ def makeCsv(net,date,opt):
 
 
     for ls in range(len(var_cut)):
-        temp = conver1D(var_cut[ls]);
-        dataMatrix= temp;
-        name = variables[ls]+'_'+date+'.csv'
-        myIndex = nameColumns(variables[ls],len(temp[0]));
-        tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
-        allData = concat([allData,tempFrame], axis=1);
-        allData = allData.fillna(value=0);
-        meanAllData= allData.mean(axis= 1);
-        meanValues = meanAllData.as_matrix();
-        mean = df.DataFrame(meanValues,columns=[variables[ls]+'_mean']);
-        dateVal[variables[ls]+'_mean']= mean;
-        if opt == 0:
-            allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
-        elif opt == 1:
-             dateVal.to_csv('../data/NetCDF/'+name,encoding = 'utf-8',index=False);
+        saveData(var_cut[ls],dateVal);
+
+
+def saveData(var,dataV):
+    dataVal = dataV;
+    allData = dataV;
+    temp = conver1D(var);
+    dataMatrix= temp;
+    name = variables[ls]+'_'+date+'.csv'
+    myIndex = nameColumns(variables[ls],len(temp[0]));
+    tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
+    allData = concat([allData,tempFrame], axis=1);
+    allData = allData.fillna(value=0);
+    meanAllData= allData.mean(axis= 1);
+    meanValues = meanAllData.as_matrix();
+    mean = df.DataFrame(meanValues,columns=[variables[ls]+'_mean']);
+    dateVal[variables[ls]+'_mean']= mean;
+    if opt == 0:
+        allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
+    elif opt == 1:
+        dateVal.to_csv('../data/NetCDF/'+name,encoding = 'utf-8',index=False);
+
 
 
 def readCsv(variables):
