@@ -121,18 +121,18 @@ def makeCsv(net,date,opt):
 
 def readCsv(variables):
    # os.makedirs('../data/totalData/');
-    data = df.DataFrame();
+    dataVa = df.DataFrame();
     variables = variables;
     mypath = '../data/NetCDF/';
     patron = re.compile(variables+'.*');
     for x in listdir(mypath):
         if patron.match(x) != None:
-            print(x);
             tempData = df.read_csv(mypath+x);
-            data = concat([tempData,data],axis=0);
-    data = data.reset_index();
-    data= data.drop(labels='index',axis=1);
-    data.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
+            dataVa = concat([tempData,dataVa],axis=0);
+    dataVa = dataVa.reset_index();
+    dataVa= dataVa.drop(labels='index',axis=1);
+    dataVa.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
+    dataVa = df.DataFrame();
 
 
 def readFiles(opt):
@@ -168,6 +168,7 @@ def checkFile(net,name,date,opt):
 #readFiles(1);
 variables=['Uat10','Vat10','PREC2'];
 for i in variables:
+    print(i)
     readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
