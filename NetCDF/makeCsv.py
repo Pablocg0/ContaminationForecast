@@ -78,7 +78,7 @@ def makeCsv(net,date,opt):
     :param type: string
     """
     allData = makeDates(date);
-    dateVal = allData;
+    dateColumn = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -102,23 +102,24 @@ def makeCsv(net,date,opt):
 
 
     for ls in range(len(var_cut)):
-        saveData(var_cut[ls],dateVal);
+        print(dateColumn)
+        saveData(var_cut[ls],dateColumn,variables[ls],date,opt);
 
 
-def saveData(var,dataV):
-    dataVal = dataV;
+def saveData(var,dataV,variables,date,opt):
+    dateVal = dataV;
     allData = dataV;
     temp = conver1D(var);
     dataMatrix= temp;
-    name = variables[ls]+'_'+date+'.csv'
-    myIndex = nameColumns(variables[ls],len(temp[0]));
+    name = variables+'_'+date+'.csv'
+    myIndex = nameColumns(variables,len(temp[0]));
     tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
     allData = concat([allData,tempFrame], axis=1);
     allData = allData.fillna(value=0);
     meanAllData= allData.mean(axis= 1);
     meanValues = meanAllData.as_matrix();
-    mean = df.DataFrame(meanValues,columns=[variables[ls]+'_mean']);
-    dateVal[variables[ls]+'_mean']= mean;
+    mean = df.DataFrame(meanValues,columns=[variables+'_mean']);
+    dateVal[variables+'_mean']= mean;
     if opt == 0:
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
     elif opt == 1:
@@ -148,7 +149,7 @@ def readFiles(opt):
     and named by the format Dom1_year-month-day.nc
     """
     #dirr = '/home/pablo/DATA/' #specified path
-    os.makedirs('../data/NetCDF/');
+    #os.makedirs('../data/NetCDF/');
     dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
     name = 'Dom2_'
@@ -172,7 +173,7 @@ def checkFile(net,name,date,opt):
         print('error in file: ' + name);
 
 
-#readFiles(1);
+readFiles(1);
 variables=['Uat10','Vat10','PREC2'];
 for i in variables:
     print(i)
