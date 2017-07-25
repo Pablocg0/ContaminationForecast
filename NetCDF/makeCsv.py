@@ -77,8 +77,6 @@ def makeCsv(net,date,opt):
     :param date: initial date
     :param type: string
     """
-    #allData = makeDates(date);
-    #dateColumn = makeDates(date);
     variables=['Uat10','Vat10','PREC2'];
 
     LON = net.variables['Longitude'][:];
@@ -106,6 +104,9 @@ def makeCsv(net,date,opt):
 
 
 def saveData(var,variables,date,opt):
+    """
+    Function for the data create
+    """
     dateVal = makeDates(date);
     allData = makeDates(date);
     temp = conver1D(var);
@@ -127,6 +128,10 @@ def saveData(var,variables,date,opt):
 
 
 def readCsv(variables):
+    """
+    :param variables : netCDF4 file name
+    :type variables: string
+    """
    # os.makedirs('../data/totalData/');
     dataVa = df.DataFrame();
     variables = variables;
@@ -164,6 +169,18 @@ def readFiles(opt):
             checkFile(net,x,f[0],opt);
 
 def checkFile(net,name,date,opt):
+    """
+    Function to check if the file has
+    the requiered parameters.
+    :param net : information that contains the file
+    :type net: Dataset
+    :param name: file name
+    :type name : string
+    :param date: date
+    :type date: string
+    :param opt: option
+    :type opt: int
+    """
     try:
         net.variables['Longitude'][:];
         net.variables['Latitude'][:];
@@ -172,6 +189,8 @@ def checkFile(net,name,date,opt):
         print('error in file: ' + name);
 
 
+if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
+if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
 readFiles(1);
 variables=['Uat10','Vat10','PREC2'];
 for i in variables:
