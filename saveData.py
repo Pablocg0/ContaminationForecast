@@ -44,6 +44,7 @@ def saveData(listEstations,startDate):
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
         dataTemp = separateDate(data);
+        #unionData(dataTemp);
         maxAndMinValues(dataTemp,est[i],contaminant)
         data = dataTemp;
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
@@ -214,6 +215,22 @@ def weekday(year,month,day):
     Week = week +1;
     sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
     return [week,sinWeek]
+
+
+def unionData(data):
+    """
+    Function to join the data of the netcdf and the data of the pollutants
+    :param data:pollutants data
+    :type data: dataFrame
+    :return: dataFrame
+    """
+    variables=['Uat10','Vat10','PREC2'];
+    netcdf = 'data/NetCDF';
+    for i in variables:
+        netcdf += i +'_total.csv';
+        dataNet = df.read_csv(netcdf);
+        allData = data.merge(dataNet,how='left',on='fecha');
+    return allData;
 
 
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
