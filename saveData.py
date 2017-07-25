@@ -225,7 +225,7 @@ def unionData(data):
     :return: dataFrame
     """
     variables=['Uat10','Vat10','PREC2'];
-    netcdf = 'data/NetCDF';
+    netcdf = 'data/NetCDF/';
     for i in variables:
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
