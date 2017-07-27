@@ -44,9 +44,9 @@ def saveData(listEstations,startDate):
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
         dataTemp = separateDate(data);
-        unionData(dataTemp);
-        maxAndMinValues(dataTemp,est[i],contaminant)
-        data = dataTemp;
+        dataTemp2 = unionData(dataTemp);
+        maxAndMinValues(dataTemp2,est[i],contaminant)
+        data = dataTemp2;
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
@@ -227,12 +227,11 @@ def unionData(data):
     variables=['Uat10','Vat10','PREC2'];
     netcdf = 'data/totalData/';
     for i in variables:
-        print(i);
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
-        allData = data.merge(dataNet,how='left',on='fecha');
+        alldata = data.merge(dataNet,how='left',on='fecha');
         netcdf = 'data/totalData/';
-    return allData;
+    return alldata;
 
 
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
