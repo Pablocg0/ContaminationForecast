@@ -44,7 +44,7 @@ def saveData(listEstations,startDate):
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
         dataTemp = separateDate(data);
-        #unionData(dataTemp);
+        unionData(dataTemp);
         maxAndMinValues(dataTemp,est[i],contaminant)
         data = dataTemp;
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
@@ -225,11 +225,13 @@ def unionData(data):
     :return: dataFrame
     """
     variables=['Uat10','Vat10','PREC2'];
-    netcdf = 'data/NetCDF/';
+    netcdf = 'data/totalData/';
     for i in variables:
+        print(i);
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
         allData = data.merge(dataNet,how='left',on='fecha');
+        netcdf = 'data/totalData/';
     return allData;
 
 
