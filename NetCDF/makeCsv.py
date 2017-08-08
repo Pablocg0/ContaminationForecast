@@ -8,6 +8,7 @@ import numpy as np
 from pandas import concat
 import re
 import os
+import tarfile
 
 
 def conver1D(array):
@@ -77,17 +78,21 @@ def makeCsv(net,date,opt):
     :param date: initial date
     :param type: string
     """
-    variables=['Uat10','Vat10','PREC2'];
+    variables=['U10','V10','RAINC'];
 
-    LON = net.variables['Longitude'][:];
-    LAT = net.variables['Latitude'][:];
+    LON = net.variables['XLONG'][:];
+    LAT = net.variables['XLAT'][:];
+
+    LON = LON[1][1];
+    LAT = LAT[1];
+
 
     LONsize = len(LON);
     LATsize = len(LAT);
 
     minlat= 19.4284700 #19.8 ;
     maxlat=20 #-19.033333;
-    minlon=-99.127660 #-99.933333;
+    minlon= -99.127660 #-99.933333;
     maxlon=-98 #99.366667;
 
     celda = [];
@@ -123,7 +128,9 @@ def saveData(var,variables,date,opt):
     if opt == 0:
         allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
     elif opt == 1:
-        dateVal.to_csv('../data/NetCDF/'+name,encoding = 'utf-8',index=False);
+        filq = '/home/pablo/DATA/'+name
+        dateVal.to_csv(filq,encoding = 'utf-8',index=False);
+
 
 
 
@@ -135,7 +142,7 @@ def readCsv(variables):
    # os.makedirs('../data/totalData/');
     dataVa = df.DataFrame();
     variables = variables;
-    mypath = '../data/NetCDF/';
+    mypath = '/home/pablo/DATA/';
     patron = re.compile(variables+'.*');
     for x in listdir(mypath):
         if patron.match(x) != None:
@@ -152,21 +159,89 @@ def readFiles(opt):
     Function to read all NetCDF files that are in the specified path
     and named by the format Dom1_year-month-day.nc
     """
-    #dirr = '/home/pablo/DATA/' #specified path
-    #os.makedirs('../data/NetCDF/');
-    dirr = '/DATA/OUT/WRF/';
     date = '\d\d\d\d-\d\d-\d\d'
-    name = 'Dom2_'
+    name = 'wrfout_d02_'
+    dirr = '../data/NetCDF/';
     patron = re.compile(name+'.*')
     patron2 = re.compile(date);
-    for x in listdir(dirr):
-        if patron.match(x) != None:
-            ls= dirr +x;
-            print(ls);
-            f = patron2.findall(x);
-            net = Dataset(ls);
-            #makeCsv(net,f[0]);
-            checkFile(net,x,f[0],opt);
+    tempfile = df.read_csv(dirr+'tfile.txt');
+    tempbase= df.read_csv(dirr+'tbase.txt');
+    tfile = list(tempfile.values.flatten());
+    tbase = list(tempbase.values.flatten());
+    l = len(tfile)
+    for i in range(l):
+        if patron.match(tfile[i]) != None:
+            ls = tbase[i] + '/' + tfile[i]
+            f = patron2.findall(tfile[i]);
+            cadena = clearString(tfile[i]);
+            print(cadena);
+            try:
+                comp = tarfile.open(ls,'r');
+                comp.extract(cadena,'../data/NetCDF/');
+                comp.close();
+                net = Dataset('../data/NetCDF/'+cadena);
+                checkFile(net,tfile[i],f[0],opt);
+                os.remove('../data/NetCDF/'+cadena);
+                tfile.pop(i);
+                tbase.pop(i);
+            except OSError as e:
+                fdata = df.DataFrame(tfile,columns=['nameFile']);
+                fbas = df.DataFrame(tbase,columns=['nameBase']);
+                fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
+                fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+                readFiles(1);
+
+
+def totalFiles():
+    dirr = '../data/NetCDF/';
+    dirr2 = '/DATA/WRF/';
+    fil=[];
+    ba = [];
+    for base, dirs, files in os.walk(dirr2,topdown=True):
+        for value in files:
+            fil.append(value);
+            ba.append(base);
+    fdata = df.DataFrame(fil,columns=['nameFile']);
+    fbase = df.DataFrame(ba,columns=['nameBase']);
+    fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
+    fbase.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+
+
+
+
+def readFiles2(opt):
+    dirr = '/DATA/WRF/';
+    name='wrfout_d02_';
+    date = '\d\d\d\d-\d\d-\d\d';
+    patron = re.compile(name+'.*')
+    patron2 = re.compile(date);
+    for base, dirs, files in os.walk(dirr,topdown=True):
+        #print(base);
+        #print(dirs);
+        for var in files:
+            if patron.match(var) != None:
+                ls = base + '/' + var
+                f = patron2.findall(var);
+                comp = tarfile.open(ls,'r');
+                cadena = clearString(var);
+                print(cadena);
+                comp.extract(cadena,'../data/NetCDF/');
+                comp.close();
+                net = Dataset('../data/NetCDF/'+cadena);
+                checkFile(net,var,f[0],opt);
+                os.remove('../data/NetCDF/'+cadena);
+
+def clearString(name):
+    if name.find(".tar") != 0:
+        name = name.replace(".tar","");
+
+    if name.find(".gz") !=0:
+        name=name.replace(".gz", "");
+
+
+    return name;
+
+
 
 def checkFile(net,name,date,opt):
     """
@@ -182,8 +257,8 @@ def checkFile(net,name,date,opt):
     :type opt: int
     """
     try:
-        net.variables['Longitude'][:];
-        net.variables['Latitude'][:];
+        net.variables['XLONG'][:];
+        net.variables['XLAT'][:];
         makeCsv(net,date,opt);
     except KeyError:
         print('error in file: ' + name);
@@ -191,8 +266,11 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
+#totalFiles();
 readFiles(1);
-variables=['Uat10','Vat10','PREC2'];
+#readFiles2(1);
+#variables=['Uat10','Vat10','PREC2'];
+variables=['U10','V10','RAINC'];
 for i in variables:
     print(i)
     readCsv(i);
