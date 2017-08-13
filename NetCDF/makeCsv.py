@@ -9,6 +9,9 @@ from pandas import concat
 import re
 import os
 import tarfile
+import gzip
+import shutil
+import tempfile
 
 
 def conver1D(array):
@@ -144,14 +147,29 @@ def readCsv(variables):
     variables = variables;
     mypath = '/home/pablo/DATA/';
     patron = re.compile(variables+'.*');
-    for x in listdir(mypath):
-        if patron.match(x) != None:
-            tempData = df.read_csv(mypath+x);
-            dataVa = concat([tempData,dataVa],axis=0);
+    for base, dirs, files in os.walk(mypath,topdown=True):
+        for value in files:
+            if patron.match(value) != None:
+                tempData = df.read_csv(mypath+value);
+                dataVa = concat([tempData,dataVa],axis=0);
     dataVa = dataVa.reset_index();
     dataVa= dataVa.drop(labels='index',axis=1);
     dataVa.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
     dataVa = df.DataFrame();
+
+
+def open_netcdf(fname):
+    if fname.endswith(".gz"):
+        infile = gzip.open(fname, 'rb')
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        shutil.copyfileobj(infile, tmp)
+        infile.close()
+        tmp.close()
+        data = Dataset(tmp.name)
+        os.unlink(tmp.name)
+    else:
+        data = Dataset(fname)
+    return data
 
 
 def readFiles(opt):
@@ -170,37 +188,48 @@ def readFiles(opt):
     tbase = list(tempbase.values.flatten());
     l = len(tfile)
     for i in range(l):
-        if patron.match(tfile[i]) != None:
-            ls = tbase[i] + '/' + tfile[i]
-            f = patron2.findall(tfile[i]);
-            cadena = clearString(tfile[i]);
-            print(cadena);
-            try:
-                comp = tarfile.open(ls,'r');
-                comp.extract(cadena,'../data/NetCDF/');
-                comp.close();
-                net = Dataset('../data/NetCDF/'+cadena);
-                checkFile(net,tfile[i],f[0],opt);
-                os.remove('../data/NetCDF/'+cadena);
-                tfile.pop(i);
-                tbase.pop(i);
-            except OSError as e:
-                fdata = df.DataFrame(tfile,columns=['nameFile']);
-                fbas = df.DataFrame(tbase,columns=['nameBase']);
-                fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
-                fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
-                readFiles(1);
+        ls = tbase[i] + '/' + tfile[i]
+        f = patron2.findall(tfile[i]);
+        cadena = clearString(tfile[i]);
+        print(cadena);
+        try:
+            shutil.copy(ls, '../data/NetCDF/'+tfile[i]);
+                #infile = gzip.open('../data/NetCDF/'+tfile[i], 'rb')
+                #infile.close()
+            net = open_netcdf('../data/NetCDF/'+tfile[i]);
+                #comp.extract(cadena,'../data/NetCDF/');
+                #comp.close();
+                #net = Dataset('../data/NetCDF/'+cadena);
+            checkFile(net,tfile[i],f[0],opt);
+            os.remove('../data/NetCDF/'+tfile[i]);
+        except (OSError,EOFError) as e:
+            print(e);
+            #fdata = df.DataFrame(tfile,columns=['nameFile']);
+            #fbas = df.DataFrame(tbase,columns=['nameBase']);
+            #fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
+            #fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+            #readFiles(1);
+        except tarfile.ReadError:
+            print('error2');
+            #fdata = df.DataFrame(tfile,columns=['nameFile']);
+            #fbas = df.DataFrame(tbase,columns=['nameBase']);
+            #fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
+            #fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+            #readFiles(1);
 
 
 def totalFiles():
     dirr = '../data/NetCDF/';
     dirr2 = '/DATA/WRF/';
+    name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
+    patron = re.compile(name+'.*')
     for base, dirs, files in os.walk(dirr2,topdown=True):
         for value in files:
-            fil.append(value);
-            ba.append(base);
+            if patron.match(value) != None:
+                fil.append(value);
+                ba.append(base);
     fdata = df.DataFrame(fil,columns=['nameFile']);
     fbase = df.DataFrame(ba,columns=['nameBase']);
     fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
@@ -267,7 +296,7 @@ def checkFile(net,name,date,opt):
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
 #totalFiles();
-readFiles(1);
+#readFiles(1);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 variables=['U10','V10','RAINC'];
