@@ -1,14 +1,15 @@
 from Utilites.FormatData import FormatData as fd
 from Utilites.Utilites import converToArray as ut
+from datetime import datetime, timedelta
 import pandas as df
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime
+
 
 
 contaminant = 'O3';
-endDate = '2017/02/01';
+endDate = '2016/12/31';
 
 
 def saveData(listEstations,startDate):
@@ -47,6 +48,7 @@ def saveData(listEstations,startDate):
         dataTemp2 = unionData(dataTemp);
         maxAndMinValues(dataTemp2,est[i],contaminant)
         data = dataTemp2;
+        build = filterData(data,build);
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
@@ -84,12 +86,21 @@ def saveData2(listEstations,startDate):
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
         dataTemp = separateDate(data);
-        maxAndMinValues(dataTemp,est[i],contaminant)
-        data = dataTemp;
+        dataTemp2 = unionData(dataTemp);
+        maxAndMinValues(dataTemp2,est[i],contaminant)
+        data = dataTemp2;
+        build = filterData(data,build);
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
 
+
+
+
+def filterData(data,build):
+    datesTemp = df.DataFrame(data['fecha'],columns=['fecha']);
+    build = build.merge(datesTemp,how='right',on='fecha');
+    return build;
 
 
 def createFile():
@@ -216,22 +227,42 @@ def weekday(year,month,day):
     sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
     return [week,sinWeek]
 
+def convertDates(data):
+    fecha = data['fecha'];
+    data = data.drop(labels='fecha',axis=1);
+    date = []
+    for i in fecha:
+        datef = datetime.strptime(i,'%Y-%m-%d %H:%M:%S');
+        date.append(datef);
+    dataTemp = df.DataFrame(date,columns = ['fecha']);
+    data['fecha']= dataTemp;
+    return data;
 
 def unionData(data):
     """
     Function to join the data of the netcdf and the data of the pollutants
-    :param data:pollutants data
+    :param data:pataFrame(minollutants data
     :type data: dataFrame
     :return: dataFrame
     """
-    variables=['Uat10','Vat10','PREC2'];
+    dataFestivos = df.read_csv('data/Festivos.csv')
+    dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
+    dataFestivos2 = convertDates(dataFestivos);
+    data= data.merge(dataFestivos2, how = 'left', on='fecha');
+    #variables=['Uat10','Vat10','PREC2'];
+    variables=['U10','V10','RAINC'];
     netcdf = 'data/totalData/';
     for i in variables:
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
-        alldata = data.merge(dataNet,how='left',on='fecha');
+        dataNet2 = convertDates(dataNet)
+        data = data.merge(dataNet2,how='left',on='fecha');
         netcdf = 'data/totalData/';
-    return alldata;
+    allD = data.dropna(axis=0,how='any');
+    #allD = data.fillna(value=-1);
+    allD = allD.reset_index();
+    allD= allD.drop(labels='index',axis=1);
+    return allD;
 
 
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
