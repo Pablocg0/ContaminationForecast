@@ -47,11 +47,11 @@ def fillTable(dataTemp):
         dataComp = df.DataFrame(listt, columns=['fecha']);
         dataVal = df.DataFrame(anioC, columns = ['valLab']);
         dataComp['valLab']= dataVal;
-        dataTotal= df.concat([data,dataComp], axis=0);
+        data= df.concat([data,dataComp], axis=0);
         i += 1;
-    dataTotal = dataTotal.reset_index();
-    dataTotal = dataTotal.drop(labels='index',axis=1)
-    return dataTotal;
+    data = data.reset_index();
+    data = data.drop(labels='index',axis=1)
+    return data;
 
 
 def hours24(anio):
