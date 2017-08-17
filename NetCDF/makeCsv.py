@@ -158,15 +158,28 @@ def readCsv(variables):
     dataVa = df.DataFrame();
 
 
-def open_netcdf(fname):
-    if fname.endswith(".gz"):
+def open_netcdf(ls,nameFile,cadena):
+    name ='.nc.tar.gz';
+    name1 = '.nc.gz'
+    patron = re.compile('.*'+name)
+    patron2 = re.compile('.*'+name1);
+    fname= '../data/NetCDF/'+nameFile
+    if patron.match(nameFile) != None:
+        comp = tarfile.open(ls,'r');
+        comp.extract(cadena,'../data/NetCDF/');
+        comp.close();
+        net = Dataset('../data/NetCDF/'+cadena);
+        os.remove('../data/NetCDF/'+cadena);
+    elif patron2.match(nameFile) != None:
+        shutil.copy(ls,fname);
         infile = gzip.open(fname, 'rb')
         tmp = tempfile.NamedTemporaryFile(delete=False)
         shutil.copyfileobj(infile, tmp)
         infile.close()
         tmp.close()
         data = Dataset(tmp.name)
-        os.unlink(tmp.name)
+        os.remove(tmp.name)
+        os.remove(fname);
     else:
         data = Dataset(fname)
     return data
@@ -193,15 +206,8 @@ def readFiles(opt):
         cadena = clearString(tfile[i]);
         print(cadena);
         try:
-            shutil.copy(ls, '../data/NetCDF/'+tfile[i]);
-                #infile = gzip.open('../data/NetCDF/'+tfile[i], 'rb')
-                #infile.close()
-            net = open_netcdf('../data/NetCDF/'+tfile[i]);
-                #comp.extract(cadena,'../data/NetCDF/');
-                #comp.close();
-                #net = Dataset('../data/NetCDF/'+cadena);
+            net = open_netcdf(ls,tfile[i],cadena);
             checkFile(net,tfile[i],f[0],opt);
-            os.remove('../data/NetCDF/'+tfile[i]);
         except (OSError,EOFError) as e:
             print(e);
             #fdata = df.DataFrame(tfile,columns=['nameFile']);
@@ -295,13 +301,13 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-#totalFiles();
+totalFiles();
 #readFiles(1);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
-variables=['U10','V10','RAINC'];
-for i in variables:
-    print(i)
-    readCsv(i);
+#variables=['U10','V10','RAINC'];
+#for i in variables:
+#    print(i)
+#    readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
