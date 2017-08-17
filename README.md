@@ -46,12 +46,18 @@ or
 
 ### Data
 1. Create data from Netcdf files
+
 `NetCDF/makeCsv.py`
+
 File involved:
-  * `NetCDF/NewBBOX.py`
-  * `NetCDF/Dominio.py`
+
+   * `NetCDF/NewBBOX.py`
+   * `NetCDF/Dominio.py`
 2. Create holiday data
+
 `Utilites/makeDayCsv.py`
+
 File involved:
-  * `Utilites/data.csv`
+
+   * `Utilites/data.csv`
 3.
