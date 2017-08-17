@@ -29,7 +29,7 @@ def saveData(listEstations,startDate):
         tempData = fd.readData(startDate[i],endDate,[est[i]],contaminant);
         tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
         temAllData= tempData.dropna(axis=1, how='all');
-        #allD = temAllData.dropna(axis=0,how='any');
+        allD = temAllData.dropna(axis=0,how='any');
         allD = temAllData.fillna(value=-1);
         allD = allD.reset_index();
         allD= allD.drop(labels='index',axis=1);
