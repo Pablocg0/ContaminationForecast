@@ -42,7 +42,7 @@ or
 
 `conda install -c anaconda scikit-learn=0.18.1`
 
-## System operation
+## Quickstart
 
 ### Data
 1. Create data from Netcdf files
@@ -53,6 +53,7 @@ File involved:
 
    * `NetCDF/NewBBOX.py`
    * `NetCDF/Dominio.py`
+
 2. Create holiday data
 
 `Utilites/makeDayCsv.py`
@@ -60,4 +61,30 @@ File involved:
 File involved:
 
    * `Utilites/data.csv`
-3.
+
+3. Creation of table with pollutant data and data created previously
+
+`saveData.py`
+
+File involved:
+
+   * `Utilites/FormatData.py`
+   * `Utilites/Utilites.py`
+
+ 4. Neural network training
+
+`auto.py`
+
+File involved:
+
+   * `NNSystem/neuralNetworkGpu.py`
+   * `NNSystem/neuralNetwork.py`
+   * `NNSystem/neuralNetworkGpuMax.py`
+
+ 5. Neural network prediction
+
+`testPediction.py`
+
+File involved:
+
+   * `prediction.py`
