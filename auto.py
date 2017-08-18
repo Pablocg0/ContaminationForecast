@@ -1,5 +1,4 @@
 from Utilites.Utilites import prepro as an
-from Utilites.FormatData import FormatData as fd
 from NNSystem.neuralNetwork import train as nn
 from NNSystem.neuralNetworkGpu import train as nng
 from NNSystem.neuralNetworkGpuMax import train as nngm
@@ -25,7 +24,7 @@ def trainNeuralNetworks(est):
         data = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
         build = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
         xy_values = an(data,build, contaminant); # preprocessing
-        nn(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
+        nng(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
         i+=1;
 
 def trainNeuralNetworksNoNormalized():
@@ -47,6 +46,10 @@ def trainNeuralNetworksNoNormalized():
         i+=1;
 
 def trainOne():
+    """
+    Function to train the neuralNetwork of the 1 stations,
+    save the training on file trainData/[nameStation].csv
+    """
     station= 'allData';
     name = station +'_'+contaminant; #name the file with the data
     data = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
