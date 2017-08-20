@@ -12,6 +12,7 @@ import tarfile
 import gzip
 import shutil
 import tempfile
+import sys
 
 
 def conver1D(array):
@@ -81,7 +82,7 @@ def makeCsv(net,date,opt):
     :param date: initial date
     :param type: string
     """
-    variables=['U10','V10','RAINC'];
+    variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
 
     LON = net.variables['XLONG'][:];
     LAT = net.variables['XLAT'][:];
@@ -168,7 +169,7 @@ def open_netcdf(ls,nameFile,cadena):
         comp = tarfile.open(ls,'r');
         comp.extract(cadena,'../data/NetCDF/');
         comp.close();
-        net = Dataset('../data/NetCDF/'+cadena);
+        data = Dataset('../data/NetCDF/'+cadena);
         os.remove('../data/NetCDF/'+cadena);
     elif patron2.match(nameFile) != None:
         shutil.copy(ls,fname);
@@ -178,10 +179,10 @@ def open_netcdf(ls,nameFile,cadena):
         infile.close()
         tmp.close()
         data = Dataset(tmp.name)
-        os.remove(tmp.name)
-        os.remove(fname);
+        os.unlink(tmp.name)
     else:
         data = Dataset(fname)
+    os.remove(fname);
     return data
 
 
@@ -206,14 +207,17 @@ def readFiles(opt):
         cadena = clearString(tfile[i]);
         print(cadena);
         try:
-            net = open_netcdf(ls,tfile[i],cadena);
+            net = open_netcdf(ls,tfile[i],cadena);            
             checkFile(net,tfile[i],f[0],opt);
+            tfile.pop(i);
+            tbase.pop(i); 
         except (OSError,EOFError) as e:
-            print(e);
-            #fdata = df.DataFrame(tfile,columns=['nameFile']);
-            #fbas = df.DataFrame(tbase,columns=['nameBase']);
-            #fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
-            #fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+         #   print(e);
+            fdata = df.DataFrame(tfile,columns=['nameFile']);
+            fbas = df.DataFrame(tbase,columns=['nameBase']);
+            fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
+            fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+            sys.exit()
             #readFiles(1);
         except tarfile.ReadError:
             print('error2');
@@ -301,13 +305,15 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-totalFiles();
+#totalFiles();
 #readFiles(1);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
-#for i in variables:
-#    print(i)
-#    readCsv(i);
+variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
+for i in variables:
+    print(i)
+    readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
+
