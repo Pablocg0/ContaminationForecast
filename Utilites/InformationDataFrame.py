@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 import matplotlib
-import matplotlib.pyplot as plt
+import numpy as np
 matplotlib.use('agg')
+import matplotlib.pyplot as plt
 import pandas as df
 import seaborn as sns
-import numpy as np
 
 
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
@@ -33,12 +33,14 @@ def information():
     info['columnas']= cColum;
     info['renglones']= cIndex;
     info.groupby('estacion').mean().loc[:,['anio','columnas']].plot(kind='bar', colormap='winter',figsize=(12.2,6.4),title='Numero de años y columnas con las que se entrena cada estacion.');
-    plt.savefig("../Graficas/estAnios.png", dpi=600);
-    #plt.show()
+    plt.savefig("../Graficas/Informacion/estAnios.png", dpi=600);
+    plt.show()
+    plt.close()
     info.groupby('estacion').mean().loc[:,['renglones']].plot(kind='bar', colormap='winter',figsize=(12.2,6.4), title ='Numero renglones que tiene cada estacion');
-    plt.savefig("../Graficas/estReng.png", dpi=600);
-    #plt.show()
-    info.to_csv('../Graficas/infEstaciones.cvs',encoding = 'utf-8',index=False);
+    plt.savefig("../Graficas/Informacion/estReng.png", dpi=600);
+    plt.show()
+    plt.close()
+    info.to_csv('../Graficas/Informacion/infEstaciones.cvs',encoding = 'utf-8',index=False);
     estImg();
 
 
@@ -46,7 +48,8 @@ def estImg():
     for value in est:
         name = dirr + value + '_'+contaminant+'.csv';
         data = df.read_csv(name);
-        colormap(name,value);
+        nameColumn= data.columns
+        colormap(name,value,nameColumn);
 
 
 def anios(data):
@@ -104,15 +107,17 @@ def nombreEst(station):
     elif station == 'XAL':
         return 'Xalostoc';
 
-def colormap(name,est):
+def colormap(name,est,nameColumn):
     title = 'Imagen de los datos de la estacion '+ nombreEst(est);
     data = df.read_csv(name,index_col='fecha');
-    column =['nox', 'co', 'nodos', 'no','otres', 'sodos', 'weekday', 'sinWeek', 'year','month', 'sinMonth', 'day', 'sinDay', 'valLab', 'U10', 'V10','RAINC']
+    column =['nox', 'co', 'nodos', 'no','otres', 'sodos', 'weekday', 'sinWeek', 'year','month', 'sinMonth', 'day', 'sinDay', 'valLab', 'U10', 'V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW']
     plt.figure(figsize=(12.2,6.4))
     plt.title(title);
-    ax = sns.heatmap(data,vmin = -1,vmax = -0.99,yticklabels=False,xticklabels=column, cbar=False);
-    plt.savefig("../Graficas/Imagen_"+est+".png", dpi=600);
-    #plt.show();
+    plt.xticks(fontsize=8)
+    ax = sns.heatmap(data,vmin = -1,vmax = -0.99,yticklabels=False,xticklabels=nameColumn, cbar=False);
+    plt.savefig("../Graficas/Informacion/Imagen_"+est+".png", dpi=600);
+    plt.show();
+    plt.close()
 
 
 information();
