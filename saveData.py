@@ -250,7 +250,7 @@ def unionData(data):
     dataFestivos2 = convertDates(dataFestivos);
     data= data.merge(dataFestivos2, how = 'left', on='fecha');
     #variables=['Uat10','Vat10','PREC2'];
-    variables=['U10','V10','RAINC'];
+    variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
     netcdf = 'data/totalData/';
     for i in variables:
         netcdf += i +'_total.csv';
