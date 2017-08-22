@@ -22,6 +22,10 @@ or
 
 `pip install -U scikit-learn`
 
+### seaborn
+
+`pip install seaborn`
+
 ## Anaconda dependency installation
 
 ### tensorflow
@@ -41,6 +45,10 @@ or
 ### sklearn
 
 `conda install -c anaconda scikit-learn=0.18.1`
+
+### seaborn
+
+`conda install seaborn`
 
 ## Quickstart
 
