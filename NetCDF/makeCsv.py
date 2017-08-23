@@ -35,6 +35,33 @@ def conver1D(array):
         total = np.insert(total,i,array1D,axis=0);
     return total;
 
+
+def divData(data):
+    total  = np.zeros((0,4),dtype=np.float32);
+    for i in range(24):
+        dataValue = data[i];
+        array1D = [];
+        size = dataValue.shape;
+        numRows = int(size[0]/2);
+        numColumns = int(size[1]/2);
+        dataSecc1 = dataValue[0:numRows,0:numColumns]
+        dataSecc2 = dataValue[numRows:,0:numColumns]
+        dataSecc3 = dataValue[0:numRows,numColumns:]
+        dataSecc4 = dataValue[numRows:,numColumns:]
+        prom1 = dataSecc1.sum()/(numColumns*numRows);
+        prom2 = dataSecc2.sum()/(numColumns*numRows);
+        prom3 = dataSecc3.sum()/(numColumns*numRows);
+        prom4 = dataSecc4.sum()/(numColumns*numRows) ;
+        array1D.append(prom1)
+        array1D.append(prom2)
+        array1D.append(prom3)
+        array1D.append(prom4)
+        total = np.insert(total,i,array1D,axis=0);
+    return total;
+
+
+
+
 def makeDates(date):
     """
     Function to create a list with the format year-month-day hours:minutes:seconds
@@ -118,7 +145,8 @@ def saveData(var,variables,date,opt):
     """
     dateVal = makeDates(date);
     allData = makeDates(date);
-    temp = conver1D(var);
+    #temp = conver1D(var);
+    temp = divData(var);
     dataMatrix= temp;
     name = variables+'_'+date+'.csv'
     myIndex = nameColumns(variables,len(temp[0]));
@@ -134,7 +162,9 @@ def saveData(var,variables,date,opt):
     elif opt == 1:
         filq = '/home/pablo/DATA/'+name
         dateVal.to_csv(filq,encoding = 'utf-8',index=False);
-
+    elif opt == 2:
+        filq = '/home/pablo/DATA/'+name+'_div'
+        allData.to_csv(filq,encoding = 'utf-8',index=False);
 
 
 
@@ -207,10 +237,10 @@ def readFiles(opt):
         cadena = clearString(tfile[i]);
         print(cadena);
         try:
-            net = open_netcdf(ls,tfile[i],cadena);            
+            net = open_netcdf(ls,tfile[i],cadena);
             checkFile(net,tfile[i],f[0],opt);
             tfile.pop(i);
-            tbase.pop(i); 
+            tbase.pop(i);
         except (OSError,EOFError) as e:
          #   print(e);
             fdata = df.DataFrame(tfile,columns=['nameFile']);
@@ -305,8 +335,8 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-#totalFiles();
-#readFiles(1);
+totalFiles();
+readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
@@ -316,4 +346,3 @@ for i in variables:
     readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
-
