@@ -49,6 +49,7 @@ def estImg():
         name = dirr + value + '_'+contaminant+'.csv';
         data = df.read_csv(name);
         nameColumn= data.columns
+        nameColumn.pop(0);
         colormap(name,value,nameColumn);
 
 
@@ -110,7 +111,6 @@ def nombreEst(station):
 def colormap(name,est,nameColumn):
     title = 'Imagen de los datos de la estacion '+ nombreEst(est);
     data = df.read_csv(name,index_col='fecha');
-    column =['nox', 'co', 'nodos', 'no','otres', 'sodos', 'weekday', 'sinWeek', 'year','month', 'sinMonth', 'day', 'sinDay', 'valLab', 'U10', 'V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW']
     plt.figure(figsize=(12.2,6.4))
     plt.title(title);
     plt.xticks(fontsize=8)
