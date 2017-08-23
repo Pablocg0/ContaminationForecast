@@ -30,7 +30,7 @@ def saveData(listEstations,startDate):
         tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
         temAllData= tempData.dropna(axis=1, how='all');
         allD = temAllData.dropna(axis=0,how='any');
-        allD = temAllData.fillna(value=-1);
+        #allD = temAllData.fillna(value=-1);
         allD = allD.reset_index();
         allD= allD.drop(labels='index',axis=1);
         allData = allD.merge(tempBuild,how='left',on='fecha');
@@ -40,14 +40,13 @@ def saveData(listEstations,startDate):
         data = allData.drop(labels=nameDelta, axis=1);
         data = data.reset_index();
         build = build.reset_index();
-        #data = fd.readData(startDate[i],endDate,[est[i]],contaminant);
-        #build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
-        dataTemp = separateDate(data);
-        dataTemp2 = unionData(dataTemp);
-        maxAndMinValues(dataTemp2,est[i],contaminant)
-        data = dataTemp2;
+        #data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
+        #build = tempBuild; #solo para cuando no se quiere quitar el ruido
+        data = separateDate(data);
+        data = unionData(data);
+        maxAndMinValues(data,est[i],contaminant)
         build = filterData(data,build);
         data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
         build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
@@ -275,4 +274,5 @@ startDate2=['1986/01/12']
 saveData(est,startDate);
 saveData2(est1,startDate1)
 saveData2(est2,startDate2)
+
 #allSaveData();
