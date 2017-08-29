@@ -51,19 +51,38 @@ def trial(station):
     result = pre.prediction(sta,contaminant,arrayPred);
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
-    plt.plot(inf,'g-', label='Real value');
-    plt.plot(real, 'r-',label='NN Predection');
-    plt.title(nombreEst(station) +' '+ contaminant);
-    plt.xlabel('Days');
-    plt.ylabel('PPM');
+    plt.plot(inf,'g-', label='Valor observado.');
+    plt.plot(real, 'r--',label='Pronostico 24h NN.');
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal');
+    plt.xlabel('Fecha');
+    plt.ylabel('Partes por millon (PPM)');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=8,rotation=80);
+    #plt.xticks(location,labels,fontsize=8,rotation=80);
+    plt.xticks(location,labels,fontsize=9);
     #plt.xlim(0,600)
     plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
     plt.show();
     plt.clf();
     plt.close()
+    gError(inf,real,location,labels,station)
 
+def gError(real,pred,location,labels,station):
+    valError = [];
+    tam = len(real);
+    for i in range(tam):
+        ve = abs(real[i] - pred[i]);
+        valError.append(ve);
+    plt.figure(figsize=(12.2,6.4));
+    plt.plot(valError, 'r-',label='Error');
+    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')');
+    plt.xlabel('Fecha');
+    plt.ylabel('Error');
+    plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=9);
+    plt.savefig('Graficas/Predicciones/Prediction'+station+ '_Error.png');
+    plt.show();
+    plt.clf();
+    plt.close()
 
 def trialNoNormalized(station):
     sta = station
@@ -127,16 +146,43 @@ def trialAllData():
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
     plt.plot(inf,'g-', label='Real value');
-    plt.plot(real, 'r-',label='NN Predection');
+    plt.plot(real, 'r--',label='NN Prediction');
     plt.title(nombreEst('AJM') +' '+ contaminant);
     plt.xlabel('Days');
     plt.ylabel('PPM');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=6,rotation=70);
+    #plt.xticks(location,labels,fontsize=6,rotation=70);
+    plt.xticks(location,labels,fontsize=8);
     #plt.xlim(0,600)
     plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
     plt.show();
     plt.clf();
+
+def deMonth(m):
+    if m == 1:
+        return "Ene";
+    elif m == 2:
+        return "Feb";
+    elif m == 3:
+        return "Mar";
+    elif m == 4:
+        return "Abr";
+    elif m == 5:
+        return "May";
+    elif m == 6:
+        return "Jun";
+    elif m == 7:
+        return "Jul";
+    elif m == 8:
+        return "Ago";
+    elif m == 9:
+        return "Sep";
+    elif m == 10:
+        return "Oct";
+    elif m == 11:
+        return "Nov";
+    elif m == 12:
+        return "Dic";
 
 
 def xlabel(data):
@@ -148,7 +194,7 @@ def xlabel(data):
     for x in dates:
         d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
         if d.hour == 0 and  d.month == m:
-            f = str(d.year) +'/'+ str(d.month)+'/'+str(d.day);
+            f = str(d.year) +'/'+ deMonth(d.month)+'/'+str(d.day);
             fechas.append(f);
             location.append(i);
             m +=1;
@@ -252,3 +298,4 @@ totalPredection(est2);
 totalPredection(est);
 #totalPredectionNoNorm();
 #trialAllData();
+
