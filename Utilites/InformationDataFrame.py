@@ -46,11 +46,13 @@ def information():
 
 def estImg():
     for value in est:
+        print(value);
         name = dirr + value + '_'+contaminant+'.csv';
         data = df.read_csv(name);
         nameColumn= data.columns
-        nameColumn.pop(0);
-        colormap(name,value,nameColumn);
+        nColumn = nameColumn.tolist()
+        nColumn.remove('fecha');
+        colormap(name,value,nColumn);
 
 
 def anios(data):

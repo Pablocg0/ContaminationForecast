@@ -250,13 +250,13 @@ def unionData(data):
     data= data.merge(dataFestivos2, how = 'left', on='fecha');
     #variables=['Uat10','Vat10','PREC2'];
     variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
-    netcdf = 'data/totalData/';
+    netcdf = 'data/totalData/totalCuadrantes/';
     for i in variables:
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
         dataNet2 = convertDates(dataNet)
         data = data.merge(dataNet2,how='left',on='fecha');
-        netcdf = 'data/totalData/';
+        netcdf = 'data/totalData/totalCuadrantes/';
     allD = data.dropna(axis=0,how='any');
     #allD = data.fillna(value=-1);
     allD = allD.reset_index();

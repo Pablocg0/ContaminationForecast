@@ -148,7 +148,7 @@ def saveData(var,variables,date,opt):
     #temp = conver1D(var);
     temp = divData(var);
     dataMatrix= temp;
-    name = variables+'_'+date+'.csv'
+    name = variables+'_'+date+'_div.csv'
     myIndex = nameColumns(variables,len(temp[0]));
     tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
     allData = concat([allData,tempFrame], axis=1);
@@ -158,12 +158,12 @@ def saveData(var,variables,date,opt):
     mean = df.DataFrame(meanValues,columns=[variables+'_mean']);
     dateVal[variables+'_mean']= mean;
     if opt == 0:
-        allData.to_csv('../data/NetCDF/'+name,encoding='utf-8',index= False);
+        allData.to_csv('/home/pablo/DATA/'+name,encoding='utf-8',index= False);
     elif opt == 1:
         filq = '/home/pablo/DATA/'+name
         dateVal.to_csv(filq,encoding = 'utf-8',index=False);
     elif opt == 2:
-        filq = '/home/pablo/DATA/'+name+'_div'
+        filq = '/home/pablo/DATA/'+name
         allData.to_csv(filq,encoding = 'utf-8',index=False);
 
 
@@ -177,8 +177,8 @@ def readCsv(variables):
     dataVa = df.DataFrame();
     variables = variables;
     mypath = '/home/pablo/DATA/';
-    patron = re.compile(variables+'.*');
-    for base, dirs, files in os.walk(mypath,topdown=True):
+    patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d_div'+'.*');
+    for base, dirs, files in os.walk(mypath,topdown=False):
         for value in files:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath+value);
@@ -210,9 +210,10 @@ def open_netcdf(ls,nameFile,cadena):
         tmp.close()
         data = Dataset(tmp.name)
         os.unlink(tmp.name)
+        os.remove(fname);
     else:
-        data = Dataset(fname)
-    os.remove(fname);
+        data = Dataset(ls)
+    #os.remove(fname);
     return data
 
 
@@ -225,28 +226,33 @@ def readFiles(opt):
     name = 'wrfout_d02_'
     dirr = '../data/NetCDF/';
     patron = re.compile(name+'.*')
-    patron2 = re.compile(date);
+    patron2 = re.compile(date); 
     tempfile = df.read_csv(dirr+'tfile.txt');
     tempbase= df.read_csv(dirr+'tbase.txt');
     tfile = list(tempfile.values.flatten());
     tbase = list(tempbase.values.flatten());
+    tfileCopy = list(tempfile.values.flatten());
+    tbaseCopy = list(tempbase.values.flatten());
     l = len(tfile)
     for i in range(l):
-        ls = tbase[i] + '/' + tfile[i]
-        f = patron2.findall(tfile[i]);
-        cadena = clearString(tfile[i]);
+        tfil = tfile[i];
+        tbas= tbase[i];
+        ls = tbas + '/' + tfil
+        f = patron2.findall(tfil);
+        cadena = clearString(tfil);
         print(cadena);
         try:
-            net = open_netcdf(ls,tfile[i],cadena);
-            checkFile(net,tfile[i],f[0],opt);
-            tfile.pop(i);
-            tbase.pop(i);
+            net = open_netcdf(ls,tfil,cadena);
+            checkFile(net,tfil,f[0],opt);
+            tfileCopy.remove(tfil);
+            tbaseCopy.remove(tbas);
         except (OSError,EOFError) as e:
-         #   print(e);
-            fdata = df.DataFrame(tfile,columns=['nameFile']);
-            fbas = df.DataFrame(tbase,columns=['nameBase']);
+            print(e);
+            fdata = df.DataFrame(tfileCopy,columns=['nameFile']);
+            fbas = df.DataFrame(tbaseCopy,columns=['nameBase']);
             fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
             fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
+            os.remove('../data/NetCDF/'+cadena);
             sys.exit()
             #readFiles(1);
         except tarfile.ReadError:
@@ -256,6 +262,8 @@ def readFiles(opt):
             #fdata.to_csv(dirr+'tfile.txt',encoding='utf-8',index=False);
             #fbas.to_csv(dirr+'tbase.txt',encoding='utf-8',index=False);
             #readFiles(1);
+        except (KeyError, FileNotFoundError, EOFError):
+            print('ERROR DE LECTURA');
 
 
 def totalFiles():
@@ -335,8 +343,8 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-totalFiles();
-readFiles(2);
+#totalFiles();
+#readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
