@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 import prediction as pre
 import predictionMax as prem
+from Utilites.metricas import metricas as met
 import pandas as df
 import numpy as np
 import matplotlib
@@ -19,6 +20,7 @@ startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','20
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
 dirrDataC = 'data/DatosCC/';
 dirData  = 'data/DatosCC/';
+metri = [];
 
 
 
@@ -26,6 +28,7 @@ def totalPredection(est):
     for x in est:
        print(x);
        trial(x);
+    print(metri);
 
 def totalPredectionNoNorm():
     for x in est:
@@ -52,9 +55,9 @@ def trial(station):
         valPred = pred[1:];
         valNorm= pre.normalize(valPred,sta,contaminant);
         arrayPred.append(convert(valNorm));
-    print(len(arrayPred))
     result = pre.prediction(sta,contaminant,arrayPred);
     real = desNorm(result,sta,contaminant);
+    metri.append(met.metricas(inf,real,station));
     plt.figure(figsize=(12.2,6.4))
     plt.plot(inf,'g-', label='Valor observado.');
     plt.plot(real, 'r--',label='Pronostico 24h NN.');
@@ -312,4 +315,3 @@ totalPredection(est2);
 
 #totalPredectionNoNorm();
 #trialAllData();
-
