@@ -10,6 +10,8 @@ import numpy as np
 
 contaminant = 'O3';
 endDate = '2016/12/31';
+dirr = 'data/DatosCP/'
+dirTotal ='data/totalData/totalProm/'
 
 
 def saveData(listEstations,startDate):
@@ -42,14 +44,16 @@ def saveData(listEstations,startDate):
         build = build.reset_index();
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
-        #data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
-        #build = tempBuild; #solo para cuando no se quiere quitar el ruido
+        data = fd.readData(startDate[i],endDate,[est[i]],contaminant);#solo para cuando no se quiere quitar el ruido
+        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);#solo para cuando no se quiere quitar el ruido
+        data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
+        build = tempBuild; #solo para cuando no se quiere quitar el ruido
         data = separateDate(data);
         data = unionData(data);
         maxAndMinValues(data,est[i],contaminant)
         build = filterData(data,build);
-        data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
-        build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
+        data.to_csv(dirr+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+        build.to_csv(dirr+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
 
 def saveData2(listEstations,startDate):
@@ -89,8 +93,8 @@ def saveData2(listEstations,startDate):
         maxAndMinValues(dataTemp2,est[i],contaminant)
         data = dataTemp2;
         build = filterData(data,build);
-        data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
-        build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
+        data.to_csv(dirr+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+        build.to_csv(dirr+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
         i += 1;
 
 
@@ -154,7 +158,7 @@ def maxAndMinValues(data,station,contaminant):
     mixmax = df.DataFrame(minx , columns = ['MIN'],index = myIndex);
     dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
-    mixmax.to_csv('data/'+nameD,encoding = 'utf-8');
+    mixmax.to_csv(dirr+nameD,encoding = 'utf-8');
 
 
 def separateDate(data):
@@ -250,13 +254,13 @@ def unionData(data):
     data= data.merge(dataFestivos2, how = 'left', on='fecha');
     #variables=['Uat10','Vat10','PREC2'];
     variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
-    netcdf = 'data/totalData/totalCuadrantes/';
+    netcdf = dirTotal;
     for i in variables:
         netcdf += i +'_total.csv';
         dataNet = df.read_csv(netcdf);
         dataNet2 = convertDates(dataNet)
         data = data.merge(dataNet2,how='left',on='fecha');
-        netcdf = 'data/totalData/totalCuadrantes/';
+        netcdf = dirTotal;
     allD = data.dropna(axis=0,how='any');
     #allD = data.fillna(value=-1);
     allD = allD.reset_index();
