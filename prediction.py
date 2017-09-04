@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 import pandas as df
 
-dirData = 'data/DatosCC/'
-dirTrain = 'trainData/TrainCC/'
+dirData = 'data/DatosLP/'
+dirTrain = 'trainData/TrainLP/'
 
 
 def normalize(data,station,contaminant):

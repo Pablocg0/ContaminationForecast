@@ -18,9 +18,9 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
-dirrDataC = 'data/DatosCC/';
-dirData  = 'data/DatosCC/';
-dirGraficas = 'Graficas/Predicciones/GraficasCC/'
+dirrDataC = 'data/DatosCP/';
+dirData  = 'data/DatosLP/';
+dirGraficas = 'Graficas/Predicciones/GraficasLP/'
 metri = [];
 
 
@@ -29,7 +29,6 @@ def totalPredection(est):
     for x in est:
        print(x);
        trial(x);
-    print(metri);
 
 def totalPredectionNoNorm():
     for x in est:
@@ -79,7 +78,6 @@ def trial(station):
 def filterData(data, dirData):
     temp = df.read_csv(dirData);
     listColumns = list(temp.columns);
-    print(len(listColumns))
     data = data.loc[:,listColumns];
     return data;
 
@@ -103,7 +101,7 @@ def gError(real,pred,location,labels,station):
 
 def saveMetric():
     dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion']);
-    dataMet.to_csv(dirGraficas+station+'_metricas.csv',encoding = 'utf-8',index=False);
+    dataMet.to_csv(dirGraficas+'Metricas.csv',encoding = 'utf-8',index=False);
 
 def trialNoNormalized(station):
     sta = station
@@ -317,6 +315,6 @@ est2 =['BJU']
 totalPredection(est);
 totalPredection(est1);
 totalPredection(est2);
-
+saveMetric();
 #totalPredectionNoNorm();
 #trialAllData();
