@@ -18,9 +18,15 @@ def correla(real,obs):
     return np.corrcoef(real,obs);
 
 def metricas(real,obs,station):
-    met = [];
-    met.append(station);
-    met.append(mape(real,obs));
-    met.append(uTheils(real,obs));
-    met.append(correla(real,obs));
+    if len(real) == 0:
+        met.append(station)
+        met.append(0);
+        met.append(0);
+        met.append(0);
+    else:
+        met = [];
+        met.append(station);
+        met.append(mape(real,obs));
+        met.append(uTheils(real,obs));
+        met.append(correla(real,obs));
     return met;
