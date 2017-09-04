@@ -17,6 +17,9 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
+dirrDataC = 'data/DatosCC/';
+dirData  = 'data/DatosCC/';
+
 
 
 def totalPredection(est):
@@ -32,9 +35,10 @@ def totalPredectionNoNorm():
 def trial(station):
     sta = station
     name = sta +'_'+contaminant;
-    temp = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
+    temp = df.read_csv(dirrDataC + name+'.csv'); #we load the data in the Variable data
     data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
-    tempBuild = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
+    data = filterData(data,dirData+name+'.csv');
+    tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
     build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
     l = xlabel(data)
     labels=l[0];
@@ -48,6 +52,7 @@ def trial(station):
         valPred = pred[1:];
         valNorm= pre.normalize(valPred,sta,contaminant);
         arrayPred.append(convert(valNorm));
+    print(len(arrayPred))
     result = pre.prediction(sta,contaminant,arrayPred);
     real = desNorm(result,sta,contaminant);
     plt.figure(figsize=(12.2,6.4))
@@ -60,11 +65,19 @@ def trial(station):
     #plt.xticks(location,labels,fontsize=8,rotation=80);
     plt.xticks(location,labels,fontsize=9);
     #plt.xlim(0,600)
-    plt.savefig('Graficas/Predicciones/Prediction'+station+ '.png');
+    plt.savefig('Graficas/Predicciones/GraficasCC/'+station+ '.png');
     plt.show();
     plt.clf();
     plt.close()
     gError(inf,real,location,labels,station)
+
+
+def filterData(data, dirData):
+    temp = df.read_csv(dirData);
+    listColumns = list(temp.columns);
+    print(len(listColumns))
+    data = data.loc[:,listColumns];
+    return data;
 
 def gError(real,pred,location,labels,station):
     valError = [];
@@ -79,7 +92,7 @@ def gError(real,pred,location,labels,station):
     plt.ylabel('Error');
     plt.legend(loc ='best');
     plt.xticks(location,labels,fontsize=9);
-    plt.savefig('Graficas/Predicciones/Prediction'+station+ '_Error.png');
+    plt.savefig('Graficas/Predicciones/GraficasCC/'+station+ '_Error.png');
     plt.show();
     plt.clf();
     plt.close()
@@ -220,7 +233,7 @@ def desNorm(data,station,contaminant):
     #print(maxi)
     nameC = 'cont_otres_'+station.lower();
     name = station+'_'+contaminant;
-    values = df.read_csv('data/'+name+'_MaxMin.csv');
+    values = df.read_csv(dirData+name+'_MaxMin.csv');
     index = values.columns[0];
     va = values[(values[index]==nameC)];
     maxx = va['MAX'].values[0];
@@ -282,7 +295,7 @@ def nombreEst(station):
 def obtMax(station,contaminant):
     nameC = 'cont_otres_'+station.lower();
     name = station+'_'+contaminant;
-    values = df.read_csv('data/'+name+'_MaxMin.csv');
+    values = df.read_csv(dirData+name+'_MaxMin.csv');
     index = values.columns[0];
     va = values[(values[index]==nameC)];
     maxx = va['MAX'].values[0];
@@ -293,9 +306,10 @@ est1 =['CHO']
 est2 =['BJU']
 #desNorm(est[1],contaminant);
 #trial();
+totalPredection(est);
 totalPredection(est1);
 totalPredection(est2);
-totalPredection(est);
+
 #totalPredectionNoNorm();
 #trialAllData();
 

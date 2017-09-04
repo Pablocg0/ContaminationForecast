@@ -13,7 +13,7 @@ def normalize(data,station,contaminant):
     :type station: string
     """
     name = station+'_'+contaminant;
-    values = df.read_csv('data/'+name+'_MaxMin.csv');
+    values = df.read_csv('data/DatosCC/'+name+'_MaxMin.csv');
     maxx = values['MAX'].values;
     minn = values['MIN'].values;
     valNorm=[]
@@ -66,10 +66,11 @@ def prediction(station,contaminant,arrayPred):
     """
     result =[]
     name = 'train_'+station+'_'+contaminant+'';
-    data = df.read_csv('data/'+station+'_'+contaminant+'.csv');
+    data = df.read_csv('data/DatosCC/'+station+'_'+contaminant+'.csv');
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
+    print(columns)
     #x_vals= x_vals[:,1:columns];
     #print(x_vals);
 
@@ -101,7 +102,7 @@ def prediction(station,contaminant,arrayPred):
     train_step = my_opt.minimize(loss);
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        saver.restore(sess, 'trainData/'+station+'/'+name+'.ckpt'); #we load the training
+        saver.restore(sess, 'trainData/TrainCC/'+station+'/'+name+'.ckpt'); #we load the training
         #print(sess.run(final_output, feed_dict={x_data:values}));
         for x in arrayPred:
             r = sess.run(final_output, feed_dict={x_data:x})

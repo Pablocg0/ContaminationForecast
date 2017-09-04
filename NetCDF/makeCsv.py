@@ -145,10 +145,10 @@ def saveData(var,variables,date,opt):
     """
     dateVal = makeDates(date);
     allData = makeDates(date);
-    #temp = conver1D(var);
-    temp = divData(var);
+    temp = conver1D(var);
+    #temp = divData(var);
     dataMatrix= temp;
-    name = variables+'_'+date+'_div.csv'
+    name = variables+'_'+date+'.csv'
     myIndex = nameColumns(variables,len(temp[0]));
     tempFrame =df.DataFrame(dataMatrix,columns=myIndex);
     allData = concat([allData,tempFrame], axis=1);
@@ -160,7 +160,7 @@ def saveData(var,variables,date,opt):
     if opt == 0:
         allData.to_csv('/home/pablo/DATA/'+name,encoding='utf-8',index= False);
     elif opt == 1:
-        filq = '/home/pablo/DATA/'+name
+        filq = '/home/pablo/DATA/DataMean/'+name
         dateVal.to_csv(filq,encoding = 'utf-8',index=False);
     elif opt == 2:
         filq = '/home/pablo/DATA/'+name
@@ -176,16 +176,16 @@ def readCsv(variables):
    # os.makedirs('../data/totalData/');
     dataVa = df.DataFrame();
     variables = variables;
-    mypath = '/home/pablo/DATA/';
-    patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d_div'+'.*');
-    for base, dirs, files in os.walk(mypath,topdown=False):
-        for value in files:
+    mypath = '/home/pablo/DATA/DataMean/';
+    patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d'+'.*');
+    for base, dirs, filess in os.walk(mypath,topdown=False):
+        for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath+value);
                 dataVa = concat([tempData,dataVa],axis=0);
     dataVa = dataVa.reset_index();
     dataVa= dataVa.drop(labels='index',axis=1);
-    dataVa.to_csv('../data/totalData/'+variables+'_total.csv',encoding='utf-8',index=False);
+    dataVa.to_csv('../data/totalData/totalProm/'+variables+'_total.csv',encoding='utf-8',index=False);
     dataVa = df.DataFrame();
 
 
@@ -344,7 +344,7 @@ def checkFile(net,name,date,opt):
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
 #totalFiles();
-#readFiles(2);
+readFiles(1);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];

@@ -8,6 +8,7 @@ import pandas as df
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 contaminant = 'O3';
+dirr = 'data/DatosCC/'
 
 
 def trainNeuralNetworks(est):
@@ -21,8 +22,8 @@ def trainNeuralNetworks(est):
         station = est[i];
         print(station);
         name = station +'_'+contaminant; #name the file with the data
-        data = df.read_csv('data/'+name+'.csv'); #we load the data in the Variable data
-        build = df.read_csv('data/'+name+'_pred.csv'); #we load the data in the Variable build
+        data = df.read_csv(dirr+name+'.csv'); #we load the data in the Variable data
+        build = df.read_csv(dirr+name+'_pred.csv'); #we load the data in the Variable build
         data = data[data['fecha']<'2015/12/31'];
         build = build[build['fecha']<'2015/12/31'];
         #print(data)
@@ -65,7 +66,7 @@ def trainOne():
 def obtMax(station,contaminant):
     nameC = 'cont_otres_'+station.lower();
     name = station+'_'+contaminant;
-    values = df.read_csv('data/'+name+'_MaxMin.csv');
+    values = df.read_csv(dirr+name+'_MaxMin.csv');
     index = values.columns[0];
     va = values[(values[index]==nameC)];
     maxx = va['MAX'].values[0];
@@ -76,9 +77,10 @@ def obtMax(station,contaminant):
 
 est1 =['CHO']
 est2 =['BJU']
+trainNeuralNetworks(est);
 trainNeuralNetworks(est1);
 trainNeuralNetworks(est2);
-trainNeuralNetworks(est);
+
 
 #trainNeuralNetworksNoNormalized()
 #trainOne();

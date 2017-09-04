@@ -36,6 +36,7 @@ def prepro(data,build,contaminant):
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
+    print(columns);
     x_val= x_vals[:,1:columns];
     y_vals = converToArray(build,contaminant);
     # Normalize data
