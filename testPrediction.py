@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 import prediction as pre
 import predictionMax as prem
-from Utilites.metricas import metricas as met
+from Utilites.metricas import metricas
 import pandas as df
 import numpy as np
 import matplotlib
@@ -20,6 +20,7 @@ startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','20
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
 dirrDataC = 'data/DatosCC/';
 dirData  = 'data/DatosCC/';
+dirGraficas = 'Graficas/Predicciones/GraficasCC/'
 metri = [];
 
 
@@ -57,7 +58,7 @@ def trial(station):
         arrayPred.append(convert(valNorm));
     result = pre.prediction(sta,contaminant,arrayPred);
     real = desNorm(result,sta,contaminant);
-    metri.append(met.metricas(inf,real,station));
+    metri.append(metricas(inf,real,station));
     plt.figure(figsize=(12.2,6.4))
     plt.plot(inf,'g-', label='Valor observado.');
     plt.plot(real, 'r--',label='Pronostico 24h NN.');
@@ -68,7 +69,7 @@ def trial(station):
     #plt.xticks(location,labels,fontsize=8,rotation=80);
     plt.xticks(location,labels,fontsize=9);
     #plt.xlim(0,600)
-    plt.savefig('Graficas/Predicciones/GraficasCC/'+station+ '.png');
+    plt.savefig(dirGraficas+station+ '.png');
     plt.show();
     plt.clf();
     plt.close()
@@ -95,10 +96,14 @@ def gError(real,pred,location,labels,station):
     plt.ylabel('Error');
     plt.legend(loc ='best');
     plt.xticks(location,labels,fontsize=9);
-    plt.savefig('Graficas/Predicciones/GraficasCC/'+station+ '_Error.png');
+    plt.savefig(dirGraficas+station+ '_Error.png');
     plt.show();
     plt.clf();
     plt.close()
+
+def saveMetric():
+    dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion']);
+    dataMet.to_csv(dirGraficas+station+'_metricas.csv',encoding = 'utf-8',index=False);
 
 def trialNoNormalized(station):
     sta = station
