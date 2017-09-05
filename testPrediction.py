@@ -101,7 +101,7 @@ def gError(real,pred,location,labels,station):
 
 def saveMetric():
     dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion']);
-    dataMet.groupby('estacion').mean().loc[:,['MAPE','uTheils','IndiceCorrelacion']].plot(kind='line', colormap='winter',figsize=(12.2,6.4),title='Metricas');
+    dataMet.groupby('estacion').mean().loc[:,['MAPE','uTheils','IndiceCorrelacion']].plot(kind='bar',figsize=(12.2,6.4),title='Metricas');
     plt.savefig(dirGraficas+"Metricas.png", dpi=600);
     plt.show()
     plt.close()

@@ -9,7 +9,7 @@ import seaborn as sns
 
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
 #est = ['LPR'];
-dirr = '../data/';
+dirr = '../data/DatosCC/';
 contaminant = 'O3';
 
 def information():
@@ -113,10 +113,10 @@ def nombreEst(station):
 def colormap(name,est,nameColumn):
     title = 'Imagen de los datos de la estacion '+ nombreEst(est);
     data = df.read_csv(name,index_col='fecha');
-    plt.figure(figsize=(12.2,6.4))
+    plt.figure(figsize=(12.2,8.4))
     plt.title(title);
     plt.xticks(fontsize=8)
-    ax = sns.heatmap(data,vmin = -1,vmax = -0.99,yticklabels=False,xticklabels=nameColumn, cbar=False);
+    ax = sns.heatmap(data,vmin = -1,vmax = -0.99,yticklabels=False,xticklabels=nameColumn, cbar=False, mask = data !=-1);
     plt.savefig("../Graficas/Informacion/Imagen_"+est+".png", dpi=600);
     plt.show();
     plt.close()
