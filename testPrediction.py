@@ -43,6 +43,7 @@ def trial(station):
     data = filterData(data,dirData+name+'.csv');
     tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
     build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
+    build = build.fillna(value=0);
     l = xlabel(data)
     labels=l[0];
     location =l[1];
@@ -100,12 +101,16 @@ def gError(real,pred,location,labels,station):
     plt.close()
 
 def saveMetric():
-    dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion']);
-    dataMet.groupby('estacion').mean().loc[:,['MAPE','uTheils','IndiceCorrelacion']].plot(kind='bar',figsize=(12.2,6.4),title='Metricas');
-    plt.savefig(dirGraficas+"Metricas.png", dpi=600);
-    plt.show()
-    plt.close()
+    nameCol = ['MAPE','uTheils','IndiceCorrelacion','agreement']
+    dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion','agreement']);
     dataMet.to_csv(dirGraficas+'Metricas.csv',encoding = 'utf-8',index=False);
+    print(dataMet);
+    for value in nameCol:
+        dataMet.groupby('estacion').mean().loc[:,[value]].plot(kind='bar',figsize=(12.2,6.4),title=value);
+        plt.savefig(dirGraficas+value+".png", dpi=600);
+        plt.show()
+        plt.close()
+
 
 def trialNoNormalized(station):
     sta = station

@@ -8,7 +8,7 @@ import pandas as df
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 contaminant = 'O3';
-dirr = 'data/DatosLP/'
+dirr = 'data/DatosLM/'
 
 
 def trainNeuralNetworks(est):
@@ -29,6 +29,7 @@ def trainNeuralNetworks(est):
         #print(data)
         #print(build)
         #break
+        data = data.fillna(value=-1);
         xy_values = an(data,build, contaminant); # preprocessing
         nng(xy_values[0],xy_values[1],xy_values[2],1000,station,contaminant); #The neural network is trained
         i+=1;
