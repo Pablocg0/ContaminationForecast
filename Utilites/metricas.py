@@ -2,9 +2,9 @@ import numpy as np
 
 
 def mape(real,obs):
-    real = np.array(real);
-    obs = np.array(obs);
-    return np.sum(np.abs((real -  obs))/ real) / len(real);
+    #real = np.array(real);
+    #obs = np.array(obs);
+    return np.mean(np.abs((obs -  real)/ obs)) * (100/len(real));
 
 def uTheils(real, obs):
     n = len(real)
@@ -22,10 +22,17 @@ def correla(real,obs):
     desvObs = np.sqrt(np.mean(np.square(obs))-(medObs*medObs));
     return cov / (desvReal*desvObs);
 
+def agreement(real,obs):
+    frac =  np.mean(np.square(obs - real))
+    req = np.mean(np.abs(obs - np.mean(obs)) + np.abs(np.square(real - np.mean(real))));
+    agrr = 1 - (frac / req)
+    return agrr;
+
 def metricas(real,obs,station):
     met = [];
     if len(real) == 0:
         met.append(station)
+        met.append(0);
         met.append(0);
         met.append(0);
         met.append(0);
@@ -34,4 +41,5 @@ def metricas(real,obs,station):
         met.append(mape(real,obs));
         met.append(uTheils(real,obs));
         met.append(correla(real,obs));
+        met.append(agreement(real,obs));
     return met;

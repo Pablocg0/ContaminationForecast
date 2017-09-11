@@ -10,7 +10,7 @@ import numpy as np
 
 contaminant = 'O3';
 endDate = '2016/12/31';
-dirr = 'data/DatosCP/'
+dirr = 'data/DatosCM/'
 dirTotal ='data/totalData/totalProm/'
 
 
@@ -44,10 +44,11 @@ def saveData(listEstations,startDate):
         build = build.reset_index();
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
-        data = fd.readData(startDate[i],endDate,[est[i]],contaminant);#solo para cuando no se quiere quitar el ruido
-        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate);#solo para cuando no se quiere quitar el ruido
+        data = fd.readData(startDate[i],endDate,[est[i]],contaminant); #solo para cuando no se quiere quitar el ruido
+        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate); #solo para cuando no se quiere quitar el ruido
         data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
         build = tempBuild; #solo para cuando no se quiere quitar el ruido
+        data = data.fillna(value=-1);
         data = separateDate(data);
         data = unionData(data);
         maxAndMinValues(data,est[i],contaminant)
@@ -252,6 +253,9 @@ def unionData(data):
     dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
     dataFestivos2 = convertDates(dataFestivos);
     data= data.merge(dataFestivos2, how = 'left', on='fecha');
+    data = data.reset_index();
+    data = data.drop(labels='index',axis=1);
+    return data;
     #variables=['Uat10','Vat10','PREC2'];
     variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
     netcdf = dirTotal;

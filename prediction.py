@@ -72,7 +72,6 @@ def prediction(station,contaminant,arrayPred):
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
-    print(columns)
     #x_vals= x_vals[:,1:columns];
     #print(x_vals);
 
