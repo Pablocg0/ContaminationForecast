@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 import pandas as df
 
-dirData = 'data/DatosLP/'
-dirTrain = 'trainData/TrainLP/'
+dirData = 'data/DatosLM/'
+dirTrain = 'trainData/TrainGLM/'
 
 
 def normalize(data,station,contaminant):
@@ -98,8 +98,8 @@ def prediction(station,contaminant,arrayPred):
     loss= tf.reduce_mean(tf.abs(y_target - final_output));
 
     # Declare optimizer gradientDescent
-    #my_opt = tf.train.GradientDescentOptimizer(0.1);
-    my_opt = tf.train.AdamOptimizer(0.001);
+    my_opt = tf.train.GradientDescentOptimizer(0.1);
+    #my_opt = tf.train.AdamOptimizer(0.001);
     train_step = my_opt.minimize(loss);
     saver = tf.train.Saver()
     with tf.Session() as sess:
