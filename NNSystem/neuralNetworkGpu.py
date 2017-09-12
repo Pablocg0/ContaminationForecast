@@ -68,8 +68,8 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
 
     # Declare optimizer gradientDescent
     with tf.device("/gpu:0"):
-        my_opt = tf.train.GradientDescentOptimizer(0.1);
-        #my_opt = tf.train.AdamOptimizer(0.001);
+       # my_opt = tf.train.GradientDescentOptimizer(0.1);
+        my_opt = tf.train.AdamOptimizer(0.001);
         train_step = my_opt.minimize(loss);
 
     # Initialize Variables
@@ -94,6 +94,6 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
 
-    saver.save(sess,'trainData/TrainGLM/'+station+'/'+name+'.ckpt')
+    saver.save(sess,'trainData/TrainLPM/'+station+'/'+name+'.ckpt')
     sess.close()
     #return total_loss;
