@@ -94,6 +94,6 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
 
-    saver.save(sess,'trainData/TrainLPM/'+station+'/'+name+'.ckpt')
+    saver.save(sess,'trainData/TrainLPB/'+station+'/'+name+'.ckpt')
     sess.close()
     #return total_loss;
