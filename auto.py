@@ -8,7 +8,7 @@ import pandas as df
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 contaminant = 'O3';
-dirr = 'data/DatosLPM/'
+dirr = 'data/DatosLPB/'
 
 
 def trainNeuralNetworks(est):

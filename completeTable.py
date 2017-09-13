@@ -3,7 +3,7 @@ import numpy as np
 import shutil
 import os
 
-est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC'];
+est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC','CHO','BJU'];
 estComplete = ['UAX','CUA','ATI','UIZ','MER','PED','TLA','XAL'];
 dirDataComp = ['data/DatosCP/','data/DatosLP/','data/DatosCC/','data/DatosLC/'];
 #dirDataSave = ['data/DatosCPM/','data/DatosLPM/','data/DatosCCM/','data/DatosLCM/'];
@@ -33,9 +33,9 @@ def unionData(origin,save):
 def copyComplete():
     for x in range(len(dirDataComp)):
         for value in estComplete:
-            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'_pred.csv',dirDataSave+value + '_'+ contaminant+'_pred.csv');
-            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'.csv',dirDataSave+value + '_'+ contaminant+'.csv');
-            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'_MaxMin.csv',dirDataSave+value + '_'+ contaminant+'_MaxMin.csv');
+            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'_pred.csv',dirDataSave[x]+value + '_'+ contaminant+'_pred.csv');
+            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'.csv',dirDataSave[x]+value + '_'+ contaminant+'.csv');
+            shutil.copy(dirDataComp[x]+value + '_'+ contaminant+'_MaxMin.csv',dirDataSave[x]+value + '_'+ contaminant+'_MaxMin.csv');
 
 def maxAndMinValues(data,station,contaminant,save):
     """
@@ -65,7 +65,7 @@ def maxAndMinValues(data,station,contaminant,save):
 
 def bootstrap(origin,save):
     for value in est:
-        print(value)
+        print(origin+value)
         dirData = origin + value + '_'+ contaminant+'.csv';
         dirPred = origin + value + '_'+ contaminant+'_pred.csv';
         data = df.read_csv(dirData);
@@ -74,10 +74,9 @@ def bootstrap(origin,save):
         dataOzono = data['cont_otres_'+ value.lower()];
         mean =dataOzono.mean(axis=0);
         std = dataOzono.std(axis=0);
-        print(mean);
-        print(std);
         dataBoot = data[data['cont_otres_'+value.lower()]>std]
         d = df.concat([data,dataBoot], axis =0);
+        print(len(d.index.tolist()));
         prediccion = df.DataFrame(d['fecha'],columns=['fecha']);
         valPred = df.DataFrame(d['cont_otres_'+value+'_delta'],columns=['cont_otres_'+value+'_delta']);
         prediccion['cont_otres_'+value+'_delta'] = valPred;
@@ -89,7 +88,6 @@ def bootstrap(origin,save):
         maxAndMinValues(d,value,contaminant,save);
         d.to_csv(save + value + '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
         prediccion.to_csv(save + value + '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
-        break
 
 def createFile():
     est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
