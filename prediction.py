@@ -26,7 +26,10 @@ def normalize(data,station,contaminant):
         else:
             m = maxx[i];
             mi = minn[i];
-            norm = (x-mi)/(m-mi);
+            if m == 0 and mi == 0 :
+                norm = 1.0;
+            else:
+                norm = (x-mi)/(m-mi);
         valNorm.append(norm);
         i+=1;
     return valNorm;
