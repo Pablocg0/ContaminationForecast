@@ -35,7 +35,7 @@ class FormatData(object):
         numberows = len(allData.index)#Numbers the data given by the previous query
         for x in estations:
             for y in tables_contaminants:
-                name = y+"_"+x; #name the column in the DataFrame
+                name = y; #name the column in the DataFrame
                 tempDataValues = pd.read_sql_query("""SELECT fecha, val  as {0} FROM {1} WHERE id_est = '{2}' AND fecha >= '{3}' AND fecha <= '{4}'ORDER BY fecha ASC;""".format(name,y,x, startDate, endDate),conn);
                 #query the values in the gives rangefrom Utilites.FormatData import FormatData as fdfrom Utilites.FormatData import FormatData as fd
                 if tempDataValues.empty:
