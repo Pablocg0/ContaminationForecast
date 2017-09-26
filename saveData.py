@@ -10,8 +10,8 @@ import numpy as np
 
 contaminant = 'O3';
 endDate = '2016/12/31';
-dirr = 'data/DatosCC16/'
-dirTotal ='data/totalData/totalC16/'
+dirr = 'data/DatosLP/'
+dirTotal ='data/totalData/totalProm/'
 
 
 def saveData(listEstations,startDate):
@@ -32,7 +32,7 @@ def saveData(listEstations,startDate):
         tempBuild = fd.buildClass2(tempData,[est[i]],contaminant,24,startDate[i],endDate);
         temAllData= tempData.dropna(axis=1, how='all');
         allD = temAllData.dropna(axis=0,how='any');
-        #allD = temAllData.fillna(value=-1);
+        allD = temAllData.fillna(value=-1);
         allD = allD.reset_index();
         allD= allD.drop(labels='index',axis=1);
         allData = allD.merge(tempBuild,how='left',on='fecha');
@@ -44,10 +44,10 @@ def saveData(listEstations,startDate):
         build = build.reset_index();
         build = build.drop(labels='index',axis=1);
         data = data.drop(labels='index',axis=1);
-        data = fd.readData(startDate[i],endDate,[est[i]],contaminant); #solo para cuando no se quiere quitar el ruido
-        build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate); #solo para cuando no se quiere quitar el ruido
-        data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
-        build = tempBuild; #solo para cuando no se quiere quitar el ruido
+        #data = fd.readData(startDate[i],endDate,[est[i]],contaminant); #solo para cuando no se quiere quitar el ruido
+        #build = fd.buildClass2(data,[est[i]],contaminant,24,startDate[i],endDate); #solo para cuando no se quiere quitar el ruido
+        #data = tempData.fillna(value=-1); #solo para cuando no se quiere quitar el ruido
+        #build = tempBuild; #solo para cuando no se quiere quitar el ruido
         data = data.fillna(value=-1);
         data = separateDate(data);
         data = unionData(data);

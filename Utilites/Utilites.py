@@ -36,8 +36,10 @@ def prepro(data,build,contaminant):
     x_vals = data.values;
     x = x_vals.shape;
     columns = x[1];
+    data = data.drop(labels='fecha',axis =1);
+    x_val =data.values;
     print(columns);
-    x_val= x_vals[:,1:columns];
+    #x_val= x_vals[:,1:columns];
     y_vals = converToArray(build,contaminant);
     # Normalize data
     min_max_scaler = preprocessing.MinMaxScaler()

@@ -18,9 +18,9 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
-dirrDataC = 'data/DatosCC16/';
-dirData  = 'data/DatosLC16/';
-dirGraficas = 'Graficas/Predicciones/GraficasLC16/'
+dirrDataC = 'data/unionGeo/DatosCC/';
+dirData  = 'data/unionGeo/DatosCC/';
+dirGraficas = 'Graficas/Predicciones/unionGeo/GraficasCC/'
 metri = [];
 
 
@@ -43,7 +43,7 @@ def trial(station):
     data = filterData(data,dirData+name+'.csv');
     tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
     build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
-    build = build.fillna(value=0);
+    build = build.fillna(value=-1);
     l = xlabel(data)
     labels=l[0];
     location =l[1];
@@ -53,7 +53,7 @@ def trial(station):
     index = data.index.values
     for x in index:
         pred = data.ix[x].values
-        valPred = pred[1:];
+        valPred = pred;
         valNorm= pre.normalize(valPred,sta,contaminant);
         arrayPred.append(convert(valNorm));
     result = pre.prediction(sta,contaminant,arrayPred);

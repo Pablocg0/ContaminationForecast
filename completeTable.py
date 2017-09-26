@@ -7,14 +7,15 @@ est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC','
 estComplete = ['UAX','CUA','ATI','UIZ','MER','PED','TLA','XAL'];
 dirDataComp = ['data/DatosCP/','data/DatosLP/','data/DatosCC/','data/DatosLC/'];
 #dirDataSave = ['data/DatosCPM/','data/DatosLPM/','data/DatosCCM/','data/DatosLCM/'];
-dirDataSave = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
+#dirDataSave = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
+dirDataSave = ['data/unionGeo/DatosCC/','data/unionGeo/DatosLC/','data/unionGeo/DatosCP/','data/unionGeo/DatosLP/'];
 dirDataMet = 'data/DatosCM/';
 contaminant = 'O3';
 
 
 def originDir():
     for x in range(len(dirDataComp)):
-        bootstrap(dirDataComp[x],dirDataSave[x]);
+        unionGeo(dirDataComp[x],dirDataSave[x]);
 
 def unionData(origin,save):
     for value in est:
@@ -89,11 +90,233 @@ def bootstrap(origin,save):
         d.to_csv(save + value + '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
         prediccion.to_csv(save + value + '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
 
+
+def unionGeo(origin,save):
+    print('TAH')
+    data = df.read_csv(origin+'TAH_O3.csv');
+    dataCo = df.read_csv(origin+'UAX_O3.csv');
+    pred = df.read_csv(origin+'TAH_O3_pred.csv');
+    pred.rename(columns={'cont_otres_TAH_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'UAX_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_UAX_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha');
+    dataComplete = df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha']).reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+    prediccion['cont_otres_TAH_delta'] = dataComplete['delta'];
+    dataComplete= dataComplete.drop('delta',axis=1);
+    dataComplete = dataComplete.reset_index();
+    dataComplete = dataComplete.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1);
+    maxAndMinValues(dataComplete,'TAH',contaminant,save);
+    dataComplete = dataComplete.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete.to_csv(save +'TAH'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'TAH'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    print('CHO')
+    data = df.read_csv(origin+'CHO_O3.csv');
+    dataCo = df.read_csv(origin+'UAX_O3.csv');
+    pred = df.read_csv(origin+'CHO_O3_pred.csv');
+    pred.rename(columns={'cont_otres_CHO_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'UAX_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_UAX_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha');
+    dataComplete = df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+    prediccion['cont_otres_CHO_delta'] = dataComplete['delta'];
+    dataComplete= dataComplete.drop('delta',axis=1);
+    dataComplete = dataComplete.reset_index();
+    dataComplete = dataComplete.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1);
+    maxAndMinValues(dataComplete,'CHO',contaminant,save);
+    dataComplete = dataComplete.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete.to_csv(save +'CHO'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'CHO'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    print('FAC')
+    data = df.read_csv(origin+'FAC_O3.csv');
+    dataCo = df.read_csv(origin+'TLA_O3.csv');
+    pred = df.read_csv(origin+'FAC_O3_pred.csv');
+    pred.rename(columns={'cont_otres_FAC_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'TLA_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_TLA_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha');
+    dataCo2 = df.read_csv(origin+'ATI_O3.csv');
+    predCo2 =  df.read_csv(origin+'ATI_O3_pred.csv');
+    predCo2.rename(columns={'cont_otres_ATI_delta':'delta'},inplace =True);
+    dataCo2 = dataCo2.merge(predCo2,how='left',on='fecha');
+    dataComplete2 = df.concat([data,dataCo,dataCo2],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete2['fecha'],columns=['fecha']);
+    prediccion['cont_otres_FAC_delta'] = dataComplete2['delta']
+    dataComplete2 = dataComplete2.drop('delta',axis=1);
+    dataComplete2 = dataComplete2.reset_index();
+    dataComplete2 = dataComplete2.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1);
+    maxAndMinValues(dataComplete2,'FAC',contaminant,save);
+    dataComplete2 = dataComplete2.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete2.to_csv(save +'FAC'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'FAC'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    print('NEZ')
+    data = df.read_csv(origin+'NEZ_O3.csv');
+    dataCo = df.read_csv(origin+'UIZ_O3.csv');
+    pred = df.read_csv(origin+'NEZ_O3_pred.csv');
+    pred.rename(columns={'cont_otres_NEZ_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'UIZ_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_UIZ_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    dataComplete = df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+    prediccion['cont_otres_NEZ_delta'] = dataComplete['delta']
+    dataComplete= dataComplete.drop('delta',axis=1);
+    dataComplete = dataComplete.reset_index();
+    dataComplete = dataComplete.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1);
+    maxAndMinValues(dataComplete,'NEZ',contaminant,save);
+    dataComplete = dataComplete.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete.to_csv(save +'NEZ'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'NEZ'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    print('CAM')
+    data = df.read_csv(origin+'CAM_O3.csv');
+    dataCo = df.read_csv(origin+'LPR_O3.csv');
+    pred = df.read_csv(origin+'CAM_O3_pred.csv');
+    pred.rename(columns={'cont_otres_CAM_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'LPR_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_LPR_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    dataCo2 = df.read_csv(origin+'XAL_O3.csv');
+    predCo2 =  df.read_csv(origin+'XAL_O3_pred.csv');
+    predCo2.rename(columns={'cont_otres_XAL_delta':'delta'},inplace =True);
+    dataCo2 = dataCo2.merge(predCo2,how='left',on='fecha')
+    dataComplete2 = df.concat([data,dataCo,dataCo2],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete2['fecha'],columns=['fecha']);
+    prediccion['cont_otres_CAM_delta'] = dataComplete2['delta']
+    dataComplete2 = dataComplete2.drop('delta',axis=1);
+    dataComplete2 = dataComplete2.reset_index();
+    dataComplete2 = dataComplete2.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1);
+    maxAndMinValues(dataComplete2,'CAM',contaminant,save);
+    dataComplete2 = dataComplete2.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete2.to_csv(save +'CAM'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'CAM'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    print('SFE')
+    data = df.read_csv(origin+'SFE_O3.csv');
+    dataCo = df.read_csv(origin+'CUA_O3.csv');
+    pred = df.read_csv(origin+'SFE_O3_pred.csv');
+    pred.rename(columns={'cont_otres_SFE_delta':'delta'},inplace =True);
+    data = data.merge(pred,how='left',on='fecha');
+    predCo =  df.read_csv(origin+'CUA_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_CUA_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    dataCo2 = df.read_csv(origin+'PED_O3.csv');
+    predCo2 =  df.read_csv(origin+'PED_O3_pred.csv');
+    predCo2.rename(columns={'cont_otres_PED_delta':'delta'},inplace =True);
+    dataCo2 = dataCo2.merge(predCo2,how='left',on='fecha')
+    dataComplete2 = df.concat([data,dataCo,dataCo2],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+    prediccion = df.DataFrame(dataComplete2['fecha'],columns=['fecha']);
+    prediccion['cont_otres_SFE_delta'] = dataComplete2['delta']
+    dataComplete2 = dataComplete2.drop('delta',axis=1);
+    dataComplete2 = dataComplete2.reset_index();
+    dataComplete2 = dataComplete2.drop('index',axis=1);
+    prediccion = prediccion.reset_index();
+    prediccion = prediccion.drop('index',axis=1)
+    maxAndMinValues(dataComplete2,'SFE',contaminant,save);
+    dataComplete2 = dataComplete2.fillna(value =-1);
+    prediccion = prediccion.fillna(value = -1);
+    dataComplete2.to_csv(save +'SFE'+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+    prediccion.to_csv(save +'SFE'+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    est = ['AJM','CCA','BJU'];
+    dataCo = df.read_csv(origin+'PED_O3.csv');
+    predCo = df.read_csv(origin+'PED_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_PED_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    print(len(dataCo.index))
+    for x in est :
+        data = df.read_csv(origin+ x + '_O3.csv');
+        pred = df.read_csv(origin+x+'_O3_pred.csv');
+        pred.rename(columns={'cont_otres_'+x+'_delta':'delta'},inplace =True);
+        data = data.merge(pred,how='left',on='fecha');
+        dataComplete= df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+        print(x)
+        prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+        prediccion['cont_otres_'+x+'_delta'] = dataComplete['delta']
+        dataComplete= dataComplete.drop('delta',axis=1);
+        dataComplete = dataComplete.reset_index();
+        dataComplete = dataComplete.drop('index',axis=1);
+        prediccion = prediccion.reset_index();
+        prediccion = prediccion.drop('index',axis=1);
+        maxAndMinValues(dataComplete,x,contaminant,save);
+        dataComplete = dataComplete.fillna(value =-1);
+        prediccion = prediccion.fillna(value = -1);
+        dataComplete.to_csv(save +x+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+        prediccion.to_csv(save +x+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    est = ['SAG','LPR'];
+    dataCo = df.read_csv(origin+'XAL_O3.csv');
+    predCo = df.read_csv(origin+'XAL_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_XAL_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    print(len(dataCo.index))
+    for x in est :
+        data = df.read_csv(origin+ x + '_O3.csv');
+        pred = df.read_csv(origin+x+'_O3_pred.csv');
+        pred.rename(columns={'cont_otres_'+x+'_delta':'delta'},inplace =True);
+        data = data.merge(pred,how='left',on='fecha');
+        dataComplete= df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+        print(x)
+        prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+        prediccion['cont_otres_'+x+'_delta'] = dataComplete['delta']
+        dataComplete= dataComplete.drop('delta',axis=1);
+        dataComplete = dataComplete.reset_index();
+        dataComplete = dataComplete.drop('index',axis=1);
+        prediccion = prediccion.reset_index();
+        prediccion = prediccion.drop('index',axis=1);
+        maxAndMinValues(dataComplete,x,contaminant,save);
+        dataComplete = dataComplete.fillna(value =-1);
+        prediccion = prediccion.fillna(value = -1);
+        dataComplete.to_csv(save +x+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+        prediccion.to_csv(save +x+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+    est = ['SJA','IZT','MGH'];
+    dataCo = df.read_csv(origin+'MER_O3.csv');
+    predCo = df.read_csv(origin+'MER_O3_pred.csv');
+    predCo.rename(columns={'cont_otres_MER_delta':'delta'},inplace =True);
+    dataCo = dataCo.merge(predCo,how='left',on='fecha')
+    print(len(dataCo.index))
+    for x in est :
+        data = df.read_csv(origin+ x + '_O3.csv');
+        pred = df.read_csv(origin+x+'_O3_pred.csv');
+        pred.rename(columns={'cont_otres_'+x+'_delta':'delta'},inplace =True);
+        data = data.merge(pred,how='left',on='fecha');
+        dataComplete= df.concat([data,dataCo],ignore_index=True).drop_duplicates(['fecha'],keep='last').reset_index(drop=True);
+        print(x)
+        prediccion = df.DataFrame(dataComplete['fecha'],columns=['fecha']);
+        prediccion['cont_otres_'+x+'_delta'] = dataComplete['delta']
+        dataComplete= dataComplete.drop('delta',axis=1);
+        dataComplete = dataComplete.reset_index();
+        dataComplete = dataComplete.drop('index',axis=1);
+        prediccion = prediccion.reset_index();
+        prediccion = prediccion.drop('index',axis=1);
+        maxAndMinValues(dataComplete,x,contaminant,save);
+        dataComplete = dataComplete.fillna(value =-1);
+        prediccion = prediccion.fillna(value = -1);
+        dataComplete.to_csv(save +x+ '_'+ contaminant+'.csv',encoding = 'utf-8',index=False);
+        prediccion.to_csv(save +x+ '_'+ contaminant+'_pred.csv',encoding = 'utf-8',index=False);
+
 def createFile():
     est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
-    dirData = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
-    dirGraficas= ['Graficas/Predicciones/GraficasCPB/','Graficas/Predicciones/GraficasLPB/','Graficas/Predicciones/GraficasCCB/','Graficas/Predicciones/GraficasLCB/'];
-    dirTrain = ['trainData/TrainCPB/','trainData/TrainLPB/','trainData/TrainCCB/','trainData/TrainLCB/'];
+    dirData = ['data/unionGeo/DatosCC/','data/unionGeo/DatosLC/','data/unionGeo/DatosCP/','data/unionGeo/DatosLP/'];
+    dirGraficas= ['Graficas/Predicciones/unionGeo/GraficasCC/','Graficas/Predicciones/unionGeo/GraficasCP/','Graficas/Predicciones/unionGeo/GraficasLC/','Graficas/Predicciones/unionGeo/GraficasLP/'];
+    dirTrain = ['trainData/unionGeo/TrainCP/','trainData/unionGeo/TrainLP/','trainData/unionGeo/TrainCC/','trainData/unionGeo/TrainLC/'];
     for val in range(len(dirData)):
         if not os.path.exists(dirData[val]): os.makedirs(dirData[val]);
         if not os.path.exists(dirGraficas[val]): os.makedirs(dirGraficas[val]);
@@ -105,4 +328,6 @@ def createFile():
 createFile();
 #bootstrap('data/','data/')
 originDir();
+#unionGeo();
 copyComplete();
+
