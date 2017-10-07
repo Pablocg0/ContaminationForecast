@@ -18,9 +18,9 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
 #est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
 #startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
-dirrDataC = 'data/unionGeo/DatosCC/';
-dirData  = 'data/unionGeo/DatosCC/';
-dirGraficas = 'Graficas/Predicciones/unionGeo/GraficasCC/'
+dirrDataC = 'data/DatosCP/';
+dirData  = 'data/DatosLP/';
+dirGraficas = 'Graficas/Predicciones/GraficasLP/'
 metri = [];
 
 
@@ -53,13 +53,13 @@ def trial(station):
     index = data.index.values
     for x in index:
         pred = data.ix[x].values
-        valPred = pred;
+        valPred = pred[1:];
         valNorm= pre.normalize(valPred,sta,contaminant);
         arrayPred.append(convert(valNorm));
     result = pre.prediction(sta,contaminant,arrayPred);
     real = desNorm(result,sta,contaminant);
     metri.append(metricas(inf,real,station));
-    plt.figure(figsize=(12.2,6.4))
+    plt.figure(figsize=(15.2,9.4))
     plt.plot(inf,'g-', label='Valor observado.');
     plt.plot(real, 'r--',label='Pronostico 24h NN.');
     plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal');
@@ -67,7 +67,7 @@ def trial(station):
     plt.ylabel('Partes por millon (PPM)');
     plt.legend(loc ='best');
     #plt.xticks(location,labels,fontsize=8,rotation=80);
-    plt.xticks(location,labels,fontsize=9);
+    plt.xticks(location,labels,fontsize=9,rotation=80);
     #plt.xlim(0,600)
     plt.savefig(dirGraficas+station+ '.png');
     plt.show();

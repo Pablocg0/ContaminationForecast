@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 import pandas as df
 
-dirData = 'data/unionGeo/DatosCC/'
-dirTrain = 'trainData/unionGeo/TrainCC/'
+dirData = 'data/DatosLP/'
+dirTrain = 'trainData/TrainLP/'
 
 
 def normalize(data,station,contaminant):
@@ -15,7 +15,6 @@ def normalize(data,station,contaminant):
     :type station: string
     """
     name = station+'_'+contaminant;
-    data = data.drop(labels ='fecha',axis=1)
     values = df.read_csv(dirData+name+'_MaxMin.csv');
     maxx = values['MAX'].values;
     minn = values['MIN'].values;
@@ -27,13 +26,9 @@ def normalize(data,station,contaminant):
         else:
             m = float( maxx[i]);
             mi = float(minn[i]);
-            print(m)
-            print(mi);
             if m == 0 and mi == 0 :
-                print(m);
                 norm = 0.0;
             else:
-                print(x)
                 norm = (x-mi)/(m-mi);
         valNorm.append(norm);
         i+=1;
