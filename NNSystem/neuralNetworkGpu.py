@@ -27,7 +27,7 @@ def init_bias(shape):
         bias=  tf.Variable(tf.random_normal(shape));
         return bias;
 
-def train(x_d,y_data, columns,iteraciones,station,contaminant):
+def train(x_d,y_data, columns,iteraciones,station,contaminant,dirTrain):
     name = 'train_'+station+'_'+contaminant;
     # Create graph session
     sess= tf.Session();
@@ -40,7 +40,7 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
     def fully_connected(input_layer,weight,biases):
         with tf.device("/gpu:0"):
             layer = tf.add(tf.matmul(input_layer,weight), biases);
-            return tf.nn.sigmoid(layer);           
+            return tf.nn.sigmoid(layer);
 
     #--------Create the first layer (size hidden nodes)--------
     # TODO ya recibe todas las columnas en la primera capa
@@ -94,6 +94,7 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant):
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
 
-    saver.save(sess,'trainData/unionGeo/TrainCC/'+station+'/'+name+'.ckpt')
+    saver.save(sess,dirTrain+station+'/'+name+'.ckpt')
     sess.close()
     #return total_loss;
+

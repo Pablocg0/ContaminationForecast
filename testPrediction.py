@@ -14,36 +14,33 @@ from time import time
 
 contaminant = 'O3';
 loss_vec= [];
-est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
-startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/10'];
-#est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
-#startDate =['2015/01/01','2015/01/01','2014/08/01','2012/02/20','2012/02/20','2011/10/01','2011/07/27','2011/07/01','2011/07/01','2011/07/01','2007/07/20','2007/07/20','1995/01/01','1995/01/01','1994/01/02','1993/01/01','1987/05/31','1986/01/16','1986/01/16','1986/01/15','1986/01/12','1986/01/10'];
-dirrDataC = 'data/DatosCP/';
-dirData  = 'data/DatosLP/';
-dirGraficas = 'Graficas/Predicciones/GraficasLP/'
 metri = [];
 
 
 
-def totalPredection(est):
+def totalPredection(est,dirData,dirrDataC,dirGraficas,dirTrain):
     for x in est:
        print(x);
-       trial(x);
+       trial(x,dirData,dirrDataC,dirGraficas,dirTrain);
 
 def totalPredectionNoNorm():
     for x in est:
        print(x);
        trialNoNormalized(x);
 
-def trial(station):
+def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     sta = station
     name = sta +'_'+contaminant;
     temp = df.read_csv(dirrDataC + name+'.csv'); #we load the data in the Variable data
+    temp = temp.fillna(value=-1.0)
     data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    data = data.reset_index(drop=True)
     data = filterData(data,dirData+name+'.csv');
     tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
+    tempBuild = tempBuild.fillna(value = -1.0)
     build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
-    build = build.fillna(value=-1);
+    build = build.reset_index(drop=True);
+    build = build.fillna(value=-1-0);
     l = xlabel(data)
     labels=l[0];
     location =l[1];
@@ -54,26 +51,27 @@ def trial(station):
     for x in index:
         pred = data.ix[x].values
         valPred = pred[1:];
-        valNorm= pre.normalize(valPred,sta,contaminant);
+        valNorm= pre.normalize(valPred,sta,contaminant,dirData);
         arrayPred.append(convert(valNorm));
-    result = pre.prediction(sta,contaminant,arrayPred);
-    real = desNorm(result,sta,contaminant);
+    result = pre.prediction(sta,contaminant,arrayPred,dirTrain,dirData);
+    real = desNorm(result,sta,contaminant,dirData);
     metri.append(metricas(inf,real,station));
-    plt.figure(figsize=(15.2,9.4))
+    plt.figure(figsize=(22.2,11.4))
     plt.plot(inf,'g-', label='Valor observado.');
     plt.plot(real, 'r--',label='Pronostico 24h NN.');
-    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal');
-    plt.xlabel('Fecha');
-    plt.ylabel('Partes por millon (PPM)');
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2016)',fontsize=20);
+    plt.xlabel('Fecha',fontsize= 11);
+    plt.ylabel('Partes por millon (PPM)',fontsize=11);
     plt.legend(loc ='best');
     #plt.xticks(location,labels,fontsize=8,rotation=80);
-    plt.xticks(location,labels,fontsize=9,rotation=80);
+    plt.xticks(location,labels,fontsize=11);
     #plt.xlim(0,600)
-    plt.savefig(dirGraficas+station+ '.png');
+    plt.savefig(dirGraficas+station+ '.png');  
     plt.show();
     plt.clf();
     plt.close()
-    gError(inf,real,location,labels,station)
+    gError(inf,real,location,labels,station,dirGraficas)
+    graSubPlot(inf,real,station,location,dirGraficas,labels)
 
 
 def filterData(data, dirData):
@@ -82,25 +80,44 @@ def filterData(data, dirData):
     data = data.loc[:,listColumns];
     return data;
 
-def gError(real,pred,location,labels,station):
+def gError(real,pred,location,labels,station,dirGraficas):
     valError = [];
     tam = len(real);
     for i in range(tam):
         ve = abs(real[i] - pred[i]);
         valError.append(ve);
-    plt.figure(figsize=(12.2,6.4));
+    plt.figure(figsize=(22.2,11.4))
     plt.plot(valError, 'r-',label='Error');
-    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')');
-    plt.xlabel('Fecha');
+    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2016)',fontsize=20);
+    plt.xlabel('Fecha',fontsize=11);
     plt.ylabel('Error');
     plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=9);
+    plt.xticks(location,labels,fontsize=11);
     plt.savefig(dirGraficas+station+ '_Error.png');
     plt.show();
     plt.clf();
     plt.close()
 
-def saveMetric():
+def graSubPlot(obs,calcu,station,location,dirGraficas,labels):
+    plt.figure(figsize=(22.2,11.4))
+    plt.subplot(2, 1, 1)
+    plt.plot(obs, 'g-', label='Valor observado.')
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2016)',fontsize=20);
+    plt.ylabel('Partes por millon (PPM)',fontsize=11);
+    plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=11);
+    plt.subplot(2, 1, 2)
+    plt.plot(calcu, 'r--',label='Pronostico 24h NN.');
+    plt.xlabel('Fecha', fontsize=15);
+    plt.ylabel('Partes por millon (PPM)',fontsize=11);
+    plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=11);
+    plt.savefig(dirGraficas+station+ '_scatter.png');
+    plt.show();
+    plt.clf();
+    plt.close()
+
+def saveMetric(dirGraficas):
     nameCol = ['MAPE','uTheils','IndiceCorrelacion','agreement']
     dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion','agreement']);
     dataMet.to_csv(dirGraficas+'Metricas.csv',encoding = 'utf-8',index=False);
@@ -222,7 +239,8 @@ def xlabel(data):
     for x in dates:
         d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
         if d.hour == 0 and  d.month == m:
-            f = str(d.year) +'/'+ deMonth(d.month)+'/'+str(d.day);
+            #f = str(d.year) +'/'+ deMonth(d.month)+'/'+str(d.day);
+            f = deMonth(d.month);
             fechas.append(f);
             location.append(i);
             m +=1;
@@ -240,13 +258,14 @@ def convert(data):
         i+=1;
     return vl
 
-def desNorm(data,station,contaminant):
+def desNorm(data,station,contaminant,dirData):
     real=[];
     #mini = min(data);
     #maxi = max(data);
     #print(mini)
     #print(maxi)
-    nameC = 'cont_otres_'+station.lower();
+    #nameC = 'cont_otres_'+station.lower();
+    nameC= 'cont_otres'
     name = station+'_'+contaminant;
     values = df.read_csv(dirData+name+'_MaxMin.csv');
     index = values.columns[0];
@@ -317,13 +336,13 @@ def obtMax(station,contaminant):
     return maxx;
 
 
-est1 =['CHO']
-est2 =['BJU']
-#desNorm(est[1],contaminant);
-#trial();
-totalPredection(est);
-totalPredection(est1);
-totalPredection(est2);
-saveMetric();
-#totalPredectionNoNorm();
-#trialAllData();
+
+def init(dirData,dirrDataC,dirGraficas,dirTrain):
+    est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
+    est1 =['CHO']
+    est2 =['BJU']
+    totalPredection(est,dirData,dirrDataC,dirGraficas,dirTrain);
+    totalPredection(est1,dirData,dirrDataC,dirGraficas,dirTrain);
+    totalPredection(est2,dirData,dirrDataC,dirGraficas,dirTrain);
+    saveMetric(dirGraficas);
+
