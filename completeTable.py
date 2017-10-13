@@ -7,26 +7,29 @@ est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC','
 estComplete = ['UAX','CUA','ATI','UIZ','MER','PED','TLA','XAL'];
 dirDataComp = ['data/DatosCP/','data/DatosLP/','data/DatosCC/','data/DatosLC/'];
 #dirDataSave = ['data/DatosCPM/','data/DatosLPM/','data/DatosCCM/','data/DatosLCM/'];
-#dirDataSave = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
-dirDataSave = ['data/unionGeo/DatosCC/','data/unionGeo/DatosLC/','data/unionGeo/DatosCP/','data/unionGeo/DatosLP/'];
+dirDataSave = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
+#dirDataSave = ['data/unionGeo/DatosCC/','data/unionGeo/DatosLC/','data/unionGeo/DatosCP/','data/unionGeo/DatosLP/'];
 dirDataMet = 'data/DatosCM/';
 contaminant = 'O3';
 
 
 def originDir():
     for x in range(len(dirDataComp)):
-        unionGeo(dirDataComp[x],dirDataSave[x]);
+        bootstrap(dirDataComp[x],dirDataSave[x]);
 
 def unionData(origin,save):
+    print(origin)
     for value in est:
         dirData = origin + value + '_'+ contaminant+'.csv';
         data = df.read_csv(dirData);
         for xs in estComplete:
+            print(xs)
             dirSave = save + value + '_'+ contaminant+'.csv';
-            dirComple = dirDataMet + xs + '_' + contaminant+'.csv';
+            dirComple = origin + xs + '_' + contaminant+'.csv';
             dataC = df.read_csv(dirComple);
             dataC = dataC.drop(['weekday','sinWeekday','year','month','sinMonth','day','sinDay','valLab'],axis=1);
             data = data.merge(dataC,how='left',on='fecha');
+        data = data.fillna(value=-1)
         maxAndMinValues(data,value,contaminant,save)
         shutil.copy(origin+value + '_'+ contaminant+'_pred.csv',save+value + '_'+ contaminant+'_pred.csv');
         data.to_csv(dirSave,encoding = 'utf-8',index=False);
@@ -58,6 +61,8 @@ def maxAndMinValues(data,station,contaminant,save):
     x_vals= x_vals[:,1:columns];
     minx = x_vals.min(axis=0)
     maxx = x_vals.max(axis=0);
+    print(minx);
+    print(maxx);
     mixmax = df.DataFrame(minx , columns = ['MIN'],index = myIndex);
     dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;
@@ -325,7 +330,7 @@ def createFile():
             r = dirTrain[val]+est[i];
             if not os.path.exists(r): os.makedirs(r);
 
-createFile();
+#createFile();
 #bootstrap('data/','data/')
 originDir();
 #unionGeo();

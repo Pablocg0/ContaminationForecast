@@ -2,11 +2,8 @@ import numpy as np
 import tensorflow as tf
 import pandas as df
 
-dirData = 'data/DatosLP/'
-dirTrain = 'trainData/TrainLP/'
 
-
-def normalize(data,station,contaminant):
+def normalize(data,station,contaminant,dirData):
     """
     Function to normalize an array of values with the minimum and the maximun that has been save in a .cvs fileName
     :param data: data to normalize
@@ -30,7 +27,7 @@ def normalize(data,station,contaminant):
                 norm = 0.0;
             else:
                 norm = (x-mi)/(m-mi);
-        valNorm.append(norm);
+        valNorm.append(float(norm));
         i+=1;
     return valNorm;
 
@@ -59,7 +56,7 @@ def fully_connected(input_layer,weight,biases):
     layer = tf.add(tf.matmul(input_layer,weight), biases);
     return tf.nn.sigmoid(layer);
 
-def prediction(station,contaminant,arrayPred):
+def prediction(station,contaminant,arrayPred,dirTrain,dirData):
     """
     Function to obtain a prediction of a neural network that has
     already been trained previously
@@ -113,3 +110,4 @@ def prediction(station,contaminant,arrayPred):
             result.append(r[0,0])
         sess.close();
         return result
+
