@@ -7,13 +7,16 @@ train = ['trainData/TrainCC/','trainData/TrainCP/','trainData/TrainLP/','trainDa
 graficas = ['Graficas/Predicciones/GraficasCC/','Graficas/Predicciones/GraficasCP/','Graficas/Predicciones/GraficasLP/','Graficas/Predicciones/GraficasCP/','Graficas/Predicciones/GraficasCPR/','Graficas/Predicciones/GraficasLPR/','Graficas/Predicciones/GraficasCCR/','Graficas/Predicciones/GraficasLCR/','Graficas/Predicciones/GraficasCPB/','Graficas/Predicciones/GraficasLPB/','Graficas/Predicciones/GraficasCCB/','Graficas/Predicciones/GraficasLCB/','Graficas/Predicciones/GraficasLC16/']
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 
-tp.init(datos[12],datosComp[12],graficas[12],train[12])
+op = 1;
+numEs = 11;
 
-#for i in range(len(datos)):
-#    print(datos[i])
-est1 =['CHO']
-est2 =['BJU']
-#au.trainNeuralNetworks(est,datos[12],train[12]);
-#au.trainNeuralNetworks(est1,datos[12],train[12]);
-#au.trainNeuralNetworks(est2,datos[12],train[12]);
- #   tp.init(datos[i],datosComp[i],graficas[i],train[i]);
+if op == 1:
+    tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
+    #tp.init(datos[numEs],datosComp[numEs],graficas[numEs],train[numEs])
+elif op == 2:
+    est1 =['CHO']
+    est2 =['BJU']
+    au.trainNeuralNetworks(est,datos[numEs],train[numEs]);
+    au.trainNeuralNetworks(est1,datos[numEs],train[numEs]);
+    au.trainNeuralNetworks(est2,datos[numEs],train[numEs]);
+
