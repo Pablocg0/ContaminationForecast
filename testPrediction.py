@@ -33,12 +33,12 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     name = sta +'_'+contaminant;
     temp = df.read_csv(dirrDataC + name+'.csv'); #we load the data in the Variable data
     temp = temp.fillna(value=-1.0)
-    data =temp[(temp['fecha']<= '2016/01/01') & (temp['fecha']>= '2015/12/31')];
+    data =temp[(temp['fecha']<= '2017/01/01') & (temp['fecha']>= '2016/12/31')];
     data = data.reset_index(drop=True)
     data = filterData(data,dirData+name+'.csv');
     tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
     tempBuild = tempBuild.fillna(value = -1.0)
-    build = tempBuild[(tempBuild['fecha']<= '2016/01/01') & (tempBuild['fecha']>= '2015/12/31')];
+    build = tempBuild[(tempBuild['fecha']<= '2017/01/01') & (tempBuild['fecha']>= '2016/12/31')];
     build = build.reset_index(drop=True);
     build = build.fillna(value=-1-0);
     l = xlabel(data)
@@ -59,7 +59,7 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     plt.figure(figsize=(22.2,11.4))
     plt.plot(inf,'g-', label='Valor observado.');
     plt.plot(real, 'r--',label='Pronostico 24h NN.');
-    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2016)',fontsize=20);
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=20);
     plt.xlabel('Fecha',fontsize= 11);
     plt.ylabel('Partes por millon (PPM)',fontsize=11);
     plt.legend(loc ='best');
@@ -88,7 +88,7 @@ def gError(real,pred,location,labels,station,dirGraficas):
         valError.append(ve);
     plt.figure(figsize=(22.2,11.4))
     plt.plot(valError, 'r-',label='Error');
-    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2016)',fontsize=20);
+    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2017)',fontsize=20);
     plt.xlabel('Fecha',fontsize=11);
     plt.ylabel('Error');
     plt.legend(loc ='best');
@@ -102,7 +102,7 @@ def graSubPlot(obs,calcu,station,location,dirGraficas,labels):
     plt.figure(figsize=(22.2,11.4))
     plt.subplot(2, 1, 1)
     plt.plot(obs, 'g-', label='Valor observado.')
-    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2016)',fontsize=20);
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=20);
     plt.ylabel('Partes por millon (PPM)',fontsize=11);
     plt.legend(loc ='best');
     plt.xticks(location,labels,fontsize=11);
@@ -235,7 +235,7 @@ def xlabel(data):
     location=[];
     dates = data['fecha'];
     i =0;
-    m = 1;
+    m = 5;
     for x in dates:
         d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
         if d.hour == 0 and  d.month == m:
@@ -264,8 +264,8 @@ def desNorm(data,station,contaminant,dirData):
     #maxi = max(data);
     #print(mini)
     #print(maxi)
-    #nameC = 'cont_otres_'+station.lower();
-    nameC= 'cont_otres'
+    nameC = 'cont_otres_'+station.lower();
+    #nameC= 'cont_otres'
     name = station+'_'+contaminant;
     values = df.read_csv(dirData+name+'_MaxMin.csv');
     index = values.columns[0];
