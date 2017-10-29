@@ -61,8 +61,6 @@ def maxAndMinValues(data,station,contaminant,save):
     x_vals= x_vals[:,1:columns];
     minx = x_vals.min(axis=0)
     maxx = x_vals.max(axis=0);
-    print(minx);
-    print(maxx);
     mixmax = df.DataFrame(minx , columns = ['MIN'],index = myIndex);
     dMax = df.DataFrame(maxx, columns= ['MAX'],index=myIndex);
     mixmax['MAX']= dMax;

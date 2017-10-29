@@ -4,7 +4,11 @@ import numpy as np
 def mape(real,obs):
     #real = np.array(real);
     #obs = np.array(obs);
-    return np.mean(np.abs((obs -  real)/ obs)) * (100/len(real));
+    #err = np.mean(np.abs((obs -  real)/ obs)) * 100;
+    err = np.sum(np.abs((obs -  real)/ np.abs(obs)));
+    print(err)
+    print(len(real))
+    return  err*(100/len(real));
 
 def uTheils(real, obs):
     n = len(real)

@@ -82,10 +82,12 @@ def filterData(data, dirData):
 
 def gError(real,pred,location,labels,station,dirGraficas):
     valError = [];
+    suma = 0; 
     tam = len(real);
     for i in range(tam):
         ve = abs(real[i] - pred[i]);
         valError.append(ve);
+    mape = (suma/len(real)) *100
     plt.figure(figsize=(22.2,11.4))
     plt.plot(valError, 'r-',label='Error');
     plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2017)',fontsize=20);
@@ -235,7 +237,8 @@ def xlabel(data):
     location=[];
     dates = data['fecha'];
     i =0;
-    m = 5;
+    one =datetime.strptime(dates[0],'%Y-%m-%d %H:%M:%S')
+    m = one.month;
     for x in dates:
         d =datetime.strptime(x,'%Y-%m-%d %H:%M:%S')
         if d.hour == 0 and  d.month == m:

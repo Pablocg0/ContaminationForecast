@@ -9,9 +9,9 @@ import numpy as np
 
 
 contaminant = 'O3';
-endDate = '2016/12/31';
-dirr = 'data/DatosLC16/'
-dirTotal ='data/totalData/totalC16/'
+endDate = '2017/12/31';
+dirr = 'data/DatosCP/'
+dirTotal ='data/totalData/totalProm/'
 
 
 def saveData(listEstations,startDate):
@@ -124,15 +124,17 @@ def allSaveData():
     """
     nameD = 'allData'+'_'+contaminant+'.csv';
     nameB = 'allData'+'_'+contaminant+'_pred.csv';
-    data = fd.readData(startDate[0],endDate,est,contaminant);
+    data = fd.readData(startDate[11],endDate,est,contaminant);
     build = fd.buildClass2(data,[est[0]],contaminant,24,startDate[0],endDate);
+    data = data.fillna(value = -1)
     print('listo')
     dataTemp = separateDate(data);
+    dataTemp = unionData(dataTemp);
     maxAndMinValues(dataTemp,'allData',contaminant)
     data = dataTemp;
-    print('listo2')
-    data.to_csv('data/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
-    build.to_csv('data/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
+    print(data)
+    data.to_csv('data/allData/'+nameD,encoding = 'utf-8',index=False);# save the data in file "data/[station_contaminant].csv"
+    build.to_csv('data/allData/'+nameB,encoding = 'utf-8', index=False);# save the data in file "data/[station_contaminant_pred].csv]
 
 
 def maxAndMinValues(data,station,contaminant):
@@ -187,7 +189,7 @@ def separateDate(data):
         sinWday[i]=wD[1];
         years[i] = d.year;
         #sinYears[i]= np.sin(d.year);
-        months[i] = d.month
+        months[i] = d.month;
         sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
         days[i] = d.day
         sinDays[i]= (1+np.sin(((d.day-1)/23)*(2*np.pi)))/2

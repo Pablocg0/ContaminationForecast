@@ -24,19 +24,19 @@ def information():
         column = data.columns
         columnas.append(len(column));
         inde = data.index;
-        numIndex.append(len(inde));
+        numIndex.append(len(inde)*len(column));
     info = df.DataFrame(est, columns=['estacion']);
     cAnio = df.DataFrame(anio,columns=['anio']);
     cColum =df.DataFrame(columnas,columns=['columnas']);
-    cIndex = df.DataFrame(numIndex,columns=['renglones']);
+    cIndex = df.DataFrame(numIndex,columns=['NumDatos']);
     info['anio'] = cAnio;
     info['columnas']= cColum;
-    info['renglones']= cIndex;
+    info['NumDatos']= cIndex;
     info.groupby('estacion').mean().loc[:,['anio','columnas']].plot(kind='bar', colormap='winter',figsize=(12.2,6.4),title='Numero de años y columnas con las que se entrena cada estacion.');
     plt.savefig("../Graficas/Informacion/estAnios.png", dpi=600);
     plt.show()
     plt.close()
-    info.groupby('estacion').mean().loc[:,['renglones']].plot(kind='bar', colormap='winter',figsize=(12.2,6.4), title ='Numero renglones que tiene cada estacion');
+    info.groupby('estacion').mean().loc[:,['NumDatos']].plot(kind='bar', colormap='winter',figsize=(12.2,6.4), title ='Numero renglones que tiene cada estacion');
     plt.savefig("../Graficas/Informacion/estReng.png", dpi=600);
     plt.show()
     plt.close()

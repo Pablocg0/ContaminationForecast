@@ -37,34 +37,34 @@ def conver1D(array):
 
 
 def divData(data):
-    total  = np.zeros((0,16),dtype=np.float32);
+    total  = np.zeros((0,4),dtype=np.float32);
     for i in range(24):
         dataValue = data[i];
         array1D = [];
-        # size = dataValue.shape;
-        # numRows = int(size[0]/2);
-        # numColumns = int(size[1]/2);
-        # dataSecc1 = dataValue[0:numRows,0:numColumns]
-        # dataSecc2 = dataValue[numRows:,0:numColumns]
-        # dataSecc3 = dataValue[0:numRows,numColumns:]
-        # dataSecc4 = dataValue[numRows:,numColumns:]
-        # prom1 = dataSecc1.sum()/(numColumns*numRows);
-        # prom2 = dataSecc2.sum()/(numColumns*numRows);
-        # prom3 = dataSecc3.sum()/(numColumns*numRows);
-        # prom4 = dataSecc4.sum()/(numColumns*numRows) ;
-        # array1D.append(prom1)
-        # array1D.append(prom2)
-        # array1D.append(prom3)
-        # array1D.append(prom4)
-        div= np.vsplit(dataValue,2);
-        divSplit = np.array_split(div[0],8);
-        divSplit1 = np.array_split(div[1],8);
-        for val in divSplit:
-            meanVal = np.mean(val);
-            array1D.append(meanVal);
-        for val in divSplit1:
-            meanVal = np.mean(val);
-            array1D.append(meanVal)
+        size = dataValue.shape;
+        numRows = int(size[0]/2);
+        numColumns = int(size[1]/2);
+        dataSecc1 = dataValue[0:numRows,0:numColumns]
+        dataSecc2 = dataValue[numRows:,0:numColumns]
+        dataSecc3 = dataValue[0:numRows,numColumns:]
+        dataSecc4 = dataValue[numRows:,numColumns:]
+        prom1 = dataSecc1.sum()/(numColumns*numRows);
+        prom2 = dataSecc2.sum()/(numColumns*numRows);
+        prom3 = dataSecc3.sum()/(numColumns*numRows);
+        prom4 = dataSecc4.sum()/(numColumns*numRows) ;
+        array1D.append(prom1)
+        array1D.append(prom2)
+        array1D.append(prom3)
+        array1D.append(prom4)
+        #div= np.vsplit(dataValue,2);
+        #divSplit = np.array_split(div[0],8);
+        #divSplit1 = np.array_split(div[1],8);
+        #for val in divSplit:
+        #    meanVal = np.mean(val);
+        #    array1D.append(meanVal);
+        #for val in divSplit1:
+        #    meanVal = np.mean(val);
+        #    array1D.append(meanVal)
         total = np.insert(total,i,array1D,axis=0);
     return total;
 
@@ -172,7 +172,7 @@ def saveData(var,variables,date,opt):
         filq = '/home/pablo/DATA/DataMean/'+name
         dateVal.to_csv(filq,encoding = 'utf-8',index=False);
     elif opt == 2:
-        filq = '/home/pablo/DATA/'+name
+        filq = '/home/pablo/DATA/DataCuadrantes'+name
         allData.to_csv(filq,encoding = 'utf-8',index=False);
 
 
@@ -185,7 +185,7 @@ def readCsv(variables):
    # os.makedirs('../data/totalData/');
     dataVa = df.DataFrame();
     variables = variables;
-    mypath = '/home/pablo/DATA/DataC16/';
+    mypath = '/home/pablo/DATA/DataCuadrantes/';
     patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d'+'.*');
     for base, dirs, filess in os.walk(mypath,topdown=False):
         for value in filess:
@@ -194,7 +194,7 @@ def readCsv(variables):
                 dataVa = concat([tempData,dataVa],axis=0);
     dataVa = dataVa.reset_index();
     dataVa= dataVa.drop(labels='index',axis=1);
-    dataVa.to_csv('../data/totalData/totalC16/'+variables+'_total.csv',encoding='utf-8',index=False);
+    dataVa.to_csv('../data/totalData/totalCuadrantes/'+variables+'_total.csv',encoding='utf-8',index=False);
     dataVa = df.DataFrame();
 
 
@@ -277,7 +277,7 @@ def readFiles(opt):
 
 def totalFiles():
     dirr = '../data/NetCDF/';
-    dirr2 = '/DATA/WRF/';
+    dirr2 = '/DATA/WRF/2017/';
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
@@ -353,7 +353,7 @@ def checkFile(net,name,date,opt):
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
 #totalFiles();
-#readFiles(0);
+readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
