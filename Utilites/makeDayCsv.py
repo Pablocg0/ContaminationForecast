@@ -88,4 +88,28 @@ def makeDates(anio):
     listDates.pop();
     return listDates;
 
-readCsv();
+def make18():
+    data = df.read_csv('../data/Festivos.csv');
+    fecha = makeDates('2018');
+    f = df.DataFrame(fecha, columns=['fecha']);
+    zeros = np.zeros(len(f.index));
+    dZ = df.DataFrame(zeros, columns = ['valLab']);
+    f['valLab'] = dZ;
+    festivosOficiales =['01-01','01-06','02-05','03-19','04-01','05-01','09-16','11-19','12-01','12-25']
+    for  i in festivosOficiales:
+        temp = f[(f.fecha >= '2018-'+i+' 00:00:00') & (f.fecha <= '2018-'+i+' 23:00:00')]
+        f.loc[temp.index,'valLab'] = 1
+    vac = f[(f.fecha >= '2018-01-02 00:00:00') & (f.fecha <= '2018-01-05 23:00:00')]
+    f.loc[vac.index,'valLab'] = 2
+    vac = f[(f.fecha >= '2018-03-26 00:00:00') & (f.fecha <= '2018-04-06 23:00:00')]
+    f.loc[vac.index,'valLab'] = 2
+    vac = f[(f.fecha >= '2018-06-25 00:00:00') & (f.fecha <= '2018-08-23 23:00:00')]
+    f.loc[vac.index,'valLab'] = 2
+    vac = f[(f.fecha >= '2018-12-24 00:00:00') & (f.fecha <= '2018-12-31 23:00:00')]
+    f.loc[vac.index,'valLab'] = 2
+    dataC = df.concat([data,f])
+    dataC = dataC.reset_index(drop=True);
+    dataC.to_csv('../data/Festivos.csv', encoding='utf-8');
+
+make18();
+#readCsv();
