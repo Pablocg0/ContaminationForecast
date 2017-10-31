@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as df
@@ -30,14 +32,11 @@ def readCsv(dirr, dirrData):
     correlacion = dataMet['IndiceCorrelacion'].values;
     est = dataMet['estacion'];
     for x in est:
-        temp = df.read_csv(dirrData + x + '_03.csv')
+        temp = df.read_csv(dirrData + x + '_O3.csv')
         columns.append(len(temp.index));
-    print(est)
-    print(correlacion)
-    print(columns)
-    fig, ax1 = plt.subplots()
-    fig.figure(figsize=(22.2,11.4));
+    fig, ax1 = plt.subplots(figsize=(22.2,11.4));
     t = np.arange(22)
+    plt.title('Comparacion de numero de datos vs el indice de correlacion.',fontsize= 25)
     ax1.bar(t,columns,0.35,color='r');
     ax1.set_xlabel('Estaciones');
     #plt.xticks(t+ 0.35 / 2, ('AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'));
@@ -49,7 +48,7 @@ def readCsv(dirr, dirrData):
     ax2.set_ylabel('Indice de correlacion', color='b')
     ax2.tick_params('y', colors='b')
     fig.tight_layout()
-    plt.savefig(dirr+'correlacionVsDatos.png');
+    plt.savefig('Graficas/Predicciones/correlacionCC.png');
     plt.show()
 
 
