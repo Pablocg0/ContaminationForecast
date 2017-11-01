@@ -109,7 +109,7 @@ def make18():
     f.loc[vac.index,'valLab'] = 2
     dataC = df.concat([data,f])
     dataC = dataC.reset_index(drop=True);
-    dataC.to_csv('../data/Festivos.csv', encoding='utf-8');
+    dataC.to_csv('../data/Festivos.csv', encoding='utf-8',index=False);
 
 make18();
 #readCsv();

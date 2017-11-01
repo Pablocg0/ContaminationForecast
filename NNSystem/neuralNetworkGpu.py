@@ -68,8 +68,8 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant,dirTrain):
 
     # Declare optimizer gradientDescent
     with tf.device("/gpu:0"):
-        my_opt = tf.train.GradientDescentOptimizer(0.1);
-        #my_opt = tf.train.AdamOptimizer(0.001);
+        #my_opt = tf.train.GradientDescentOptimizer(0.1);
+        my_opt = tf.train.AdamOptimizer(0.001);
         train_step = my_opt.minimize(loss);
 
     # Initialize Variables
