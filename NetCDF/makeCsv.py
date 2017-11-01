@@ -38,7 +38,7 @@ def conver1D(array):
 
 def divData(data):
     total  = np.zeros((0,4),dtype=np.float32);
-    for i in range(24):
+    for i in range(48):
         dataValue = data[i];
         array1D = [];
         size = dataValue.shape;
@@ -84,7 +84,7 @@ def makeDates(date):
     date = date + ' 00:00:00';
     d =datetime.strptime(date,'%Y-%m-%d %H:%M:%S');
     listDates.append(d);
-    for x in range(23):
+    for x in range(47):
         d = d + timedelta(hours=1);
         listDates.append(d);
     allData = df.DataFrame(listDates,columns=['fecha']);
@@ -277,7 +277,7 @@ def readFiles(opt):
 
 def totalFiles():
     dirr = '../data/NetCDF/';
-    dirr2 = '/DATA/WRF/2017/';
+    dirr2 = '/DATA/WRF/';
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
@@ -352,7 +352,7 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-#totalFiles();
+totalFiles();
 readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
