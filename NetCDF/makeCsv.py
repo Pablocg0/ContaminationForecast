@@ -191,12 +191,38 @@ def readCsv(variables):
         for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath+value);
+                tempData = completeMet(tempData);
                 dataVa = concat([tempData,dataVa],axis=0);
     dataVa = dataVa.reset_index();
     dataVa= dataVa.drop(labels='index',axis=1);
     dataVa.to_csv('../data/totalData/totalCuadrantes/'+variables+'_total.csv',encoding='utf-8',index=False);
     dataVa = df.DataFrame();
 
+
+def completeMet(data):
+    """
+    :param data: meteorology data
+    :type data: DataFrame
+    """
+    fechaOri = []
+    newData= df.DataFrame([],columns= data.columns)
+    nameColumns = data.columns.values
+    nameColumns = nameColumns[1:]
+    fecha  = data['fecha'].values
+    for i in range(24):
+        f = fecha[i]
+        fechaOri.append(f);
+        dateInit = datetime.strptime(f,'%Y-%m-%d %H:%M:%S');
+        da = dateInit + timedelta(hours = 24)
+        ti = da.strftime('%Y-%m-%d %H:%M:%S');
+        temp = data[data.fecha == ti]
+        dtemp = data.loc[temp.index,nameColumns]
+        newData= df.concat([newData,dtemp])
+    newData= newData.drop(labels='fecha',axis=1)
+    newData = newData.reset_index(drop=True);
+    fechas = df.DataFrame(fechaOri,columns=['fecha']);
+    newData['fecha']= fechas;
+    return newData;
 
 def open_netcdf(ls,nameFile,cadena):
     name ='.nc.tar.gz';
