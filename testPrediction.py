@@ -58,7 +58,7 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     real = desNorm(result,sta,contaminant,dirData);
     metri.append(metricas(inf,real,station));
     plt.figure(figsize=(22.2,11.4))
-    plt.plot(inf,'g--', label='Valor observado.');
+    plt.plot(inf,'go-', label='Valor observado.');
     plt.plot(real, 'ro-',label='Pronostico 24h NN.');
     plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=20);
     plt.xlabel('Fecha',fontsize= 11);
