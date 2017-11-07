@@ -9,8 +9,8 @@ graficas = ['Graficas/Predicciones/GraficasCC/','Graficas/Predicciones/GraficasC
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 
 op = 1
-numEs=1;
-numE =1;
+numEs=0;
+numE =0;
 print(datos[numEs]);
 if op == 1:
     #tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
