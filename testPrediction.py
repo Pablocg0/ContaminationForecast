@@ -26,7 +26,7 @@ def totalPredection(est,dirData,dirrDataC,dirGraficas,dirTrain):
 def totalPredectionNoNorm():
     for x in est:
        print(x);
-       trialNoNormalized(x);
+       trialNoNormalized(x);  
 
 def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     sta = station
@@ -36,11 +36,12 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     data =temp[(temp['fecha']<= '2017/01/01') & (temp['fecha']>= '2016/12/31')];
     data = data.reset_index(drop=True)
     data = filterData(data,dirData+name+'.csv');
+    data = data.fillna(value=-1.0)
     tempBuild = df.read_csv(dirrDataC+name+'_pred.csv'); #we load the data in the Variable build
     tempBuild = tempBuild.fillna(value = -1.0)
     build = tempBuild[(tempBuild['fecha']<= '2017/01/01') & (tempBuild['fecha']>= '2016/12/31')];
     build = build.reset_index(drop=True);
-    build = build.fillna(value=-1-0);
+    build = build.fillna(value=-1.0);
     l = xlabel(data)
     labels=l[0];
     location =l[1];
@@ -57,8 +58,8 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     real = desNorm(result,sta,contaminant,dirData);
     metri.append(metricas(inf,real,station));
     plt.figure(figsize=(22.2,11.4))
-    plt.plot(inf,'g-', label='Valor observado.');
-    plt.plot(real, 'r--',label='Pronostico 24h NN.');
+    plt.plot(inf,'g--', label='Valor observado.');
+    plt.plot(real, 'ro-',label='Pronostico 24h NN.');
     plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=20);
     plt.xlabel('Fecha',fontsize= 11);
     plt.ylabel('Partes por millon (PPM)',fontsize=11);

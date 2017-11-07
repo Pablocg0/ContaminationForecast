@@ -8,8 +8,8 @@ train = ['trainData/TrainCC/','trainData/TrainCP/','trainData/TrainLP/','trainDa
 graficas = ['Graficas/Predicciones/GraficasCC/','Graficas/Predicciones/GraficasCP/','Graficas/Predicciones/GraficasLP/','Graficas/Predicciones/GraficasLC/','Graficas/Predicciones/GraficasCPR/','Graficas/Predicciones/GraficasLPR/','Graficas/Predicciones/GraficasCCR/','Graficas/Predicciones/GraficasLCR/','Graficas/Predicciones/GraficasCPB/','Graficas/Predicciones/GraficasLPB/','Graficas/Predicciones/GraficasCCB/','Graficas/Predicciones/GraficasLCB/','Graficas/Predicciones/GraficasGCM/']
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 
-op = 1;
-numEs=11;
+op = 1
+numEs=3;
 numE =3;
 print(datos[numEs]);
 if op == 1:

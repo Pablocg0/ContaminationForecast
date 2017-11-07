@@ -10,8 +10,8 @@ import numpy as np
 
 contaminant = 'O3';
 endDate = '2017/12/31';
-dirr = 'data/DatosCP/'
-dirTotal ='data/totalData/totalProm/'
+dirr = 'data/DatosCC/'
+dirTotal ='data/totalData/totalCuadrantes/'
 
 
 def saveData(listEstations,startDate):
