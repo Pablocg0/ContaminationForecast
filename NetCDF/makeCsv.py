@@ -303,7 +303,7 @@ def readFiles(opt):
 
 def totalFiles():
     dirr = '../data/NetCDF/';
-    dirr2 = '/DATA/WRF/';
+    dirr2 = '/DATA/WRF_Operativo/2017/';
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
@@ -322,7 +322,7 @@ def totalFiles():
 
 
 def readFiles2(opt):
-    dirr = '/DATA/WRF/';
+    dirr = '/DATA/WRF_Operativo/2017/';
     name='wrfout_d02_';
     date = '\d\d\d\d-\d\d-\d\d';
     patron = re.compile(name+'.*')
@@ -378,7 +378,7 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-totalFiles();
+#totalFiles();
 readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];

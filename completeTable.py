@@ -80,7 +80,6 @@ def bootstrap(origin,save):
         std = dataOzono.std(axis=0);
         dataBoot = data[data['cont_otres_'+value.lower()]>std]
         d = df.concat([data,dataBoot], axis =0);
-        print(len(d.index.tolist()));
         prediccion = df.DataFrame(d['fecha'],columns=['fecha']);
         valPred = df.DataFrame(d['cont_otres_'+value+'_delta'],columns=['cont_otres_'+value+'_delta']);
         prediccion['cont_otres_'+value+'_delta'] = valPred;
