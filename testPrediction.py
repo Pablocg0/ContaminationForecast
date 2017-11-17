@@ -26,7 +26,7 @@ def totalPredection(est,dirData,dirrDataC,dirGraficas,dirTrain):
 def totalPredectionNoNorm():
     for x in est:
        print(x);
-       trialNoNormalized(x);  
+       trialNoNormalized(x);
 
 def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     sta = station
@@ -67,7 +67,7 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     #plt.xticks(location,labels,fontsize=8,rotation=80);
     plt.xticks(location,labels,fontsize=11);
     #plt.xlim(0,600)
-    plt.savefig(dirGraficas+station+ '.png');  
+    plt.savefig(dirGraficas+station+ '.png');
     plt.show();
     plt.clf();
     plt.close()
@@ -83,7 +83,7 @@ def filterData(data, dirData):
 
 def gError(real,pred,location,labels,station,dirGraficas):
     valError = [];
-    suma = 0; 
+    suma = 0;
     tam = len(real);
     for i in range(tam):
         ve = abs(real[i] - pred[i]);
@@ -264,10 +264,6 @@ def convert(data):
 
 def desNorm(data,station,contaminant,dirData):
     real=[];
-    #mini = min(data);
-    #maxi = max(data);
-    #print(mini)
-    #print(maxi)
     nameC = 'cont_otres_'+station.lower();
     #nameC= 'cont_otres'
     name = station+'_'+contaminant;
@@ -276,8 +272,6 @@ def desNorm(data,station,contaminant,dirData):
     va = values[(values[index]==nameC)];
     maxx = va['MAX'].values[0];
     minn = va['MIN'].values[0];
-    #print(maxx)
-    #print(minn)
     for x in data:
         realVal = (x*(maxx-minn))+minn
         real.append(realVal);
@@ -349,4 +343,3 @@ def init(dirData,dirrDataC,dirGraficas,dirTrain):
     totalPredection(est1,dirData,dirrDataC,dirGraficas,dirTrain);
     totalPredection(est2,dirData,dirrDataC,dirGraficas,dirTrain);
     saveMetric(dirGraficas);
-
