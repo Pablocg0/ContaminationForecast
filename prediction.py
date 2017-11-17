@@ -32,6 +32,22 @@ def normalize(data,station,contaminant,dirData):
     return valNorm;
 
 
+    def desNorm(data,station,contaminant,dirData):
+        real=[];
+        nameC = 'cont_otres_'+station.lower();
+        #nameC= 'cont_otres'
+        name = station+'_'+contaminant;
+        values = df.read_csv(dirData+name+'_MaxMin.csv');
+        index = values.columns[0];
+        va = values[(values[index]==nameC)];
+        maxx = va['MAX'].values[0];
+        minn = va['MIN'].values[0];
+        for x in data:
+            realVal = (x*(maxx-minn))+minn
+            real.append(realVal);
+        return real;
+
+
 def init_weight(shape):
     """
     Function for the define Variable function weight
@@ -110,4 +126,3 @@ def prediction(station,contaminant,arrayPred,dirTrain,dirData):
             result.append(r[0,0])
         sess.close();
         return result
-
