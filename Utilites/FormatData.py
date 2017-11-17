@@ -106,7 +106,17 @@ class FormatData(object):
         build.dropna();
         return build.fillna(value=-1);
 
-
+    def saveData(estacion,fecha,Valor):
+        oztool = ContIOTools();
+        conexion = SqlCont();
+        conn = conexion.getPostgresConn();
+        cur= conn.cursor();
+        #conexion database
+        sql = """INSERT INTO forecast_otres(id, fecha, val,id_est) VALUES ({1},{2},{3})""".format(fecha,Valor,estacion);
+        cur.execute(sql);
+        conn.commit();
+        cur.close();
+        
 
     def buildClass2(allData,estation,contaminant,delta,startDate, endDate):
         oztool = ContIOTools();
