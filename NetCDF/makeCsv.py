@@ -172,7 +172,7 @@ def saveData(var,variables,date,opt):
         filq = '/home/pablo/DATA/DataMean/'+name
         dateVal.to_csv(filq,encoding = 'utf-8',index=False);
     elif opt == 2:
-        filq = '/home/pablo/DATA/DataCuadrantes'+name
+        filq = '/home/pablo/DATA/DataCuadrantes/'+name
         allData.to_csv(filq,encoding = 'utf-8',index=False);
 
 
