@@ -378,7 +378,7 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-#totalFiles();
+totalFiles();
 readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];

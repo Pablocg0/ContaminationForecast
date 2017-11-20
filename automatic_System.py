@@ -5,7 +5,7 @@ import sys, os
 import pandas as df
 import numpy as np
 import prediction as pre
-#from NetCDF.makeCsv import makeCsv as mk
+from NetCDF.makeCsv import makeCsv as mk
 
 dirNetCDF = '/DATA/WRF_Operativo/2017/'; #direccion de los archivos NetCDF
 #dirCsv = '/data/totalData/totalCuadrantes/';
@@ -13,6 +13,8 @@ dirCsv = '/home/pablo/DATA/DataCuadrantes/'; #direccion de los archivos creados 
 dirData= 'data/DatosLCB/'; #Direccion de datos de entrenamiento
 dirTrain = 'trainData/TrainLCB/'; #Direccion de entrenamiento de la red neuronal
 estaciones =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
+
 
 def configuracion():
     nameNetcdf = "wrfout_d02_"
@@ -24,16 +26,17 @@ def configuracion():
     return [actual,ayer,actualNetcdf,actualCsv,ayerCsv];
 
 def buscarArchivo(archivo):
-    for root, dir, ficheros in os.walk(dirNetCDF):
+    for root, dir, ficheros in os.walk(dirNetCDF,topdown=True):
         for i in ficheros:
-            if archivo in i.lower():
+            print(i)
+            if archivo in i:
                 return True;
-            else:
-                return False;
+    return False;
 
 
 def leerArchivo(informacion):
     if buscarArchivo(informacion[3]):
+        print(informacion[3]);
         fecha= str(informacion[0].year)+"-"+str(informacion[0].month)+"-"+str(informacion[0].day)
         dataMet = unionMeteorologia(fecha);
         for value in estaciones:
@@ -42,6 +45,8 @@ def leerArchivo(informacion):
             valPred = prediccion(value, data);
             guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2]) : #NetCDF
+        print(informacion[2]);
+        print("netcdf hoy")
         data = mk.open_netcdf(dirNetCDF+informacion[2],informacion[2],mk.clearString(informacion[2]));
         mk.checkFile(data,informacion[2],fecha,2);
         fecha= str(informacion[0].year)+"-"+str(informacion[0].month)+"-"+str(informacion[0].day)
@@ -53,6 +58,8 @@ def leerArchivo(informacion):
             guardarPrediccion(value,informacion[0],valPred)
     else :
         buscarArchivo(informacion[4]); #csv ayer
+        print(informacion[4]);
+        print("ayer");
         fecha= str(informacion[1].year)+"-"+str(informacion[1].month)+"-"+str(informacion[1].day)
         dataMet = unionMeteorologia(fecha);
         for value in estaciones:
@@ -80,7 +87,6 @@ def baseContaminantes(fecha,estacion):
 
 
 def unionMeteorologia(fecha):
-    variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
     data = df.DataFrame();
     for i in variables:
         name = i+"_"+fecha+".csv";
@@ -93,5 +99,6 @@ def guardarPrediccion(estacion,fecha,Valor):
     fd.saveData(estacion,fechaActual,Valor)
 
 
-configuracion();
-#leerArchivo(information);
+information=configuracion();
+print(information);
+leerArchivo(information);

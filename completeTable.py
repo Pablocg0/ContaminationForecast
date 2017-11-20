@@ -3,8 +3,8 @@ import numpy as np
 import shutil
 import os
 
-est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC','CHO','BJU'];
-estComplete = ['UAX','CUA','ATI','UIZ','MER','PED','TLA','XAL'];
+est = ['AJM','MGH','CCA','SFE','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','FAC','CHO','BJU','UAX','CUA','ATI','UIZ','MER','PED','TLA','XAL'];
+estComplete = [];
 dirDataComp = ['data/DatosCP/','data/DatosLP/','data/DatosCC/','data/DatosLC/'];
 #dirDataSave = ['data/DatosCPM/','data/DatosLPM/','data/DatosCCM/','data/DatosLCM/'];
 dirDataSave = ['data/DatosCPB/','data/DatosLPB/','data/DatosCCB/','data/DatosLCB/'];
