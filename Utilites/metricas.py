@@ -2,13 +2,16 @@ import numpy as np
 
 
 def mape(real,obs):
-    #real = np.array(real);
-    #obs = np.array(obs);
-    #err = np.mean(np.abs((obs -  real)/ obs)) * 100;
     err = np.sum(np.abs((obs -  real)/ np.abs(obs)));
     print(err)
     print(len(real))
     return  err*(100/len(real));
+
+
+def rmse(real, obs):
+    error = np.sqrt(np.mean((obs-real)**2))
+    return error;
+
 
 def uTheils(real, obs):
     n = len(real)
@@ -40,10 +43,12 @@ def metricas(real,obs,station):
         met.append(0);
         met.append(0);
         met.append(0);
+        met.append(0)
     else:
         met.append(station);
         met.append(mape(real,obs));
         met.append(uTheils(real,obs));
         met.append(correla(real,obs));
         met.append(agreement(real,obs));
+        met.append(rmse(real, obs));
     return met;
