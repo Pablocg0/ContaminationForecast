@@ -3,8 +3,6 @@ import numpy as np
 
 def mape(real,obs):
     err = np.sum(np.abs((obs -  real)/ np.abs(obs)));
-    print(err)
-    print(len(real))
     return  err*(100/len(real));
 
 
