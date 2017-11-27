@@ -6,8 +6,6 @@ def mape(real,obs):
     #obs = np.array(obs);
     #err = np.mean(np.abs((obs -  real)/ obs)) * 100;
     err = np.sum(np.abs((obs -  real)/ np.abs(obs)));
-    print(err)
-    print(len(real))
     return  err*(100/len(real));
 
 def uTheils(real, obs):
