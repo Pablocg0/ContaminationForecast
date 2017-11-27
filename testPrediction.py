@@ -28,7 +28,7 @@ def totalPredectionNoNorm():
        print(x);
        trialNoNormalized(x);
 
-def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
+def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):	
     sta = station
     name = sta +'_'+contaminant;
     temp = df.read_csv(dirrDataC + name+'.csv'); #we load the data in the Variable data
@@ -45,6 +45,12 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     l = xlabel(data)
     labels=l[0];
     location =l[1];
+    if (station == 'SAG') | (station == 'UIZ'):
+        lugar = location[0]+1;
+        nombre = labels[0];
+    else:
+        lugar = location[2]+1;
+        nombre = labels[2];
     arrayPred = []
     nameColumn ='cont_otres_' + sta+'_delta';
     inf= build[nameColumn].values
@@ -58,21 +64,32 @@ def trial(station,dirData,dirrDataC,dirGraficas,dirTrain):
     real = desNorm(result,sta,contaminant,dirData);
     metri.append(metricas(inf,real,station));
     plt.figure(figsize=(22.2,11.4))
-    plt.plot(inf,'go-', label='Valor observado.');
-    plt.plot(real, 'ro-',label='Pronostico 24h NN.');
-    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=20);
-    plt.xlabel('Fecha',fontsize= 11);
-    plt.ylabel('Partes por millon (PPM)',fontsize=11);
+    plt.plot(inf, color= 'tomato',linestyle= "solid", marker = 'o', label='Valor observado.');
+    plt.plot(real, color='darkgreen',linestyle= 'solid', marker='o', label='Pronóstico 24h NN.');
+    plt.title(nombreEst(station) +' ('+station+') comparación de '+ contaminant+' observado vs red neuronal (2017)',fontsize=25, y=1.1 );
+    plt.xlabel('Fecha',fontsize= 18);
+    n = 'Primera semana de '+nombre;
+    #plt.xlabel(n,fontsize=18);
+    plt.ylabel('Partes por millon (PPM)',fontsize=18);
     plt.legend(loc ='best');
+    plt.grid(True, axis = 'both', alpha= 0.3, linestyle="--", which="both");
     #plt.xticks(location,labels,fontsize=8,rotation=80);
-    plt.xticks(location,labels,fontsize=11);
-    #plt.xlim(0,600)
-    plt.savefig(dirGraficas+station+ '.png');
+    plt.xticks(location,labels,fontsize=16,rotation=80);
+    #plt.xlim(lugar,lugar+144);
+    plt.axhspan(20,40, color='lightgray', alpha=0.3);
+    plt.axhspan(60,80, color='lightgray', alpha=0.3);
+    plt.axhspan(100,120, color='lightgray', alpha=0.3);
+    plt.gca().spines['bottom'].set_color('dimgray');
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(dirGraficas+station+'_'+nombre+ '.png');
     plt.show();
     plt.clf();
     plt.close()
     gError(inf,real,location,labels,station,dirGraficas)
-    graSubPlot(inf,real,station,location,dirGraficas,labels)
+    #graSubPlot(inf,real,station,location,dirGraficas,labels)
 
 
 def filterData(data, dirData):
@@ -85,17 +102,25 @@ def gError(real,pred,location,labels,station,dirGraficas):
     valError = [];
     suma = 0;
     tam = len(real);
+    x = np.arange(tam);
     for i in range(tam):
         ve = abs(real[i] - pred[i]);
         valError.append(ve);
     mape = (suma/len(real)) *100
     plt.figure(figsize=(22.2,11.4))
-    plt.plot(valError, 'r-',label='Error');
-    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2017)',fontsize=20);
-    plt.xlabel('Fecha',fontsize=11);
-    plt.ylabel('Error');
-    plt.legend(loc ='best');
-    plt.xticks(location,labels,fontsize=11);
+    plt.plot(valError, color = 'maroon',linestyle='solid' ,label='Error');
+    plt.fill_between(x,valError,0,where=x>=0,color = 'salmon'); 
+    plt.title('Error en la prediccion de la estacion '+nombreEst(station) +' ('+station+')(2017)',fontsize=25,y=1.1);
+    plt.xlabel('Fechas',fontsize=18);
+    plt.ylabel('Error PPM',fontsize=18);
+    #plt.legend(loc ='best');
+    plt.xticks(location,labels,fontsize=16,rotation=80);
+    plt.grid(True, axis = 'both', alpha= 0.5, linestyle="--");
+    plt.gca().spines['bottom'].set_color('lightgray');
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.tight_layout()
     plt.savefig(dirGraficas+station+ '_Error.png');
     plt.show();
     plt.clf();
@@ -116,17 +141,27 @@ def graSubPlot(obs,calcu,station,location,dirGraficas,labels):
     plt.legend(loc ='best');
     plt.xticks(location,labels,fontsize=11);
     plt.savefig(dirGraficas+station+ '_scatter.png');
+    plt.grid(True);
     plt.show();
     plt.clf();
     plt.close()
 
 def saveMetric(dirGraficas):
-    nameCol = ['MAPE','uTheils','IndiceCorrelacion','agreement']
-    dataMet = df.DataFrame(metri, columns=['estacion','MAPE','uTheils','IndiceCorrelacion','agreement']);
+    nameCol = ['MAPE','uTheils','Indice de Correlación','Agreement']
+    dataMet = df.DataFrame(metri, columns=['Estacion','MAPE','uTheils','Indice de Correlación','Agreement']);
     dataMet.to_csv(dirGraficas+'Metricas.csv',encoding = 'utf-8',index=False);
     print(dataMet);
     for value in nameCol:
-        dataMet.groupby('estacion').mean().loc[:,[value]].plot(kind='bar',figsize=(12.2,6.4),title=value);
+        #dataMet.groupby('estacion').mean().loc[:,[value]].plot(kind='bar',figsize=(12.2,6.4),title=value);
+        dataMet.groupby('Estacion').mean().loc[:,[value]].plot(kind='bar',figsize=(22.2,11.4),color='steelblue', fontsize=18);
+        plt.title(value, size=25, y=1.1)
+        plt.grid(True, axis='y', linestyle='--', alpha=0.4);
+        plt.gca().spines['bottom'].set_color('lightgray');
+        plt.gca().spines['left'].set_visible(False)
+        plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['right'].set_visible(False)
+        plt.legend(loc =1,bbox_to_anchor=(0.1, 1.09));
+        plt.tight_layout()
         plt.savefig(dirGraficas+value+".png", dpi=600);
         plt.show()
         plt.close()
@@ -208,29 +243,29 @@ def trialAllData():
 
 def deMonth(m):
     if m == 1:
-        return "Ene";
+        return "Enero";
     elif m == 2:
-        return "Feb";
+        return "Febreo";
     elif m == 3:
-        return "Mar";
+        return "Marzo";
     elif m == 4:
-        return "Abr";
+        return "Abril";
     elif m == 5:
-        return "May";
+        return "Mayo";
     elif m == 6:
-        return "Jun";
+        return "Junio";
     elif m == 7:
-        return "Jul";
+        return "Julio";
     elif m == 8:
-        return "Ago";
+        return "Agosto";
     elif m == 9:
-        return "Sep";
+        return "Septiembre";
     elif m == 10:
-        return "Oct";
+        return "Octubre";
     elif m == 11:
-        return "Nov";
+        return "Novimebre";
     elif m == 12:
-        return "Dic";
+        return "Diciembre";
 
 
 def xlabel(data):
