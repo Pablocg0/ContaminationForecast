@@ -188,6 +188,8 @@ def readCsv(variables):
     mypath = '/home/pablo/DATA/DataCuadrantes/';
     patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d'+'.*');
     for base, dirs, filess in os.walk(mypath,topdown=False):
+        filess = sorted(filess)
+        print(filess);
         for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath+value);
@@ -220,9 +222,13 @@ def completeMet(data):
         newData= df.concat([newData,dtemp])
     newData= newData.drop(labels='fecha',axis=1)
     newData = newData.reset_index(drop=True);
+    columns = newData.columns.values
     fechas = df.DataFrame(fechaOri,columns=['fecha']);
-    newData['fecha']= fechas;
-    return newData;
+    fechas[columns[0]]= newData[columns[0]];
+    fechas[columns[1]]= newData[columns[1]];
+    fechas[columns[2]]= newData[columns[2]];
+    fechas[columns[3]]= newData[columns[3]];
+    return fechas;
 
 def open_netcdf(ls,nameFile,cadena):
     name ='.nc.tar.gz';
@@ -303,7 +309,7 @@ def readFiles(opt):
 
 def totalFiles():
     dirr = '../data/NetCDF/';
-    dirr2 = '/DATA/WRF_Operativo/2017/';
+    dirr2 = '/DATA/TEMPWRF/2016/';
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
@@ -322,7 +328,7 @@ def totalFiles():
 
 
 def readFiles2(opt):
-    dirr = '/DATA/WRF_Operativo/2017/';
+    dirr = '/DATA/TEMPWRF/2016/';
     name='wrfout_d02_';
     date = '\d\d\d\d-\d\d-\d\d';
     patron = re.compile(name+'.*')
@@ -378,8 +384,8 @@ def checkFile(net,name,date,opt):
 
 if not os.path.exists('data/NetCDF'): os.makedirs('data/NetCDF');
 if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
-totalFiles();
-readFiles(2);
+#totalFiles();
+#readFiles(2);
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
