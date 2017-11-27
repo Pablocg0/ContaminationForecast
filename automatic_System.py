@@ -45,12 +45,12 @@ def leerArchivo(informacion):
             data = filterData(data,dirData+value+"/");
             valPred = prediccion(value, data);
             guardarPrediccion(value,informacion[0],valPred)
-    elif buscarArchivo(dirNetCDF+ str(informacion[2].month) + "/" +informacion[2]) : #NetCDF
-        print(informacion[2]);
+    elif buscarArchivo(dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0]) + "/" +informacion[2]) : #NetCDF
+        print(dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0]) + "/" +informacion[2]);
         print("netcdf hoy")
-        direccioNetCDF = informacion[0].year + "_" + deMonth(informacion[0]);
-        data = mk.open_netcdf(direccioNetCDF+informacion[2],informacion[2],mk.clearString(informacion[2]));
-        mk.checkFile(data,informacion[2],fecha,2);
+        direccioNetCDF = informacion[0].year + "_" + deMonth(informacion[0]+"/");
+        #data = mk.open_netcdf(direccioNetCDF+informacion[2],informacion[2],mk.clearString(informacion[2]));
+        #mk.checkFile(data,informacion[2],fecha,2);
         fecha= str(informacion[0].year)+"-"+str(informacion[0].month)+"-"+str(informacion[0].day)
         dataMet = unionMeteorologia(fecha);
         for value in estaciones:
@@ -60,7 +60,7 @@ def leerArchivo(informacion):
             valPred = prediccion(value, data);
             guardarPrediccion(value,informacion[0],valPred)
     else :
-        buscarArchivo(informacion[4]); #csv ayer
+        #buscarArchivo(informacion[4]); #csv ayer
         print(dirCsv+informacion[4]);
         print("ayer");
         fecha= str(informacion[1].year)+"-"+str(informacion[1].month)+"-"+str(informacion[1].day)
