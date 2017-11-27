@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 import pandas as df
 from netCDF4 import Dataset
 import netCDF4 as nc4
-import NewBBOX as ne
+#import .NewBBOX as ne
+from .NewBBOX import NewBBOX as ne
 from os import listdir
 import numpy as np
 from pandas import concat
@@ -140,7 +141,7 @@ def makeCsv(net,date,opt):
     for i in variables:
         var= net.variables[i][:]
         celda.append(var);
-        result = ne.NewBBOX(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
+        result = ne(var,LON,LAT,LONsize,LATsize,minlat,maxlat,minlon,maxlon);
         var_cut.append(result[0]);
 
 
@@ -189,7 +190,6 @@ def readCsv(variables):
     patron = re.compile(variables+'_\d\d\d\d-\d\d-\d\d'+'.*');
     for base, dirs, filess in os.walk(mypath,topdown=False):
         filess = sorted(filess)
-        print(filess);
         for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath+value);
@@ -389,9 +389,9 @@ if not os.path.exists('data/totalData'): os.makedirs('data/totalData');
 #readFiles2(1);
 #variables=['Uat10','Vat10','PREC2'];
 #variables=['U10','V10','RAINC'];
-variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
-for i in variables:
-    print(i)
-    readCsv(i);
+#variables=['U10','V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
+#for i in variables:
+#    print(i)
+#    readCsv(i);
 #readCsv(variables[0]);
 #makeDates('2017-06-13');
