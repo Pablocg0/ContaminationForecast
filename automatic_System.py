@@ -47,7 +47,8 @@ def leerArchivo(informacion):
     elif buscarArchivo(informacion[2]) : #NetCDF
         print(informacion[2]);
         print("netcdf hoy")
-        data = mk.open_netcdf(dirNetCDF+informacion[2],informacion[2],mk.clearString(informacion[2]));
+        direccioNetCDF = informacion[0].year + "_" + deMonth(informacion[0]);
+        data = mk.open_netcdf(direccioNetCDF+informacion[2],informacion[2],mk.clearString(informacion[2]));
         mk.checkFile(data,informacion[2],fecha,2);
         fecha= str(informacion[0].year)+"-"+str(informacion[0].month)+"-"+str(informacion[0].day)
         dataMet = unionMeteorologia(fecha);
@@ -98,6 +99,32 @@ def guardarPrediccion(estacion,fecha,Valor):
     fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day)+' '+str(fecha.hour)+':00:00';
     fd.saveData(estacion,fechaActual,Valor)
 
+
+def deMonth(m):
+    if m == 1:
+        return "Enero";
+    elif m == 2:
+        return "Febrero";
+    elif m == 3:
+        return "Marzo";
+    elif m == 4:
+        return "Abril";
+    elif m == 5:
+        return "Mayo";
+    elif m == 6:
+        return "Junio";
+    elif m == 7:
+        return "Julio";
+    elif m == 8:
+        return "Agosto";
+    elif m == 9:
+        return "Septiembre";
+    elif m == 10:
+        return "Octubre";
+    elif m == 11:
+        return "Noviembre";
+    elif m == 12:
+        return "Diciembre";
 
 information=configuracion();
 print(information);
