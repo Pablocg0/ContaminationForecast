@@ -13,9 +13,9 @@ graficas = ['Graficas/Predicciones/GraficasCC/','Graficas/Predicciones/GraficasC
 # Lista de estaciones que va a entrenar
 est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL'];
 
-op = 1;# 1) Predicciones 2) Para Entrenar
+op = 2;# 1) Predicciones 2) Para Entrenar
 numEs=11;
-numE =3;
+numE =11;
 print(datos[numEs]);
 if op == 1:
     #tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
