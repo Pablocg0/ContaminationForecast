@@ -112,7 +112,7 @@ class FormatData(object):
         conn = conexion.getPostgresConn();
         cur= conn.cursor();
         #conexion database
-        sql = """INSERT INTO forecast_otres(id, fecha, val,id_est) VALUES ({1},{2},{3})""".format(fecha,Valor,estacion);
+        sql = """INSERT INTO forecast_otres(fecha,val,id_est) VALUES (\'{0}\',{1},\'{2}\')""".format(fecha,Valor[0],estacion);
         cur.execute(sql);
         conn.commit();
         cur.close();
