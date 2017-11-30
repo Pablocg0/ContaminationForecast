@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 from Utilites.FormatData import FormatData as fd
+from Utilites.Utilites import prepro as an
 import time
 import sys, os
 import pandas as df
 import numpy as np
 import prediction as pre
+import autoTraining as tr
 from NetCDF.makeCsv import open_netcdf, checkFile
 
 dirNetCDF = '/DATA/WRF_Operativo/2017/'; #direccion de los archivos NetCDF
@@ -12,8 +14,9 @@ dirNetCDF = '/DATA/WRF_Operativo/2017/'; #direccion de los archivos NetCDF
 dirCsv = '/home/pablo/DATA/DataCuadrantes/'; #direccion de los archivos creados apartir de los NetCDF
 dirData= 'data/DatosLCB/'; #Direccion de datos de entrenamiento
 dirTrain = 'trainData/TrainLCB/'; #Direccion de entrenamiento de la red neuronal
-estaciones =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
+estaciones =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
 variables=['V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
+dataBackup = df.DataFrame;
 
 
 def configuracion():
@@ -34,6 +37,7 @@ def buscarArchivo(archivo, carpeta):
 
 
 def leerArchivo(informacion):
+    dataBackup= baseContaminantes(informacion[0],estaciones[0]);
     if buscarArchivo(informacion[3],dirCsv):
         fecha= str(informacion[0].year)+"-"+numString(informacion[0].month)+"-"+numString(informacion[0].day)
         dataMet = unionMeteorologia(fecha);
@@ -41,14 +45,20 @@ def leerArchivo(informacion):
             print(value);
             data = baseContaminantes(informacion[0],value);
             if data.empty :
-                guardarPrediccion(value,informacion[0],[-1]);
+                data = dataBackup;
+                data = data.merge(dataMet,how='left',on='fecha');
+                data = data.fillna(value=-1)
+                data = filterData(data,dirData+value+"_O3.csv");
+                data = data.fillna(value=-1)
+                valPred = prediccion(value, data);
+                #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
-                guardarPrediccion(value,informacion[0],valPred)
+                #guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
         direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
         #stringClear = makeCsv.clearString(informacion[2]);
@@ -60,14 +70,20 @@ def leerArchivo(informacion):
         for value in estaciones:
             data = baseContaminantes(informacion[0],value);
             if data.empty :
-                guardarPrediccion(value,informacion[0],[-1]);
+                data = dataBackup;
+                data = data.merge(dataMet,how='left',on='fecha');
+                data = data.fillna(value=-1)
+                data = filterData(data,dirData+value+"_O3.csv");
+                data = data.fillna(value=-1)
+                valPred = prediccion(value, data);
+                #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"._O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
-                guardarPrediccion(value,informacion[0],valPred)
+                #guardarPrediccion(value,informacion[0],valPred)
     else :
         #buscarArchivo(informacion[4]); #csv ayer
         fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
@@ -76,13 +92,21 @@ def leerArchivo(informacion):
             print(value);
             data = baseContaminantes(informacion[0],value);
             if data.empty :
-                guardarPrediccion(value,informacion[0],[-1]);        
+                data = dataBackup;
+                data = data.merge(dataMet,how='left',on='fecha');
+                data = data.fillna(value=-1)
+                data = filterData(data,dirData+value+"_O3.csv");
+                data = data.fillna(value=-1)
+                valPred = prediccion(value, data);
+                #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred  = prediccion(value, data);
-                guardarPrediccion(value,informacion[0],valPred)
+                #guardarPrediccion(value,informacion[0],valPred)
+    for x in estaciones:
+        training(informacion[1],x,dirTrain,dirData);
 
 
 
@@ -110,6 +134,23 @@ def baseContaminantes(fecha,estacion):
     data = fd.readData(fechaActual,fechaActual,[estacion],"O3");
     return data;
 
+def training(fechaAyer, estacion,dirTrain,dirData):
+    print(estacion);
+    fecha = str(fechaAyer.year)+'/'+numString(fechaAyer.month)+'/'+numString(fechaAyer.day)+' '+numString(fechaAyer.hour)+':00:00';
+    fechaMet = str(fechaAyer.year)+"-"+numString(fechaAyer.month)+"-"+numString(fechaAyer.day);
+    fechaBuild = str(fechaAyer.year)+"/"+numString(fechaAyer.month)+"/"+numString(fechaAyer.day);
+    data = fd.readData(fecha,fecha,[estacion],"O3");
+    build = fd.buildClass2(data,[estacion],"O3",24,fechaBuild,fechaBuild);
+    if data.empty:
+        print("No se puede hacer el entrenamiento");
+    else:
+        dataMet = unionMeteorologia(fechaMet);
+        data = data.merge(dataMet,how='left',on='fecha');
+        data = filterData(data,dirData+estacion+"_O3.csv");
+        data = data.fillna(value=-1);
+        xy_values = an(data,build,'O3'); # preprocessing       
+        tr.training(xy_values[0], xy_values[1], estacion, dirTrain, 'O3',dirData);
+
 
 def unionMeteorologia(fecha):
     data = df.read_csv(dirCsv+"U10_"+fecha+".csv");
@@ -131,24 +172,8 @@ def filterData(data, dirData):
     return data;
 
 def numString(num):
-    if num == 1:
-        return "01";
-    elif num == 2:
-        return "02";
-    elif num == 3:
-        return "03";
-    elif num == 4:
-        return "04";
-    elif num == 5:
-        return "05";
-    elif num == 6:
-        return "06";
-    elif num == 7:
-        return "07";
-    elif num == 8:
-        return "08";
-    elif num == 9:
-        return "09";
+    if num < 10:
+        return "0"+ str(num);
     else:
         return str(num);
 
