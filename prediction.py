@@ -114,13 +114,12 @@ def prediction(station, contaminant, arrayPred, dirTrain, dirData):
     loss = tf.reduce_mean(tf.abs(y_target - final_output))
 
     # Declare optimizer gradientDescent
-    'my_opt = tf.train.GradientDescentOptimizer(0.1)'
+    # my_opt = tf.train.GradientDescentOptimizer(0.1)
     my_opt = tf.train.AdamOptimizer(0.001)
     train_step = my_opt.minimize(loss)
     with tf.Session() as sess:
         saver = tf.train.import_meta_graph(dirTrain + station + '/' + name + '.meta')
         saver.restore(sess, tf.train.latest_checkpoint(dirTrain + station + '/'))
-        'print(sess.run(final_output, feed_dict={x_data:values}))'
         for x in arrayPred:
             r = sess.run(final_output, feed_dict={x_data: x})
             result.append(r[0, 0])
