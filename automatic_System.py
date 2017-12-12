@@ -51,6 +51,7 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
@@ -58,6 +59,7 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
         direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
@@ -76,6 +78,7 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
@@ -83,6 +86,7 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"._O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],valPred)
     else :
         #buscarArchivo(informacion[4]); #csv ayer
@@ -98,12 +102,14 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred  = prediccion(value, data);
+                print(valPred);
                 #guardarPrediccion(value,informacion[0],valPred)
     for x in estaciones:
         training(informacion[1],x,dirTrain,dirData);

@@ -94,7 +94,8 @@ def train(x_d,y_data, columns,iteraciones,station,contaminant,dirTrain):
         if (i+1)%iteraciones==0:
             total_loss = temp_loss;
 
-    saver.save(sess,dirTrain+station+'/'+name+'.ckpt')
+    saver.save(sess,dirTrain+station+'/'+name,global_step = 1000, write_meta_graph=False);
     sess.close()
+    #tf.reset_default_graph();
     #return total_loss;
 
