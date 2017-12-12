@@ -9,12 +9,12 @@ import prediction as pre
 import autoTraining as tr
 from NetCDF.makeCsv import open_netcdf, checkFile
 
-dirNetCDF = '/DATA/WRF_Operativo/2017/'; #direccion de los archivos NetCDF
+dirNetCDF = '/DATA/WRF_Operativo/2017/' #direccion de los archivos NetCDF
 #dirCsv = '/data/totalData/totalCuadrantes/';
-dirCsv = '/home/pablo/DATA/DataCuadrantes/'; #direccion de los archivos creados apartir de los NetCDF
-dirData= 'data/DatosLCB/'; #Direccion de datos de entrenamiento
+dirCsv = '/home/pablo/DATA/DataCuadrantes/' #direccion de los archivos creados apartir de los NetCDF
+dirData = 'data/DatosLCB/'; #Direccion de datos de entrenamiento
 dirTrain = 'trainData/TrainLCB/'; #Direccion de entrenamiento de la red neuronal
-estaciones =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
+estaciones = ['AJM', 'MGH', 'CCA', 'SFE', 'UAX', 'CUA', 'NEZ', 'CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
 variables=['V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
 dataBackup = df.DataFrame;
 
@@ -154,7 +154,7 @@ def training(fechaAyer, estacion,dirTrain,dirData):
         data = data.merge(dataMet,how='left',on='fecha');
         data = filterData(data,dirData+estacion+"_O3.csv");
         data = data.fillna(value=-1);
-        xy_values = an(data,build,'O3'); # preprocessing       
+        xy_values = an(data,build,'O3'); # preprocessing
         tr.training(xy_values[0], xy_values[1], estacion, dirTrain, 'O3',dirData);
 
 
@@ -219,4 +219,3 @@ ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer
 test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
 leerArchivo(test);
 #leerArchivo(information);
-
