@@ -119,7 +119,7 @@ def prediction(station,contaminant,arrayPred,dirTrain,dirData):
     train_step = my_opt.minimize(loss);
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        saver.restore(sess, dirTrain+station+'/'+name+'.ckpt'); #we load the training
+        saver.restore(sess, dirTrain+station+'/'+name); #we load the training
         #print(sess.run(final_output, feed_dict={x_data:values}));
         for x in arrayPred:
             r = sess.run(final_output, feed_dict={x_data:x})

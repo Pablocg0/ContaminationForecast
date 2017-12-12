@@ -61,6 +61,7 @@ def training(datax, build, estacion, dirTrain,contaminant,dirData):
     #my_opt = tf.train.GradientDescentOptimizer(0.1);
     my_opt = tf.train.AdamOptimizer(0.001);
     train_step = my_opt.minimize(loss);
+    saver = tf.train.Saver();
     name = 'train_'+estacion+'_'+contaminant;
     with tf.Session() as sess:
         new_saver = tf.train.import_meta_graph(dirTrain+estacion+'/'+name+'.ckpt.meta')
@@ -69,4 +70,8 @@ def training(datax, build, estacion, dirTrain,contaminant,dirData):
         sess.run(init);
         for step in range(1000):
             sess.run(train_step, feed_dict={x_data: datax, y_target: build});
+
+        saver.save(sess,dirTrain+estacion+'/'+name+'.ckpt')
         sess.close();
+        tf.reset_default_graph();
+
