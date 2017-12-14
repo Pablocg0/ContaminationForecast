@@ -51,8 +51,8 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
-                print(valPred);
-                #guardarPrediccion(value,informacion[0],[-1]);
+                print("Informacion insuficiente para la prediccion");
+                guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = data.fillna(value=-1)
@@ -60,7 +60,7 @@ def leerArchivo(informacion):
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
                 print(valPred);
-                #guardarPrediccion(value,informacion[0],valPred)
+                guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
         direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
         #stringClear = makeCsv.clearString(informacion[2]);
@@ -78,16 +78,16 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
-                print(valPred);
-                #guardarPrediccion(value,informacion[0],[-1]);
+                print("Informacion insuficiente para la prediccion");
+                guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = data.fillna(value=-1)
-                data = filterData(data,dirData+value+"._O3.csv");
+                data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
                 print(valPred);
-                #guardarPrediccion(value,informacion[0],valPred)
+                guardarPrediccion(value,informacion[0],valPred)
     else :
         #buscarArchivo(informacion[4]); #csv ayer
         fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
@@ -102,15 +102,15 @@ def leerArchivo(informacion):
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data);
-                print(valPred);
-                #guardarPrediccion(value,informacion[0],[-1]);
+                print("Informacion insuficiente para la prediccion");
+                guardarPrediccion(value,informacion[0],[-1]);
             else:
                 data = data.merge(dataMet,how='left',on='fecha');
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 valPred  = prediccion(value, data);
                 print(valPred);
-                #guardarPrediccion(value,informacion[0],valPred)
+                guardarPrediccion(value,informacion[0],valPred)
     for x in estaciones:
         training(informacion[1],x,dirTrain,dirData);
 
@@ -209,13 +209,13 @@ def deMonth(m):
     elif m == 12:
         return "diciembre";
 
-#information=configuracion();
-nameNetcdf = "wrfout_d02_"
-hoy= datetime.strptime("2017-09-23 19:00:00",'%Y-%m-%d %H:%M:%S')
-dayer = datetime.strptime("2017-09-22 19:00:00",'%Y-%m-%d %H:%M:%S')
-actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
-actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
-ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
-test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
-leerArchivo(test);
-#leerArchivo(information);
+information=configuracion();
+#nameNetcdf = "wrfout_d02_"
+#hoy= datetime.strptime("2017-12-12 19:00:00",'%Y-%m-%d %H:%M:%S')
+#dayer = datetime.strptime("2017-09-23 19:00:00",'%Y-%m-%d %H:%M:%S')
+#actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
+#actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
+#ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
+#test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
+#leerArchivo(test);
+leerArchivo(information);

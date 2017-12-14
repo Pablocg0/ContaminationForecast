@@ -64,15 +64,15 @@ def training(datax, build, estacion, dirTrain, contaminant, dirData):
     # my_opt = tf.train.GradientDescentOptimizer(0.1)
     my_opt = tf.train.AdamOptimizer(0.001)
     train_step = my_opt.minimize(loss)
-    saver = tf.train.Saver()
     name = 'train_' + estacion + '_' + contaminant
     with tf.Session() as sess:
-        new_saver = tf.train.import_meta_graph(dirTrain + estacion + '/' + name + '-1000.meta')
-        new_saver.restore(sess, tf.train.latest_checkpoint(dirTrain + estacion + '/'))
-        init = tf.global_variables_initializer()
-        sess.run(init)
-        for step in range(1000):
-            sess.run(train_step, feed_dict={x_data: datax, y_target: build})
-        saver.save(sess, dirTrain + estacion + '/' + name, global_step=step, write_meta_graph=False)
-        sess.close()
-        tf.reset_default_graph()
+         new_saver = tf.train.import_meta_graph(dirTrain+estacion+'/'+name+'-1000.meta')
+         new_saver.restore(sess, tf.train.latest_checkpoint(dirTrain + estacion + '/'))
+         init = tf.global_variables_initializer();
+         sess.run(init);
+         for step in range(1000):
+             sess.run(train_step, feed_dict={x_data: datax, y_target: build});
+
+         new_saver.save(sess, dirTrain + estacion + '/' + name, global_step= step+1, write_meta_graph=False)
+         sess.close();
+
