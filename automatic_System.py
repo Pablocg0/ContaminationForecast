@@ -37,7 +37,7 @@ def buscarArchivo(archivo, carpeta):
 
 
 def leerArchivo(informacion):
-    dataBackup= baseContaminantes(informacion[0],estaciones[7]);
+    dataBackup = back()
     print(informacion[0]);
     if buscarArchivo(informacion[3],dirCsv):
         fecha= str(informacion[0].year)+"-"+numString(informacion[0].month)+"-"+numString(informacion[0].day)
@@ -45,13 +45,12 @@ def leerArchivo(informacion):
         for value in estaciones:
             print(value);
             data = baseContaminantes(informacion[0],value);
-            if data.empty :
-                data = dataBackup;
-                data = data.merge(dataMet,how='left',on='fecha');
+            if data.empty:
+                data = dataBackup
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
-                valPred = prediccion(value, data);
+                valPred = prediccion(value, data)
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
             else:
@@ -73,8 +72,7 @@ def leerArchivo(informacion):
         for value in estaciones:
             data = baseContaminantes(informacion[0],value);
             if data.empty :
-                data = dataBackup;
-                data = data.merge(dataMet,how='left',on='fecha');
+                data = dataBackup
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
@@ -97,8 +95,7 @@ def leerArchivo(informacion):
             print(value);
             data = baseContaminantes(informacion[0],value);
             if data.empty :
-                data = dataBackup;
-                data = data.merge(dataMet,how='left',on='fecha');
+                data = dataBackup
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
@@ -136,88 +133,98 @@ def convert(data):
     return vl
 
 
-def baseContaminantes(fecha,estacion):
-    fechaActual = str(fecha.year)+'-'+numString(fecha.month)+'-'+numString(fecha.day)+' '+numString(fecha.hour)+':00:00';
-    print(fechaActual);
-    data = fd.readData(fechaActual,fechaActual,[estacion],"O3");
+def baseContaminantes(fecha, estacion):
+    fechaActual = str(fecha.year)+'-'+numString(fecha.month)+'-'+numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
+    print(fechaActual)
+    data = fd.readData(fechaActual, fechaActual, [estacion], "O3")
     return data;
 
-def training(fechaAyer, estacion,dirTrain,dirData):
+
+def training(fechaAyer, estacion, dirTrain, dirData):
     print(estacion);
     fecha = str(fechaAyer.year)+'/'+numString(fechaAyer.month)+'/'+numString(fechaAyer.day)+' '+numString(fechaAyer.hour)+':00:00';
     fechaMet = str(fechaAyer.year)+"-"+numString(fechaAyer.month)+"-"+numString(fechaAyer.day);
     fechaBuild = str(fechaAyer.year)+"/"+numString(fechaAyer.month)+"/"+numString(fechaAyer.day);
     data = fd.readData(fecha,fecha,[estacion],"O3");
-    build = fd.buildClass2(data,[estacion],"O3",24,fechaBuild,fechaBuild);
+    build = fd.buildClass2(data, [estacion], "O3", 24, fechaBuild, fechaBuild)
     if data.empty:
-        print("No se puede hacer el entrenamiento");
+        print("No se puede hacer el entrenamiento")
     else:
-        dataMet = unionMeteorologia(fechaMet);
-        data = data.merge(dataMet,how='left',on='fecha');
-        data = filterData(data,dirData+estacion+"_O3.csv");
-        data = data.fillna(value=-1);
-        xy_values = an(data,build,'O3'); # preprocessing
-        tr.training(xy_values[0], xy_values[1], estacion, dirTrain, 'O3',dirData);
+        dataMet = unionMeteorologia(fechaMet)
+        data = data.merge(dataMet, how='left', on='fecha')
+        data = filterData(data, dirData + estacion + "_O3.csv")
+        data = data.fillna(value=-1)
+        xy_values = an(data, build, 'O3')  # preprocessing
+        tr.training(xy_values[0], xy_values[1], estacion, dirTrain, 'O3', dirData)
 
 
 def unionMeteorologia(fecha):
-    data = df.read_csv(dirCsv+"U10_"+fecha+".csv");
+    data = df.read_csv(dirCsv + "U10_" + fecha + ".csv")
     for i in variables:
-        name = i+"_"+fecha+".csv";
-        dataTemp = df.read_csv(dirCsv+name);
-        data = data.merge(dataTemp,how='left',on='fecha');
-    return data;
+        name = i + "_" + fecha + ".csv"
+        dataTemp = df.read_csv(dirCsv + name)
+        data = data.merge(dataTemp, how='left', on='fecha')
+    return data
 
-def guardarPrediccion(estacion,fecha,Valor):
+
+def guardarPrediccion(estacion, fecha, Valor):
     fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day + 1)+' '+str(fecha.hour)+':00:00';
-    fd.saveData(estacion,fechaActual,Valor)
+    fd.saveData(estacion, fechaActual, Valor)
 
 
 def filterData(data, dirData):
-    temp = df.read_csv(dirData);
-    listColumns = list(temp.columns);
-    data = data.loc[:,listColumns];
-    return data;
+    temp = df.read_csv(dirData)
+    listColumns = list(temp.columns)
+    data = data.loc[:, listColumns]
+    return data
+
+
+def back(arg):
+    temp = df.read_csv(dirData + "AJM_O3.csv")
+    return temp.ix[1]
+
 
 def numString(num):
     if num < 10:
-        return "0"+ str(num);
+        return "0" + str(num)
     else:
-        return str(num);
+        return str(num)
+
 
 def deMonth(m):
     if m == 1:
-        return "enero";
+        return "enero"
     elif m == 2:
-        return "febrero";
+        return "febrero"
     elif m == 3:
-        return "marzo";
+        return "marzo"
     elif m == 4:
-        return "abril";
+        return "abril"
     elif m == 5:
-        return "mayo";
+        return "mayo"
     elif m == 6:
-        return "junio";
+        return "junio"
     elif m == 7:
-        return "julio";
+        return "julio"
     elif m == 8:
-        return "agosto";
+        return "agosto"
     elif m == 9:
-        return "septiembre";
+        return "septiembre"
     elif m == 10:
-        return "octubre";
+        return "octubre"
     elif m == 11:
-        return "noviembre";
+        return "noviembre"
     elif m == 12:
-        return "diciembre";
+        return "diciembre"
 
-information=configuracion();
-#nameNetcdf = "wrfout_d02_"
-#hoy= datetime.strptime("2017-12-12 19:00:00",'%Y-%m-%d %H:%M:%S')
-#dayer = datetime.strptime("2017-09-23 19:00:00",'%Y-%m-%d %H:%M:%S')
-#actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
-#actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
-#ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
-#test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
-#leerArchivo(test);
-leerArchivo(information);
+
+information = configuracion()
+# nameNetcdf = "wrfout_d02_"
+# hoy= datetime.strptime("2017-12-12 19:00:00",'%Y-%m-%d %H:%M:%S')
+# dayer = datetime.strptime("2017-09-23 19:00:00",'%Y-%m-%d %H:%M:%S')
+# actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
+# actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
+# ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
+# test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
+# leerArchivo(test);
+leerArchivo(information)
