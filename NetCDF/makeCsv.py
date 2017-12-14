@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import pandas as df
 from netCDF4 import Dataset
 import netCDF4 as nc4
-#import .NewBBOX as ne
+#import NewBBOX as ne
 from .NewBBOX import NewBBOX as ne
 from os import listdir
 import numpy as np
@@ -309,7 +309,7 @@ def readFiles(opt):
 
 def totalFiles():
     dirr = '../data/NetCDF/';
-    dirr2 = '/DATA/TEMPWRF/2016/';
+    dirr2 = '/DATA/WRF_Operativo/';
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
     fil=[];
     ba = [];
@@ -328,7 +328,7 @@ def totalFiles():
 
 
 def readFiles2(opt):
-    dirr = '/DATA/TEMPWRF/2016/';
+    dirr = '/DATA/WRF_Operativo/';
     name='wrfout_d02_';
     date = '\d\d\d\d-\d\d-\d\d';
     patron = re.compile(name+'.*')

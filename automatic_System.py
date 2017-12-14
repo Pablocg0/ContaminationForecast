@@ -12,8 +12,8 @@ from NetCDF.makeCsv import open_netcdf, checkFile
 dirNetCDF = '/DATA/WRF_Operativo/2017/' #direccion de los archivos NetCDF
 #dirCsv = '/data/totalData/totalCuadrantes/';
 dirCsv = '/home/pablo/DATA/DataCuadrantes/' #direccion de los archivos creados apartir de los NetCDF
-dirData = 'data/DatosLCB/'; #Direccion de datos de entrenamiento
-dirTrain = 'trainData/TrainLCB/'; #Direccion de entrenamiento de la red neuronal
+dirData = '/home/pablo/PollutionForecast/ContaminationForecast/data/DatosLCB/'; #Direccion de datos de entrenamiento
+dirTrain = '/home/pablo/PollutionForecast/ContaminationForecast/trainData/TrainLCB/'; #Direccion de entrenamiento de la red neuronal
 estaciones = ['AJM', 'MGH', 'CCA', 'SFE', 'UAX', 'CUA', 'NEZ', 'CAM','LPR','SJA','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','XAL','CHO','BJU'];
 variables=['V10','RAINC','T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW'];
 dataBackup = df.DataFrame;
@@ -37,7 +37,8 @@ def buscarArchivo(archivo, carpeta):
 
 
 def leerArchivo(informacion):
-    dataBackup= baseContaminantes(informacion[0],estaciones[0]);
+    dataBackup= baseContaminantes(informacion[0],estaciones[7]);
+    print(informacion[0]);
     if buscarArchivo(informacion[3],dirCsv):
         fecha= str(informacion[0].year)+"-"+numString(informacion[0].month)+"-"+numString(informacion[0].day)
         dataMet = unionMeteorologia(fecha);
@@ -137,6 +138,7 @@ def convert(data):
 
 def baseContaminantes(fecha,estacion):
     fechaActual = str(fecha.year)+'-'+numString(fecha.month)+'-'+numString(fecha.day)+' '+numString(fecha.hour)+':00:00';
+    print(fechaActual);
     data = fd.readData(fechaActual,fechaActual,[estacion],"O3");
     return data;
 
@@ -167,7 +169,7 @@ def unionMeteorologia(fecha):
     return data;
 
 def guardarPrediccion(estacion,fecha,Valor):
-    fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day)+' '+str(fecha.hour)+':00:00';
+    fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day + 1)+' '+str(fecha.hour)+':00:00';
     fd.saveData(estacion,fechaActual,Valor)
 
 
