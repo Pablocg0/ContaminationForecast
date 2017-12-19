@@ -24,7 +24,7 @@ def configuracion():
     actual = datetime.now();
     actualNetcdf = nameNetcdf+ str(actual.year)+ "-"+ numString(actual.month)+ "-"+numString(actual.day)+"_00.nc";
     actualCsv = variables[0]+"_"+str(actual.year)+ "-"+ numString(actual.month)+ "-"+numString(actual.day)+".csv";
-    ayer = actual - timedelta(days=1);
+    ayer = actual - timedelta(days=1)
     ayerCsv = variables[0]+"_"+str(ayer.year)+ "-"+ numString(ayer.month)+ "-"+numString(ayer.day)+".csv";
     return [actual,ayer,actualNetcdf,actualCsv,ayerCsv];
 
@@ -49,7 +49,7 @@ def leerArchivo(informacion):
                 data = dataBackup
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
-                data = data.fillna(value=-1)                
+                data = data.fillna(value=-1)
                 valPred = prediccion(value, data)
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
@@ -57,7 +57,7 @@ def leerArchivo(informacion):
                 #data = data.merge(dataMet,how='left', on='fecha');
                 data = separateDate(data)
                 data = unionData(data,informacion[0])
-                data = df.concat([data,dataMet], axis=1);                
+                data = df.concat([data,dataMet], axis=1);
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
@@ -85,42 +85,70 @@ def leerArchivo(informacion):
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
             else:
-                data = separateDate(data)   
-                data = unionData(data,informacion[0])             
-                data = df.concat([data,dataMet], axis=1);
-                data = data.fillna(value=-1)
-                data = filterData(data,dirData+value+"_O3.csv");
-                data = data.fillna(value=-1)
-                print(data)
-                valPred = prediccion(value, data);
-                print(valPred);
-                guardarPrediccion(value,informacion[0],valPred)
-    else :
-        #buscarArchivo(informacion[4]); #csv ayer
-        fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
-        dataMet = unionMeteorologia(fechaAyer, informacion[1]);
-        dataMet = dataMet.drop('fecha',axis =1)
-        for value in estaciones:
-            print(value);
-            data = baseContaminantes(informacion[0],value);
-            if data.empty :
-                data = dataBackup
-                data = data.fillna(value=-1)
-                data = filterData(data,dirData+value+"_O3.csv");
-                data = data.fillna(value=-1)
-                valPred = prediccion(value, data);
-                print("Informacion insuficiente para la prediccion");
-                guardarPrediccion(value,informacion[0],[-1]);
-            else:
                 data = separateDate(data)
-                data = unionData(data,informacion[1])
+                data = unionData(data,informacion[0])
                 data = df.concat([data,dataMet], axis=1);
+                data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
                 print(data)
-                valPred  = prediccion(value, data);
+                valPred = prediccion(value, data);
                 print(valPred);
                 guardarPrediccion(value,informacion[0],valPred)
+    else:
+        if buscarArchivo(informacion[4]):
+            # buscarArchivo(informacion[4]); #csv ayer
+            fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
+            dataMet = unionMeteorologia(fechaAyer, informacion[1]);
+            dataMet = dataMet.drop('fecha',axis =1)
+            for value in estaciones:
+                print(value);
+                data = baseContaminantes(informacion[0],value);
+                if data.empty :
+                    data = dataBackup
+                    data = data.fillna(value=-1)
+                    data = filterData(data,dirData+value+"_O3.csv");
+                    data = data.fillna(value=-1)
+                    valPred = prediccion(value, data);
+                    print("Informacion insuficiente para la prediccion");
+                    guardarPrediccion(value,informacion[0],[-1]);
+                else:
+                    data = separateDate(data)
+                    data = unionData(data,informacion[0])
+                    data = df.concat([data,dataMet], axis=1);
+                    data = filterData(data,dirData+value+"_O3.csv");
+                    data = data.fillna(value=-1)
+                    print(data)
+                    valPred  = prediccion(value, data);
+                    print(valPred);
+                    guardarPrediccion(value,informacion[0],valPred)
+        else:
+            anteAyer = informacion[1] - timedelta(days=1)
+            nameCsv =   variables[0]+"_"+str(anteAyer.year)+ "-"+ numString(anteAyer.month)+ "-"+numString(anteAyer.day)+".csv";
+            fechaAnteAyer= str(anteAyer.year)+"-"+numString(anteAyer.month)+"-"+numString(anteAyer.day)
+            dataMet = unionMeteorologia(fechaAnteAyer, anteAyer)
+            dataMet = dataMet.drop('fecha',axis =1)
+            for value in estaciones:
+                print(value);
+                data = baseContaminantes(informacion[0],value);
+                if data.empty :
+                    data = dataBackup
+                    data = data.fillna(value=-1)
+                    data = filterData(data,dirData+value+"_O3.csv");
+                    data = data.fillna(value=-1)
+                    valPred = prediccion(value, data);
+                    print("Informacion insuficiente para la prediccion");
+                    guardarPrediccion(value,informacion[0],[-1]);
+                else:
+                    data = separateDate(data)
+                    data = unionData(data,informacion[0])
+                    data = df.concat([data,dataMet], axis=1);
+                    data = filterData(data,dirData+value+"_O3.csv");
+                    data = data.fillna(value=-1)
+                    print(data)
+                    valPred  = prediccion(value, data);
+                    print(valPred);
+                    guardarPrediccion(value,informacion[0],valPred)
     #for x in estaciones:
         #training(informacion[1],x,dirTrain,dirData);
 
@@ -183,6 +211,7 @@ def unionMeteorologia(fecha, fechaComplete):
     filterData = filterData.reset_index(drop=True)
     return filterData
 
+
 def convertDates(data):
     fecha = data['fecha'];
     data = data.drop(labels='fecha',axis=1);
@@ -195,7 +224,7 @@ def convertDates(data):
     return data;
 
 
-def unionData(data,fechaComplete):
+def unionData(data, fechaComplete):
     """
     Function to join the data of the netcdf and the data of the pollutants
     :param data:pataFrame(minollutants data
