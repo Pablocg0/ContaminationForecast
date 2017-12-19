@@ -252,7 +252,7 @@ def unionData(data):
     :return: dataFrame
     """
     dataFestivos = df.read_csv('data/Festivos.csv')
-    #dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
+    dataFestivos = dataFestivos.drop('Unnamed: 0',axis=1);
     dataFestivos2 = convertDates(dataFestivos);
     data= data.merge(dataFestivos2, how = 'left', on='fecha');
     data = data.reset_index();
