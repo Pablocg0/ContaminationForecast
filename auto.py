@@ -24,8 +24,8 @@ def trainNeuralNetworks(est,dirr, dirTrain):
         name = station +'_'+contaminant; #name the file with the data
         data = df.read_csv(dirr+name+'.csv'); #we load the data in the Variable data
         build = df.read_csv(dirr+name+'_pred.csv'); #we load the data in the Variable build
-        data = data[data['fecha']<'2016/12/31'];
-        build = build[build['fecha']<'2016/12/31'];
+        data = data[data['fecha']<'2017/12/31'];
+        build = build[build['fecha']<'2017/12/31'];
         tamLen.append(len(data.index));
         data = data.fillna(value=-1);
         build = build.fillna(value=-1)

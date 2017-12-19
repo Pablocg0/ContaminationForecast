@@ -38,10 +38,10 @@ def buscarArchivo(archivo, carpeta):
 
 def leerArchivo(informacion):
     dataBackup = back()
-    print(informacion[0]);
     if buscarArchivo(informacion[3],dirCsv):
         fecha= str(informacion[0].year)+"-"+numString(informacion[0].month)+"-"+numString(informacion[0].day)
-        dataMet = unionMeteorologia(fecha);
+        dataMet = unionMeteorologia(fecha, informacion[0]);
+        dataMet = dataMet.drop('fecha',axis =1)
         for value in estaciones:
             print(value);
             data = baseContaminantes(informacion[0],value);
@@ -49,18 +49,22 @@ def leerArchivo(informacion):
                 data = dataBackup
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
-                data = data.fillna(value=-1)
+                data = data.fillna(value=-1)                
                 valPred = prediccion(value, data)
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
             else:
-                data = data.merge(dataMet,how='left',on='fecha');
+                #data = data.merge(dataMet,how='left', on='fecha');
+                data = separateDate(data)
+                data = unionData(data,informacion[0])
+                data = df.concat([data,dataMet], axis=1);                
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
+                print(data)
                 valPred = prediccion(value, data);
                 print(valPred);
-                guardarPrediccion(value,informacion[0],valPred)
+                #guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
         direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
         #stringClear = makeCsv.clearString(informacion[2]);
@@ -68,7 +72,8 @@ def leerArchivo(informacion):
         #checkFile(data,informacion[2],fecha,2);
         fecha= str(informacion[0].year)+"-"+numString(informacion[0].month)+"-"+numString(informacion[0].day)
         checkFile(data,informacion[2],fecha,2);
-        dataMet = unionMeteorologia(fecha);
+        dataMet = unionMeteorologia(fecha, informacion[0]);
+        dataMet = dataMet.drop('fecha',axis =1)
         for value in estaciones:
             data = baseContaminantes(informacion[0],value);
             if data.empty :
@@ -80,17 +85,21 @@ def leerArchivo(informacion):
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
             else:
-                data = data.merge(dataMet,how='left',on='fecha');
+                data = separateDate(data)   
+                data = unionData(data,informacion[0])             
+                data = df.concat([data,dataMet], axis=1);
                 data = data.fillna(value=-1)
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
+                print(data)
                 valPred = prediccion(value, data);
                 print(valPred);
                 guardarPrediccion(value,informacion[0],valPred)
     else :
         #buscarArchivo(informacion[4]); #csv ayer
         fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
-        dataMet = unionMeteorologia(fechaAyer);
+        dataMet = unionMeteorologia(fechaAyer, informacion[1]);
+        dataMet = dataMet.drop('fecha',axis =1)
         for value in estaciones:
             print(value);
             data = baseContaminantes(informacion[0],value);
@@ -103,14 +112,17 @@ def leerArchivo(informacion):
                 print("Informacion insuficiente para la prediccion");
                 guardarPrediccion(value,informacion[0],[-1]);
             else:
-                data = data.merge(dataMet,how='left',on='fecha');
+                data = separateDate(data)
+                data = unionData(data,informacion[1])
+                data = df.concat([data,dataMet], axis=1);
                 data = filterData(data,dirData+value+"_O3.csv");
                 data = data.fillna(value=-1)
+                print(data)
                 valPred  = prediccion(value, data);
                 print(valPred);
                 guardarPrediccion(value,informacion[0],valPred)
-    for x in estaciones:
-        training(informacion[1],x,dirTrain,dirData);
+    #for x in estaciones:
+        #training(informacion[1],x,dirTrain,dirData);
 
 
 
@@ -119,9 +131,11 @@ def prediccion(estacion,data):
     temp = temp[1:];
     dataPred = pre.normalize(temp,estacion,"O3",dirData);
     dataPred= convert(dataPred);
+    print(dataPred)
     prediccion = pre.prediction(estacion,"O3",[dataPred],dirTrain,dirData)
-    prediccion = pre.desNorm(prediccion,estacion,"O3",dirData);
-    return prediccion;
+    print(prediccion)
+    prediccion1 = pre.desNorm(prediccion,estacion,"O3",dirData);
+    return prediccion1;
 
 def convert(data):
     size = len(data);
@@ -135,7 +149,6 @@ def convert(data):
 
 def baseContaminantes(fecha, estacion):
     fechaActual = str(fecha.year)+'-'+numString(fecha.month)+'-'+numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
-    print(fechaActual)
     data = fd.readData(fechaActual, fechaActual, [estacion], "O3")
     return data;
 
@@ -150,21 +163,54 @@ def training(fechaAyer, estacion, dirTrain, dirData):
     if data.empty:
         print("No se puede hacer el entrenamiento")
     else:
-        dataMet = unionMeteorologia(fechaMet)
-        data = data.merge(dataMet, how='left', on='fecha')
+        dataMet = unionMeteorologia(fechaMet, fechaAyer)
+        dataMet = dataMet.drop('fecha',axis =1)
+        data = df.concat([data,dataMet], axis=1);
         data = filterData(data, dirData + estacion + "_O3.csv")
         data = data.fillna(value=-1)
         xy_values = an(data, build, 'O3')  # preprocessing
         tr.training(xy_values[0], xy_values[1], estacion, dirTrain, 'O3', dirData)
 
 
-def unionMeteorologia(fecha):
+def unionMeteorologia(fecha, fechaComplete):
     data = df.read_csv(dirCsv + "U10_" + fecha + ".csv")
     for i in variables:
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
-        data = data.merge(dataTemp, how='left', on='fecha')
-    return data
+        data= data.merge(dataTemp, how='left', on='fecha')
+    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+    filterData = data[(data['fecha'] == fechaM)]
+    filterData = filterData.reset_index(drop=True)
+    return filterData
+
+def convertDates(data):
+    fecha = data['fecha'];
+    data = data.drop(labels='fecha',axis=1);
+    date = []
+    for i in fecha:
+        datef = datetime.strptime(i,'%Y-%m-%d %H:%M:%S');
+        date.append(datef);
+    dataTemp = df.DataFrame(date,columns = ['fecha']);
+    data['fecha']= dataTemp;
+    return data;
+
+
+def unionData(data,fechaComplete):
+    """
+    Function to join the data of the netcdf and the data of the pollutants
+    :param data:pataFrame(minollutants data
+    :type data: dataFrame
+    :return: dataFrame
+    """
+    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+    dataFestivos = df.read_csv('data/Festivos.csv')
+    dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
+    dataFestivos2 = convertDates(dataFestivos);
+    dataFestivos2 = dataFestivos2[(dataFestivos2['fecha'] == fechaM)]
+    dataFestivos2 = dataFestivos2.drop('fecha',axis =1)
+    data= df.concat([data,dataFestivos2], axis=1);
+    return data;
+
 
 
 def guardarPrediccion(estacion, fecha, Valor):
@@ -179,9 +225,9 @@ def filterData(data, dirData):
     return data
 
 
-def back(arg):
-    temp = df.read_csv(dirData + "AJM_O3.csv")
-    return temp.ix[1]
+def back():
+    temp = df.read_csv(dirData + "MGH_O3.csv")
+    return temp.loc[:0]
 
 
 def numString(num):
@@ -216,6 +262,74 @@ def deMonth(m):
         return "noviembre"
     elif m == 12:
         return "diciembre"
+
+def separateDate(data):
+    """
+    Function to separate the date in year, month ,day and the function sine of each one of them
+    :parama data: DataFrame that contains the dates
+    :type data: DataFrame
+    """
+    dates = data['fecha'];
+    lenght = len(dates.index);
+    years = np.ones((lenght,1))*-1;
+    sinYears = np.ones((lenght,1))*-1;
+    months = np.ones((lenght,1))*-1;
+    sinMonths = np.ones((lenght,1))*-1;
+    days = np.ones((lenght,1))*-1;
+    sinDays = np.ones((lenght,1))*-1;
+    wDay = np.ones((lenght,1))*-1;
+    sinWday = np.ones((lenght,1))*-1;
+    i  =0 ;
+    for x in dates:
+        d =x
+        #d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
+        wD= weekday(d.year,d.month,d.day);
+        wDay[i]=wD[0];
+        sinWday[i]=wD[1];
+        years[i] = d.year;
+        #sinYears[i]= np.sin(d.year);
+        months[i] = d.month;
+        sinMonths[i] =(1+np.sin(((d.month-1)/11)*(2*np.pi)))/2
+        days[i] = d.day
+        sinDays[i]= (1+np.sin(((d.day-1)/23)*(2*np.pi)))/2
+        i += 1;
+    weekD = df.DataFrame(wDay, columns= ['weekday'])
+    data['weekday']= weekD;
+    sinWeekD = df.DataFrame(sinWday, columns= ['sinWeekday'])
+    data['sinWeekday']= sinWeekD;
+    dataYear = df.DataFrame(years, columns= ['year'])
+    data['year'] = dataYear
+    #dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data);
+    #data['sinYear'] = dataSinYear
+    dataMonths = df.DataFrame(months, columns= ['month'])
+    data['month'] = dataMonths
+    dataSinMonths = df.DataFrame(sinMonths, columns= ['sinMonth'])
+    data['sinMonth'] = dataSinMonths
+    dataDay = df.DataFrame(days, columns= ['day'])
+    data['day'] = dataDay
+    dataSinDay = df.DataFrame(sinDays, columns= ['sinDay'])
+    data['sinDay'] = dataSinDay
+    return data;
+
+def weekday(year,month,day):
+    """
+    Function to take day of the week using the congruence of Zeller , 1 is Sunday
+    :param year: year of the date
+    :type year: int
+    :param month: month of the date
+    :type month: int
+    :param day: day of the date
+    :type day:int
+    :return: int, 1 is Sunday
+    """
+    a = (14-month)/12;
+    a = int(a);
+    y = year-a;
+    m = month+12*a-2;
+    week = (day+y+int(y/4)-int(y/100)+int(y/400)+int((31*m)/12))%7;
+    Week = week +1;
+    sinWeek = (1+np.sin(((week-1)/7)*(2*np.pi)))/2
+    return [week,sinWeek]
 
 
 information = configuracion()
