@@ -96,7 +96,7 @@ def leerArchivo(informacion):
                 print(valPred);
                 guardarPrediccion(value,informacion[0],valPred)
     else:
-        if buscarArchivo(informacion[4]):
+        if buscarArchivo(informacion[4], dirCsv):
             # buscarArchivo(informacion[4]); #csv ayer
             fechaAyer= str(informacion[1].year)+"-"+numString(informacion[1].month)+"-"+numString(informacion[1].day)
             dataMet = unionMeteorologia(fechaAyer, informacion[1]);
@@ -159,7 +159,6 @@ def prediccion(estacion,data):
     temp = temp[1:];
     dataPred = pre.normalize(temp,estacion,"O3",dirData);
     dataPred= convert(dataPred);
-    print(dataPred)
     prediccion = pre.prediction(estacion,"O3",[dataPred],dirTrain,dirData)
     print(prediccion)
     prediccion1 = pre.desNorm(prediccion,estacion,"O3",dirData);
@@ -232,10 +231,11 @@ def unionData(data, fechaComplete):
     :return: dataFrame
     """
     fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
-    dataFestivos = df.read_csv('data/Festivos.csv')
+    dataFestivos = df.read_csv('/home/pablo/PollutionForecast/ContaminationForecast/data/Festivos.csv')
     dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
     dataFestivos2 = convertDates(dataFestivos);
     dataFestivos2 = dataFestivos2[(dataFestivos2['fecha'] == fechaM)]
+    dataFestivos2 = dataFestivos2.reset_index(drop=True)
     dataFestivos2 = dataFestivos2.drop('fecha',axis =1)
     data= df.concat([data,dataFestivos2], axis=1);
     return data;
