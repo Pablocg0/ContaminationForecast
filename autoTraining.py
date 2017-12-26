@@ -66,13 +66,14 @@ def training(datax, build, estacion, dirTrain, contaminant, dirData):
     train_step = my_opt.minimize(loss)
     name = 'train_' + estacion + '_' + contaminant
     with tf.Session() as sess:
-         saver = tf.train.Saver()
-         saver.restore(sess, tf.train.latest_checkpoint(dirTrain + station + '/'))# load training
+         #saver = tf.train.Saver()
+         saver = tf.train.import_meta_graph(dirTrain + estacion + '/' + name + '-1000.meta')
+         saver.restore(sess, tf.train.latest_checkpoint(dirTrain + estacion + '/'))# load training
          init = tf.global_variables_initializer();
          sess.run(init);
          for step in range(1000):
              sess.run(train_step, feed_dict={x_data: datax, y_target: build});
 
-         new_saver.save(sess, dirTrain + estacion + '/' + name, global_step= step+1, write_meta_graph=False)
+         saver.save(sess, dirTrain + estacion + '/' + name, global_step= step+1, write_meta_graph=False)
          sess.close();
 
