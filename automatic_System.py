@@ -22,6 +22,7 @@ dataBackup = df.DataFrame;
 def configuracion():
     nameNetcdf = "wrfout_d02_"
     actual = datetime.now();
+    actual = actual - timedelta(hours=1)
     actualNetcdf = nameNetcdf+ str(actual.year)+ "-"+ numString(actual.month)+ "-"+numString(actual.day)+"_00.nc";
     actualCsv = variables[0]+"_"+str(actual.year)+ "-"+ numString(actual.month)+ "-"+numString(actual.day)+".csv";
     ayer = actual - timedelta(days=1)
@@ -64,7 +65,7 @@ def leerArchivo(informacion):
                 print(data)
                 valPred = prediccion(value, data);
                 print(valPred);
-                #guardarPrediccion(value,informacion[0],valPred)
+                guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
         direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
         #stringClear = makeCsv.clearString(informacion[2]);
@@ -192,6 +193,8 @@ def training(fechaAyer, estacion, dirTrain, dirData):
     else:
         dataMet = unionMeteorologia(fechaMet, fechaAyer)
         dataMet = dataMet.drop('fecha',axis =1)
+        data = separateDate(data)
+        data = unionData(data,fechaAyer)
         data = df.concat([data,dataMet], axis=1);
         data = filterData(data, dirData + estacion + "_O3.csv")
         data = data.fillna(value=-1)
@@ -230,7 +233,7 @@ def unionData(data, fechaComplete):
     :type data: dataFrame
     :return: dataFrame
     """
-    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day+1)+' '+numString(fechaComplete.hour)+':00:00';
     dataFestivos = df.read_csv('/home/pablo/PollutionForecast/ContaminationForecast/data/Festivos.csv')
     dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
     dataFestivos2 = convertDates(dataFestivos);
