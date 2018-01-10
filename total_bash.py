@@ -15,7 +15,7 @@ est =['AJM','MGH','CCA','SFE','UAX','CUA','NEZ','CAM','LPR','SJA','IZT','SAG','T
 
 op = 2;# 1) Predicciones 2) Para Entrenar
 numEs=11;
-numE =11;
+numE =3;
 print(datos[numEs]);
 if op == 1:
     #tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
