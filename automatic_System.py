@@ -233,7 +233,7 @@ def unionData(data, fechaComplete):
     :type data: dataFrame
     :return: dataFrame
     """
-    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day+1)+' '+numString(fechaComplete.hour)+':00:00';
+    fechaM = str(fechaComplete.year)+'-'+numString(fechaComplete.month)+'-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
     dataFestivos = df.read_csv('/home/pablo/PollutionForecast/ContaminationForecast/data/Festivos.csv')
     dataFestivos = dataFestivos.drop(labels='Unnamed: 0',axis=1);
     dataFestivos2 = convertDates(dataFestivos);
@@ -246,7 +246,8 @@ def unionData(data, fechaComplete):
 
 
 def guardarPrediccion(estacion, fecha, Valor):
-    fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day + 1)+' '+str(fecha.hour)+':00:00';
+    fecha = fecha + timedelta(days=1)
+    fechaActual = str(fecha.year)+'-'+str(fecha.month)+'-'+str(fecha.day)+' '+str(fecha.hour)+':00:00';
     fd.saveData(estacion, fechaActual, Valor)
 
 
