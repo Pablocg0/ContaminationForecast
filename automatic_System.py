@@ -67,7 +67,7 @@ def leerArchivo(informacion):
                 print(valPred);
                 guardarPrediccion(value,informacion[0],valPred)
     elif buscarArchivo(informacion[2],dirNetCDF) : #NetCDF
-        direccioNetCDF = dirNetCDF+ str(informacion[0].month) +"_"+  deMonth(informacion[0].month) + "/"
+        direccioNetCDF = dirNetCDF+ str(informacion[0].month).zfill(2) +"_"+  deMonth(informacion[0].month) + "/"
         #stringClear = makeCsv.clearString(informacion[2]);
         data = open_netcdf(direccioNetCDF+informacion[2],informacion[2],informacion[2]);
         #checkFile(data,informacion[2],fecha,2);
