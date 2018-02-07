@@ -160,9 +160,16 @@ def init():
     nameContaminant = config.get('completeTable', 'nameContaminant')
     porcentaje = config.get('completeTable', 'porcentaje')
     est = config.get('completeTable','est')
+    dirDataComp = dirDataComp.split()
+    dirDataSave = dirDataSave.split()
+    contaminant = contaminant.split()
+    nameContaminant = nameContaminant.split()
+    est = est.split()
     print(nameContaminant)
-    #originDir(dirDataComp, dirDataSave, nameContaminant, est, contaminant, porcentaje)
-    #copyComplete(estComplete, dirDataComp, dirDataSave, contaminant)
+    tam = len(contaminant)
+    for xs in range(tam):
+        originDir([dirDataComp[xs]], [dirDataSave[xs]], nameContaminant[xs], est, contaminant[xs], porcentaje)
+        #copyComplete(estComplete, dirDataComp, dirDataSave, contaminant)
 
 
-#init()
+init()
