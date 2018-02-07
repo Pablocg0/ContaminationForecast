@@ -28,6 +28,12 @@ or
 
 ## Anaconda dependency installation
 
+### CUDA
+
+ For the installation of CUDA visit
+
+ https://developer.nvidia.com/cuda-downloads
+
 ### tensorflow
 
  For the installation of tensorflow gpu visit:
@@ -37,6 +43,8 @@ or
  For tensorflow
 
  `conda install -c jjhelmus tensorflow=0.12.0rc0`
+
+ `conda install -c anaconda tensorflow-gpu`
 
 ### pandas
 
