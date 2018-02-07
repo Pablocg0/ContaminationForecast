@@ -312,12 +312,15 @@ def init():
     mode = config.get('saveData_cont_otres', 'mode')
     bootstrap = config.get('saveData_cont_otres', 'bootstrap')
     endDate = config.get('saveData_cont_otres', 'endDate')
+    tables = tables.split()
     for xs in tables:
         contaminant = config.get('saveData_' + xs, 'contaminant')
         nameContaminant = config.get('saveData_' + xs, 'nameContaminant')
         dirr = config.get('saveData_' + xs, 'dirr')
         est = config.get('saveData_' + xs, 'est')
         startDate = config.get('saveData_' + xs, 'startDate')
+        startDate = startDate.split()
+        est = est.split()
         saveData(est, startDate, nameContaminant, endDate, dirr, dirTotalCsv, contaminant, mode)
     if bootstrap == 'S':
         completeTable.init()

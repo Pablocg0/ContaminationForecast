@@ -24,6 +24,13 @@ def init():
     columnContaminant = config.get('total_bash', 'columnContaminant')
     option = config.get('total_bash', 'option')
     iteraciones = config.get('total_bash', 'iteraciones')
+    est = est.split()
+    contaminant = contaminant.split()
+    columnContaminant = columnContaminant.split()
+    datos = datos.split()
+    datosComp = datosComp.split()
+    train = train.split()
+    graficas = graficas.split()
     num = len(contaminant)
     for xs in range(num):
         if option == 2:
