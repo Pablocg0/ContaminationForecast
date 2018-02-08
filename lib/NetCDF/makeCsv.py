@@ -69,7 +69,8 @@ def divData(data, numRow, numColumns):
         div = np.vsplit(dataValue, numRow)
         for xs in div:
             divSplit = np.array_split(xs, numColumns)
-            rows.append(divSplit)
+            for ls in divSplit:
+                rows.append(ls)
         for ys in rows:
             meanVal = np.mean(ys)
             array1D.append(meanVal)
@@ -357,7 +358,7 @@ def totalFiles(pathCopyData, pathNetCDF, dateInit, dateFinal):
     :type pathNetCDF: String
     """
     dateInit = datetime.strptime(dateInit, '%Y-%m-%d')
-    dateFinal = datetime.strftime(dateFinal, '%Y-%m-%d')
+    dateFinal = datetime.strptime(dateFinal, '%Y-%m-%d')
     dirr = pathCopyData
     dirr2 = pathNetCDF
     name = 'wrfout_d02_\d\d\d\d-\d\d-\d\d_00.nc'
@@ -370,7 +371,7 @@ def totalFiles(pathCopyData, pathNetCDF, dateInit, dateFinal):
         for value in files:
             if patron.match(value) != None:
                 f = patron2.findall(value)
-                dateNetCDF = datetime.strptime(f, '%Y-%m-%d')
+                dateNetCDF = datetime.strptime(f[0], '%Y-%m-%d')
                 if (dateNetCDF < dateFinal) & (dateNetCDF > dateInit):
                     fil.append(value)
                     ba.append(base)
@@ -427,31 +428,31 @@ def checkFile(net, name, date, opt, path, numRow, numColumns, minlat, maxlat, mi
 
 def init():
     config = configparser.ConfigParser()
-    config.read('../../modulos/Pre-procesamiento/confMakeCsv.conf')
+    config.read('confMakeCsv.conf')
     path = config.get('makeCsv', 'path')
     pathCsv = config.get('makeCsv', 'pathCsv')
     pathCopyData = config.get('makeCsv', 'pathCopyData')
     pathNetCDF = config.get('makeCsv', 'pathNetCDF')
-    numRow = config.get('makeCsv', 'numRows')
-    numColumns = config.get('makeCsv', 'numColumns')
-    minlat = config.get('makeCsv', 'minlat')
-    maxlat = config.get('makeCsv', 'maxlat')
-    minlon = config.get('makeCsv', 'minlon')
-    maxlon = config.get('makeCsv', 'maxlon')
+    numRow = int(config.get('makeCsv', 'numRows'))
+    numColumns = int(config.get('makeCsv', 'numColumns'))
+    minlat = float(config.get('makeCsv', 'minlat'))
+    maxlat = float(config.get('makeCsv', 'maxlat'))
+    minlon = float(config.get('makeCsv', 'minlon'))
+    maxlon = float(config.get('makeCsv', 'maxlon'))
     dateInit = config.get('makeCsv', 'dateInit')
     dateFinal = config.get('makeCsv', 'dateFinal')
     variables = config.get('makeCsv', 'variables')
     mode = config.get('makeCsv', 'mode')
-    print(variables)
+    variables = variables.split()
     if mode == 'S':
         print('save')
-        #totalFiles(pathCopyData, pathNetCDF, dateInit, dateFinal)
+        totalFiles(pathCopyData, pathNetCDF, dateInit, dateFinal)
     elif mode == 'P':
         print('procesamiento')
-        #readFiles(2, path, pathCopyData, numRow, numColumns, minlat, maxlat, minlon, maxlon, variables)
-        #for i in variables:
-            #print(i)
-            #readCsv(i, path, pathCsv, variables)
+        readFiles(2, path, pathCopyData, numRow, numColumns, minlat, maxlat, minlon, maxlon, variables)
+        for i in variables:
+            print(i)
+            readCsv(i, path, pathCsv, variables)
 
 
 init()

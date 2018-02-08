@@ -165,11 +165,10 @@ def init():
     contaminant = contaminant.split()
     nameContaminant = nameContaminant.split()
     est = est.split()
-    print(nameContaminant)
-    tam = len(contaminant)
+    tam = len(contaminant) - 1
     for xs in range(tam):
         originDir([dirDataComp[xs]], [dirDataSave[xs]], nameContaminant[xs], est, contaminant[xs], porcentaje)
         #copyComplete(estComplete, dirDataComp, dirDataSave, contaminant)
 
 
-init()
+#init()

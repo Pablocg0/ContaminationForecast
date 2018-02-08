@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#source ~/anaconda3/envs/py35/bin/activate py35
-python ../../lib/NetCDF/makeCsv.py
+source ~/anaconda3/envs/tensorflow/bin/activate tensorflow
+python ../../lib/NetCDF/makeCsv.py || python ../../lib/NetCDF/makeCsv.py
 python ../../lib/saveData.py
 

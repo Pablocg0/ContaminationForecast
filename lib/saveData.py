@@ -25,7 +25,7 @@ def saveData(listEstations, startDate, nameContaminant, endDate, dirr, dirTotalC
     :type dirTotalCsv: String
     :param contaminant: name pollutant
     """
-    createFile()
+    #createFile()
     est = listEstations
     tam = len(est) - 1
     i = 0
@@ -33,7 +33,7 @@ def saveData(listEstations, startDate, nameContaminant, endDate, dirr, dirTotalC
         print(est[i])
         print(startDate[i])
         if est[i] == 'CHO' or est[i] == 'BJU':
-            saveData2(est[i], startDate[i], nameContaminant, endDate, dirr, dirTotalCsv, contaminant)
+            saveData2([est[i]], [startDate[i]], nameContaminant, endDate, dirr, dirTotalCsv, contaminant)
         nameDelta = nameContaminant + est[i] + '_delta'
         nameD = est[i] + '_' + contaminant + '.csv'
         nameB = est[i] + '_' + contaminant + '_pred.csv'
@@ -89,7 +89,7 @@ def saveData2(listEstations, startDate, nameContaminant, endDate, dirr, dirTotal
     :type dirTotalCsv: String
     :param contaminant: name pollutant
     """
-    createFile()
+    #createFile()
     est = listEstations
     tam = len(est) - 1
     i = 0
@@ -99,8 +99,8 @@ def saveData2(listEstations, startDate, nameContaminant, endDate, dirr, dirTotal
         nameDelta = nameContaminant + est[i] + '_delta'
         nameD = est[i] + '_' + contaminant + '.csv'
         nameB = est[i] + '_' + contaminant + '_pred.csv'
-        #tempData = fd.readData(startDate[i], endDate, [est[i]], contaminant)
-        #tempBuild = fd.buildClass2(tempData, [est[i]], contaminant, 24, startDate[i], endDate)
+        tempData = fd.readData(startDate[i], endDate, [est[i]], contaminant)
+        tempBuild = fd.buildClass2(tempData, [est[i]], contaminant, 24, startDate[i], endDate)
         temAllData = tempData.dropna(axis=1, how='all')
         # allD = temAllData.dropna(axis=0,how='any')
         allD = temAllData.fillna(value=-1)
@@ -140,21 +140,6 @@ def filterData(data, build):
     datesTemp = df.DataFrame(data['fecha'], columns=['fecha'])
     build = build.merge(datesTemp, how='right', on='fecha')
     return build
-
-
-def createFile():
-    # we create the necesary folders to save the files in case of not existing
-    est = ['AJM', 'MGH', 'CCA', 'SFE', 'UAX', 'CUA', 'NEZ', 'CAM', 'LPR', 'SJA', 'CHO','IZT','SAG','TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL']
-    if not os.path.exists('data'):
-        os.makedirs('data')
-    if not os.path.exists('trainData'):
-        os.makedirs('trainData')
-    i = 0
-    while i <= 21:
-        r = 'trainData/' + est[i]
-        if not os.path.exists(r):
-            os.makedirs(r)
-        i += 1
 
 
 def maxAndMinValues(data, station, contaminant, dirr):
@@ -283,7 +268,7 @@ def unionData(data, dirTotalCsv):
     :type data: dataFrame
     :return: dataFrame
     """
-    dataFestivos = df.read_csv('data/Festivos.csv')
+    dataFestivos = df.read_csv('../../Data/Festivos.csv')
     dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
     dataFestivos2 = convertDates(dataFestivos)
     data = data.merge(dataFestivos2, how='left', on='fecha')
