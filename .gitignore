@@ -5,3 +5,5 @@ data/
 trainData/
 *.swp
 ./ropeproject/
+*.save
+*.save.1
