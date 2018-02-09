@@ -4,6 +4,6 @@ __pycache__/
 data/
 trainData/
 *.swp
-./ropeproject/
+.ropeproject/
 *.save
 *.save.1

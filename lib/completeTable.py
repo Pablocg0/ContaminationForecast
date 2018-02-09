@@ -132,24 +132,6 @@ def bootstrap(origin, save, nameContaminant, contaminant, est, porcentaje):
             prediccion.to_csv(save + value + '_' + contaminant + '_pred.csv', encoding ='utf-8', index=False)
 
 
-def createFile():
-    est = ['AJM', 'MGH', 'CCA', 'SFE', 'UAX', 'CUA', 'NEZ', 'CAM', 'LPR', 'SJA', 'CHO', 'IZT', 'SAG', 'TAH','ATI','FAC','UIZ','MER','PED','TLA','BJU','XAL'];
-    dirData = ['data/unionGeo/DatosCC/', 'data/unionGeo/DatosLC/', 'data/unionGeo/DatosCP/','data/unionGeo/DatosLP/'];
-    dirGraficas = ['Graficas/Predicciones/unionGeo/GraficasCC/', 'Graficas/Predicciones/unionGeo/GraficasCP/','Graficas/Predicciones/unionGeo/GraficasLC/','Graficas/Predicciones/unionGeo/GraficasLP/'];
-    dirTrain = ['trainData/unionGeo/TrainCP/', 'trainData/unionGeo/TrainLP/', 'trainData/unionGeo/TrainCC/','trainData/unionGeo/TrainLC/'];
-    for val in range(len(dirData)):
-        if not os.path.exists(dirData[val]):
-            os.makedirs(dirData[val])
-        if not os.path.exists(dirGraficas[val]):
-            os.makedirs(dirGraficas[val])
-        if not os.path.exists(dirTrain[val]):
-            os.makedirs(dirTrain[val])
-        for i in range(len(est)):
-            r = dirTrain[val] + est[i]
-            if not os.path.exists(r):
-                os.makedirs(r)
-
-
 def init():
     estComplete = []
     config = configparser.ConfigParser()
@@ -158,17 +140,17 @@ def init():
     dirDataSave = config.get('completeTable', 'dirDataSave')
     contaminant = config.get('completeTable', 'contaminant')
     nameContaminant = config.get('completeTable', 'nameContaminant')
-    porcentaje = config.get('completeTable', 'porcentaje')
+    porcentaje = float((config.get('completeTable', 'porcentaje'))
     est = config.get('completeTable','est')
-    dirDataComp = dirDataComp.split()
-    dirDataSave = dirDataSave.split()
     contaminant = contaminant.split()
     nameContaminant = nameContaminant.split()
     est = est.split()
     tam = len(contaminant) - 1
     for xs in range(tam):
-        originDir([dirDataComp[xs]], [dirDataSave[xs]], nameContaminant[xs], est, contaminant[xs], porcentaje)
+        if not os.path.exists(dirDataSave + 'B' + contaminant[xs] + '/'):
+            os.makedirs(dirDataSave + 'B' + contaminant[xs] + '/')
+        originDir([dirDataComp + contaminant[xs] + '/'], [dirDataSave + 'B' + contaminant[xs] + '/'], nameContaminant[xs], est, contaminant[xs], porcentaje)
         #copyComplete(estComplete, dirDataComp, dirDataSave, contaminant)
 
 
-#init()
+init()
