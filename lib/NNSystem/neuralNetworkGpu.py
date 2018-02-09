@@ -14,7 +14,7 @@ def init_weight(shape):
     :return: matrix weight
     """
     with tf.device("/cpu:0"):
-        weight = tf.Variable(tf.random_normal(shape), name='weight')
+        weight = tf.Variable(tf.random_normal(shape))
         return weight
 
 
@@ -27,7 +27,7 @@ def init_bias(shape):
     :return: matrix bias
     """
     with tf.device("/cpu:0"):
-        bias = tf.Variable(tf.random_normal(shape), name='bias')
+        bias = tf.Variable(tf.random_normal(shape))
         return bias
 
 

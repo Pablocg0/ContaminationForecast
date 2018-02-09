@@ -5,7 +5,7 @@ import configparser
 
 def init():
     config = configparser.ConfigParser()
-    # config.read('../modulos/training/confTraining.conf')
+    # config.read('confTraining.conf')
     config.read('confTraining.conf')
     # Datos postprocesados de la base de datos y de meteorologia
     datos = config.get('total_bash', 'datos')
@@ -22,8 +22,8 @@ def init():
     fechaFinal = config.get('total_bash', 'fechaFinal')
     contaminant = config.get('total_bash', 'contaminant')
     columnContaminant = config.get('total_bash', 'columnContaminant')
-    option = config.get('total_bash', 'option')
-    iteraciones = config.get('total_bash', 'iteraciones')
+    option = int(config.get('total_bash', 'option'))
+    iteraciones = int(config.get('total_bash', 'iteraciones'))
     est = est.split()
     contaminant = contaminant.split()
     columnContaminant = columnContaminant.split()
@@ -32,11 +32,12 @@ def init():
     train = train.split()
     graficas = graficas.split()
     num = len(contaminant)
-    for xs in range(num):
-        if option == 2:
+    if option == 2:
+        for xs in range(num):
             # tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
-            tp.init(datos[xs], datosComp[xs], graficas[xs], train[xs], contaminant[xs], columnContaminant[xs], fechaInicio, fechaFinal,est)
-        elif option == 1:
+            tp.init(datos[xs]+contaminant[xs]+'/', datosComp[xs]+contaminant[xs]+'/', graficas[xs], train[xs]+contaminant[xs]+'/', contaminant[xs], columnContaminant[xs], fechaInicio, fechaFinal,est)
+    elif option == 1:
+        for xs in range(num):
             au.trainNeuralNetworks(est, datos[xs], train[xs], fechaFinal, contaminant[xs], iteraciones)
 
 

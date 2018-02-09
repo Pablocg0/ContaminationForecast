@@ -75,13 +75,15 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     labels = l[0]
     location = l[1]
     if (station == 'SAG') | (station == 'UIZ'):
-        lugar = location[0] + 1
-        nombre = labels[0]
+        loc = labels.index('Junio')
+        lugar = location[loc] + 1
+        nombre = labels[loc]
     else:
-        lugar = location[2] + 1
-        nombre = labels[2]
+        loc = labels.index('Junio')
+        lugar = location[loc] + 1
+        nombre = labels[loc]
     arrayPred = []
-    nameColumn = columnContaminant + sta + '_delta'
+    nameColumn = columnContaminant +'_'+ sta + '_delta'
     inf = build[nameColumn].values
     index = data.index.values
     for x in index:
@@ -95,16 +97,16 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     plt.figure(figsize=(22.2, 11.4))
     plt.plot(inf, color='tomato', linestyle="solid", marker='o', label='Valor observado.');
     plt.plot(real, color='darkgreen', linestyle='solid', marker='o', label='Pronóstico 24h NN.');
-    plt.title(nombreEst(station) + ' (' + station + ') comparación de ' + contaminant+' observado vs red neuronal (2017)',fontsize=25, y=1.1 )
-    plt.xlabel('Fecha', fontsize=18)
+    plt.title(nombreEst(station) + ' (' + station + ') comparación de ' + contaminant+' observado vs red neuronal' + ' para la primer semana de ' + nombre + ' 2016' ,fontsize=25, y=1.1 )
+    #plt.xlabel('Fecha', fontsize=18)
     n = 'Primera semana de '+nombre
-    # plt.xlabel(n,fontsize=18);
+    plt.xlabel(n,fontsize=18);
     plt.ylabel('Partes por millon (PPM)', fontsize=18)
     plt.legend(loc='best')
     plt.grid(True, axis='both', alpha= 0.3, linestyle="--", which="both")
     # plt.xticks(location,labels,fontsize=8,rotation=80)
     plt.xticks(location,labels,fontsize=16,rotation=80)
-    # plt.xlim(lugar,lugar+144);
+    plt.xlim(lugar,lugar+144);
     plt.axhspan(20, 40, color='lightgray', alpha=0.3)
     plt.axhspan(60, 80, color='lightgray', alpha=0.3)
     plt.axhspan(100, 120, color='lightgray', alpha=0.3)
@@ -223,8 +225,8 @@ def saveMetric(dirGraficas):
     :param dirGraficas: address where the graphics are saved
     :type dirGraficas: String
     """
-    nameCol = ['MAPE', 'uTheils', 'Indice de Correlación', 'Agreement']
-    dataMet = df.DataFrame(metri, columns=['Estacion', 'MAPE', 'uTheils', 'Indice de Correlación','Agreement']);
+    nameCol = ['MAPE', 'uTheils', 'Indice de Correlación', 'Agreement', 'RMSE']
+    dataMet = df.DataFrame(metri, columns=['Estacion', 'MAPE', 'uTheils', 'Indice de Correlación','Agreement', 'RMSE']);
     dataMet.to_csv(dirGraficas + 'Metricas.csv', encoding='utf-8', index=False)
     print(dataMet)
     for value in nameCol:
@@ -236,7 +238,7 @@ def saveMetric(dirGraficas):
         plt.gca().spines['left'].set_visible(False)
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
-        plt.legend(loc=1, bbox_to_anchor=(0.1, 1.09))
+        plt.legend(loc=1, bbox_to_anchor=(0.1, 1.09), frameon=None)
         plt.tight_layout()
         plt.savefig(dirGraficas + value + ".png", dpi=600)
         plt.show()
