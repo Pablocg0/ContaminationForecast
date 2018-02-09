@@ -27,14 +27,17 @@ def trainNeuralNetworks(est, dirr, dirTrain, fechaFinal, contaminant, iteracione
         station = est[i]
         print(station)
         name = station + '_' + contaminant  # name the file with the data
-        if os.path.exists(dirr + name + '.csv'):
-            data = df.read_csv(dirr + name + '.csv')   # we load the data in the Variable data
-            build = df.read_csv(dirr + name + '_pred.csv')  # we load the data in the Variable build
+        newD = dirr + contaminant +'/' + name 
+        print(newD+ '.csv')
+        print(os.path.exists(newD + '.csv'))
+        if os.path.exists(newD + '.csv'):
+            data = df.read_csv(newD + '.csv')   # we load the data in the Variable data
+            build = df.read_csv(newD + '_pred.csv')  # we load the data in the Variable build
             data = data[data['fecha'] < fechaFinal]
             build = build[build['fecha'] < fechaFinal]
             tamLen.append(len(data.index))
             data = data.fillna(value=-1)
             build = build.fillna(value=-1)
             xy_values = an(data, build, contaminant)  # preprocessing
-            nng(xy_values[0], xy_values[1], xy_values[2], iteraciones, station, contaminant, dirTrain)  # The neural network is trained
+            nng(xy_values[0], xy_values[1], xy_values[2], iteraciones, station, contaminant, dirTrain + contaminant + '/' )  # The neural network is trained
             i += 1
