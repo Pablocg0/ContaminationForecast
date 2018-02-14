@@ -100,8 +100,8 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     plt.title(nombreEst(station) + ' (' + station + ') comparación de ' + contaminant+' observado vs red neuronal' + ' para la primer semana de ' + nombre + ' 2016' ,fontsize=25, y=1.1 )
     #plt.xlabel('Fecha', fontsize=18)
     n = 'Primera semana de '+nombre
-    plt.xlabel(n,fontsize=18);
-    plt.ylabel('Partes por millon (PPM)', fontsize=18)
+    plt.xlabel(n,fontsize=22);
+    plt.ylabel('Partes por millon (PPM)', fontsize=22)
     plt.legend(loc='best')
     plt.grid(True, axis='both', alpha= 0.3, linestyle="--", which="both")
     # plt.xticks(location,labels,fontsize=8,rotation=80)

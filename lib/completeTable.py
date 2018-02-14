@@ -140,7 +140,7 @@ def init():
     dirDataSave = config.get('completeTable', 'dirDataSave')
     contaminant = config.get('completeTable', 'contaminant')
     nameContaminant = config.get('completeTable', 'nameContaminant')
-    porcentaje = float((config.get('completeTable', 'porcentaje'))
+    porcentaje = float(config.get('completeTable', 'porcentaje'))
     est = config.get('completeTable','est')
     contaminant = contaminant.split()
     nameContaminant = nameContaminant.split()

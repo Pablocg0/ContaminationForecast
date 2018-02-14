@@ -334,7 +334,8 @@ def readFiles(opt, path, pathCopyData, numRow, numColumns, minlat, maxlat, minlo
             fbas = df.DataFrame(tbaseCopy, columns=['nameBase'])
             fdata.to_csv(dirr + 'tfile.txt', encoding='utf-8', index=False)
             fbas.to_csv(dirr + 'tbase.txt', encoding='utf-8', index=False)
-            os.remove(pathCopyData + cadena)
+            if os.path.exists(pathCopyData + cadena):
+                os.remove(pathCopyData + cadena)
             sys.exit()
             # readFiles(1);
         except tarfile.ReadError:
@@ -428,7 +429,7 @@ def checkFile(net, name, date, opt, path, numRow, numColumns, minlat, maxlat, mi
 
 def init():
     config = configparser.ConfigParser()
-    config.read('confMakeCsv.conf')
+    config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/Pre-procesamiento/confMakeCsv.conf')
     path = config.get('makeCsv', 'path')
     pathCsv = config.get('makeCsv', 'pathCsv')
     pathCopyData = config.get('makeCsv', 'pathCopyData')
