@@ -525,8 +525,11 @@ def init():
     minlon = float(config.get('automatic_System', 'minlon'))
     maxlon = flot(config.get('automatic_System', 'maxlon'))
     variables = config.get('automatic_System', 'variables')
+    estaciones = estaciones.split()
+    variables = variables.split()
     dataBackup = df.DataFrame
     information = configuracion(variables)
+    contaminant = contaminant.split()
     print(contaminant)
     # nameNetcdf = "wrfout_d02_"
     # hoy= datetime.strptime("2017-12-12 19:00:00",'%Y-%m-%d %H:%M:%S')
@@ -536,6 +539,8 @@ def init():
     # ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
     # test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
     # leerArchivo(test);
+    for xs in contaminant:
+        leerArchivo(information, estaciones, variables, dirNetCDF, dirCsv, dirData + xs + '/', dirTrain + xs + '/', dirFestivos, dataBackup,path,pathCopyData, xs,numRow, numColumns, minlat, maxlat, minlon, maxlon)
     #leerArchivo(information, estaciones, variables, dirNetCDF, dirCsv, dirData, dirTrain, dirFestivos, dataBackup,path,pathCopyData, contaminant,numRow, numColumns, minlat, maxlat, minlon, maxlon)
 
 
