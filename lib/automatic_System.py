@@ -545,6 +545,7 @@ def findT(fileName):
 
 
 def init():
+    contaminant = str(sys.argv[1])
     config = configparser.ConfigParser()
     config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/forecast/confAutomatic_System.conf')
     dirNetCDF = config.get('automatic_System', 'dirNetCDF')
@@ -555,7 +556,7 @@ def init():
     variables = config.get('automatic_System', 'variables')
     pathCopyData = config.get('automatic_System', 'pathCopyData')
     path = config.get('automatic_System', 'path')
-    contaminant = config.get('automatic_System', 'contaminant')
+    #contaminant = config.get('automatic_System', 'contaminant')
     numRow = int(config.get('automatic_System', 'numRows'))
     numColumns = int(config.get('automatic_System', 'numColumns'))
     minlat = float(config.get('automatic_System', 'minlat'))
@@ -585,4 +586,3 @@ def init():
 
 
 init()
-
