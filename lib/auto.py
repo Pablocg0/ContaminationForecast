@@ -27,7 +27,9 @@ def trainNeuralNetworks(est, dirr, dirTrain, fechaFinal, contaminant, iteracione
         station = est[i]
         print(station)
         name = station + '_' + contaminant  # name the file with the data
-        newD = dirr + contaminant +'/' + name 
+        newD = dirr + 'B' +contaminant +'/' + name 
+        if not os.path.exists(dirTrain):
+            os.makedirs(dirTrain)
         print(newD+ '.csv')
         print(os.path.exists(newD + '.csv'))
         if os.path.exists(newD + '.csv'):
@@ -39,5 +41,7 @@ def trainNeuralNetworks(est, dirr, dirTrain, fechaFinal, contaminant, iteracione
             data = data.fillna(value=-1)
             build = build.fillna(value=-1)
             xy_values = an(data, build, contaminant)  # preprocessing
-            nng(xy_values[0], xy_values[1], xy_values[2], iteraciones, station, contaminant, dirTrain + contaminant + '/' )  # The neural network is trained
+            nng(xy_values[0], xy_values[1], xy_values[2], iteraciones, station, contaminant, dirTrain)  # The neural network is trained
+            i += 1
+        else:
             i += 1

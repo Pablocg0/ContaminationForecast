@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as df
 import tensorflow as tf
+import os
 from sklearn.model_selection import train_test_split #installl sklearn with pip or anaconda
 
 
@@ -117,8 +118,8 @@ def train(x_d, y_data, columns, iteraciones, station, contaminant, dirTrain):
             total_loss = temp_loss;
 
 
-    if not os.path.exists(dirTrain + station + '/' + name):
-        os.makedirs(dirTrain + station + '/' + name)
+    if not os.path.exists(dirTrain + station + '/'):
+        os.makedirs(dirTrain + station + '/')
     saver.save(sess,dirTrain + station + '/' + name, global_step = 1000);
     sess.close()
     #tf.reset_default_graph();

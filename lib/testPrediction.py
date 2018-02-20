@@ -74,12 +74,13 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     l = xlabel(data)
     labels = l[0]
     location = l[1]
+    print(labels)
     if (station == 'SAG') | (station == 'UIZ'):
-        loc = labels.index('Junio')
+        loc = labels.index('Marzo')
         lugar = location[loc] + 1
         nombre = labels[loc]
     else:
-        loc = labels.index('Junio')
+        loc = labels.index('Marzo')
         lugar = location[loc] + 1
         nombre = labels[loc]
     arrayPred = []

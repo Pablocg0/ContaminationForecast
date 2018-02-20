@@ -152,10 +152,11 @@ class FormatData(object):
         #The connection to the database is closed
         return build;
 
-    def saveData(estacion, fecha, Valor):
+
+    def saveData(estacion, fecha, Valor, contaminant):
         """
         function to save the prediction in the database
-        
+
         :param estacion: name of the station to which the prediction belongs
         :type estacion: string
         :param fecha: prediction date
@@ -163,12 +164,14 @@ class FormatData(object):
         :param valor: prediction value
         :type valor: float32
         """
+        table = contaminant
         oztool = ContIOTools();
         conexion = SqlCont();
         conn = conexion.getPostgresConn();
         cur= conn.cursor();
         #conexion database
-        sql = """INSERT INTO forecast_otres(fecha,val,id_est) VALUES (\'{0}\',{1},\'{2}\');""".format(fecha,Valor[0],estacion);
+        sql = """INSERT INTO {0}(fecha,val,id_est) VALUES (\'{1}\',{2},\'{3}\');""".format(table,fecha,Valor[0],estacion);
         cur.execute(sql)
         conn.commit()
         cur.close()
+
