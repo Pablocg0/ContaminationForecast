@@ -31,44 +31,47 @@ def saveData(listEstations, startDate, nameContaminant, endDate, dirr, dirTotalC
     i = 0
     while i <= tam:  # 21
         print(est[i])
+        print(contaminant)
         print(startDate[i])
         if est[i] == 'CHO' or est[i] == 'BJU':
             saveData2([est[i]], [startDate[i]], nameContaminant, endDate, dirr, dirTotalCsv, contaminant)
-        nameDelta = nameContaminant + est[i] + '_delta'
-        nameD = est[i] + '_' + contaminant + '.csv'
-        nameB = est[i] + '_' + contaminant + '_pred.csv'
-        tempData = fd.readData(startDate[i], endDate, [est[i]], contaminant)
-        tempBuild = fd.buildClass2(tempData, [est[i]], contaminant, 24, startDate[i], endDate)
-        temAllData = tempData.dropna(axis=1, how='all')
-        allD = temAllData.dropna(axis=0, how='any')
-        allD = temAllData.fillna(value=-1)
-        allD = allD.reset_index()
-        allD = allD.drop(labels='index', axis=1)
-        allData = allD.merge(tempBuild, how='left', on='fecha')
-        build = df.DataFrame(allData['fecha'], columns=['fecha'])
-        val = df.DataFrame(allData[nameDelta], columns=[nameDelta])
-        build[nameDelta] = val
-        build = build.fillna(value=-1)
-        data = allData.drop(labels=nameDelta, axis=1)
-        data = data.reset_index()
-        build = build.reset_index()
-        build = build.drop(labels='index', axis=1)
-        data = data.drop(labels='index', axis=1)
-        if mode == 'C':
-            data = fd.readData(startDate[i], endDate, [est[i]], contaminant) # solo para cuando no se quiere quitar el ruido
-            build = fd.buildClass2(data, [est[i]], contaminant, 24, startDate[i], endDate) #solo para cuando no se quiere quitar el ruido
-            data = tempData.fillna(value=-1)  # solo para cuando no se quiere quitar el ruido
-            build = tempBuild  # solo para cuando no se quiere quitar el ruido
-        data = data.fillna(value=-1)
-        data = separateDate(data)
-        data = unionData(data, dirTotalCsv)
-        data = data.drop_duplicates(keep='first')
-        build = build.drop_duplicates(keep='first')
-        maxAndMinValues(data, est[i], contaminant, dirr)
-        build = filterData(data, build)
-        data.to_csv(dirr + nameD, encoding='utf-8', index=False)  # save the data in file "data/[station_contaminant].csv"
-        build.to_csv(dirr + nameB, encoding='utf-8', index=False)  # save the data in file "data/[station_contaminant_pred].csv]
-        i += 1
+            i += 1
+        else:
+            nameDelta = nameContaminant + est[i] + '_delta'
+            nameD = est[i] + '_' + contaminant + '.csv'
+            nameB = est[i] + '_' + contaminant + '_pred.csv'
+            tempData = fd.readData(startDate[i], endDate, [est[i]], contaminant)
+            tempBuild = fd.buildClass2(tempData, [est[i]], contaminant, 24, startDate[i], endDate)
+            temAllData = tempData.dropna(axis=1, how='all')
+            allD = temAllData.dropna(axis=0, how='any')
+            allD = temAllData.fillna(value=-1)
+            allD = allD.reset_index()
+            allD = allD.drop(labels='index', axis=1)
+            allData = allD.merge(tempBuild, how='left', on='fecha')
+            build = df.DataFrame(allData['fecha'], columns=['fecha'])
+            val = df.DataFrame(allData[nameDelta], columns=[nameDelta])
+            build[nameDelta] = val
+            build = build.fillna(value=-1)
+            data = allData.drop(labels=nameDelta, axis=1)
+            data = data.reset_index()
+            build = build.reset_index()
+            build = build.drop(labels='index', axis=1)
+            data = data.drop(labels='index', axis=1)
+            if mode == 'C':
+                data = fd.readData(startDate[i], endDate, [est[i]], contaminant) # solo para cuando no se quiere quitar el ruido
+                build = fd.buildClass2(data, [est[i]], contaminant, 24, startDate[i], endDate) #solo para cuando no se quiere quitar el ruido
+                data = tempData.fillna(value=-1)  # solo para cuando no se quiere quitar el ruido
+                build = tempBuild  # solo para cuando no se quiere quitar el ruido
+            data = data.fillna(value=-1)
+            data = separateDate(data)
+            data = unionData(data, dirTotalCsv)
+            data = data.drop_duplicates(keep='first')
+            build = build.drop_duplicates(keep='first')
+            maxAndMinValues(data, est[i], contaminant, dirr)
+            build = filterData(data, build)
+            data.to_csv(dirr + nameD, encoding='utf-8', index=False)  # save the data in file "data/[station_contaminant].csv"
+            build.to_csv(dirr + nameB, encoding='utf-8', index=False)  # save the data in file "data/[station_contaminant_pred].csv]
+            i += 1
 
 
 def saveData2(listEstations, startDate, nameContaminant, endDate, dirr, dirTotalCsv, contaminant):

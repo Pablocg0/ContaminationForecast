@@ -69,7 +69,8 @@ def divData(data, numRow, numColumns):
         div = np.vsplit(dataValue, numRow)
         for xs in div:
             divSplit = np.array_split(xs, numColumns)
-            rows.append(divSplit)
+            for ls in divSplit:
+                rows.append(ls)
         for ys in rows:
             meanVal = np.mean(ys)
             array1D.append(meanVal)

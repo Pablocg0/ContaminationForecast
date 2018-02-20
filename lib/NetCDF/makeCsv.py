@@ -453,7 +453,7 @@ def init():
         readFiles(2, path, pathCopyData, numRow, numColumns, minlat, maxlat, minlon, maxlon, variables)
         for i in variables:
             print(i)
-            readCsv(i, path, pathCsv, variables)
+            readCsv(i, path, pathCsv)
 
 
 init()

@@ -73,6 +73,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
     :param pathCopyData: address to copy the file
     :type pathCopyData: String
     """
+    print(dirTrain)
+    print(dirData)
     dataBackup = back(dirData, contaminant)
     if buscarArchivo(informacion[3], dirCsv):
         fecha = str(informacion[0].year) + "-" + numString(informacion[0].month)+"-"+numString(informacion[0].day)
@@ -88,7 +90,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print("Informacion insuficiente para la prediccion")
-                guardarPrediccion(value, informacion[0], [-1])
+                guardarPrediccion(value, informacion[0], [-1], contaminant)
             else:
                 # data = data.merge(dataMet,how='left', on='fecha');
                 data = separateDate(data)
@@ -97,12 +99,13 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 data = filterData(data, dirData + value + "_" + contaminant + ".csv")
                 data = data.fillna(value=-1)
+                data = data.loc[0:0]
                 print(data)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print(valPred)
-                guardarPrediccion(value, informacion[0], valPred)
+                guardarPrediccion(value, informacion[0], valPred, contaminant)
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
-        direccioNetCDF = dirNetCDF + str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
+        direccioNetCDF = dirNetCDF +'0' +str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
         data = open_netcdf(direccioNetCDF + informacion[2], informacion[2], informacion[2], pathCopyData);
         fecha = str(informacion[0].year) + "-" + numString(informacion[0].month)+"-"+numString(informacion[0].day)
         checkFile(data, informacion[2], fecha, 2, path, numRow, numColumns, minlat, maxlat, minlon, maxlon, variables)
@@ -117,7 +120,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print("Informacion insuficiente para la prediccion")
-                guardarPrediccion(value, informacion[0], [-1])
+                guardarPrediccion(value, informacion[0], [-1], contaminant)
             else:
                 data = separateDate(data)
                 data = unionData(data, informacion[0], dirFestivos)
@@ -125,10 +128,11 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 data = filterData(data, dirData + value + "_" + contaminant + ".csv")
                 data = data.fillna(value=-1)
+                data = data.loc[0:0]
                 print(data)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print(valPred)
-                guardarPrediccion(value, informacion[0], valPred)
+                guardarPrediccion(value, informacion[0], valPred, contaminant)
     else:
         if buscarArchivo(informacion[4], dirCsv):
             # buscarArchivo(informacion[4]); #csv ayer
@@ -145,17 +149,18 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     data = data.fillna(value=-1)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print("Informacion insuficiente para la prediccion")
-                    guardarPrediccion(value, informacion[0], [-1]);
+                    guardarPrediccion(value, informacion[0], [-1], contaminant);
                 else:
                     data = separateDate(data)
                     data = unionData(data, informacion[0], dirFestivos)
                     data = df.concat([data, dataMet], axis=1)
                     data = filterData(data, dirData + value + "_" + contaminant + ".csv")
                     data = data.fillna(value=-1)
+                    data = data.loc[0:0]
                     print(data)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant)
         else:
             anteAyer = informacion[1] - timedelta(days=1)
             nameCsv = variables[0]+"_"+str(anteAyer.year)+ "-"+ numString(anteAyer.month)+ "-"+numString(anteAyer.day)+".csv";
@@ -172,17 +177,18 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     data = data.fillna(value=-1)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print("Informacion insuficiente para la prediccion")
-                    guardarPrediccion(value, informacion[0], [-1])
+                    guardarPrediccion(value, informacion[0], [-1],contaminant)
                 else:
                     data = separateDate(data)
                     data = unionData(data, informacion[0], dirFestivos)
                     data = df.concat([data, dataMet], axis=1)
                     data = filterData(data, dirData + value + "_" + contaminant + ".csv")
                     data = data.fillna(value=-1)
+                    data = data.loc[0:0]
                     print(data)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant)
     # for x in estaciones:
         # training(informacion[1],x,dirTrain,dirData, dirFestivos, variables, contaminant);
 
@@ -347,7 +353,7 @@ def unionData(data, fechaComplete, dirFestivos):
     return data
 
 
-def guardarPrediccion(estacion, fecha, Valor):
+def guardarPrediccion(estacion, fecha, Valor,contaminant):
     """
     function to save the prediction in the database
 
@@ -358,9 +364,10 @@ def guardarPrediccion(estacion, fecha, Valor):
     :param valor: prediction value
     :type valor: float32
     """
+    print(findT(contaminant))
     fecha = fecha + timedelta(days=1)
     fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-    fd.saveData(estacion, fechaActual, Valor)
+    fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
 
 
 def filterData(data, dirData):
@@ -504,16 +511,47 @@ def weekday(year, month, day):
     sinWeek = (1 + np.sin(((week - 1) / 7) * (2 * np.pi))) * 0.5
     return [week, sinWeek]
 
+def findT(fileName):
+        if "PM2.5" in fileName:
+            return "forecast_pmdoscinco"
+
+        if "PM10" in fileName:
+            return "forecast_pmdiez"
+
+        if "NOX" in fileName:
+            return "forecast_nox"
+
+        if "CO2" in fileName:
+            return "forecast_codos"
+
+        if "PMCO" in fileName:
+            return "forecast_pmco"
+
+        if "CO" in fileName:
+            return "forecast_co"
+
+        if "NO2" in fileName:
+            return "forecast_nodos"
+
+        if "NO" in fileName:
+            return "forecast_no"
+
+        if "O3" in fileName:
+            return "forecast_otres"
+
+        if "SO2" in fileName:
+            return "forecast_sodos"
+
+
 
 def init():
     config = configparser.ConfigParser()
-    config.read('confAutomatic_System.conf')
+    config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/forecast/confAutomatic_System.conf')
     dirNetCDF = config.get('automatic_System', 'dirNetCDF')
     dirCsv = config.get('automatic_System', 'dirCsv')
     dirData = config.get('automatic_System', 'dirData')
     dirTrain = config.get('automatic_System', 'dirTrain')
     dirFestivos = config.get('automatic_System', 'dirFestivos')
-    estaciones = config.get('automatic_System', 'estaciones')
     variables = config.get('automatic_System', 'variables')
     pathCopyData = config.get('automatic_System', 'pathCopyData')
     path = config.get('automatic_System', 'path')
@@ -523,25 +561,28 @@ def init():
     minlat = float(config.get('automatic_System', 'minlat'))
     maxlat = float(config.get('automatic_System', 'maxlat'))
     minlon = float(config.get('automatic_System', 'minlon'))
-    maxlon = flot(config.get('automatic_System', 'maxlon'))
+    maxlon = float(config.get('automatic_System', 'maxlon'))
     variables = config.get('automatic_System', 'variables')
-    estaciones = estaciones.split()
     variables = variables.split()
     dataBackup = df.DataFrame
     information = configuracion(variables)
     contaminant = contaminant.split()
     print(contaminant)
-    # nameNetcdf = "wrfout_d02_"
-    # hoy= datetime.strptime("2017-12-12 19:00:00",'%Y-%m-%d %H:%M:%S')
-    # dayer = datetime.strptime("2017-09-23 19:00:00",'%Y-%m-%d %H:%M:%S')
-    # actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
-    # actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
-    # ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
-    # test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
-    # leerArchivo(test);
+    #for i in range(1, 24):
+        #nameNetcdf = "wrfout_d02_"
+        #hoy= datetime.strptime("2018-01-23 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
+        #dayer = datetime.strptime("2018-01-23 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
+        #actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
+        #actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
+        #ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";
+        #test =[hoy,dayer,actualNetcdf,actualCsv,ayerCsv]
+        #information = test
     for xs in contaminant:
-        leerArchivo(information, estaciones, variables, dirNetCDF, dirCsv, dirData + xs + '/', dirTrain + xs + '/', dirFestivos, dataBackup,path,pathCopyData, xs,numRow, numColumns, minlat, maxlat, minlon, maxlon)
+        estaciones = config.get('automatic_System', 'estaciones'+xs)
+        estaciones = estaciones.split()
+        leerArchivo(information, estaciones, variables, dirNetCDF, dirCsv, dirData + 'B' +xs + '/', dirTrain + xs + '/', dirFestivos, dataBackup,path,pathCopyData, xs,numRow, numColumns, minlat, maxlat, minlon, maxlon)
     #leerArchivo(information, estaciones, variables, dirNetCDF, dirCsv, dirData, dirTrain, dirFestivos, dataBackup,path,pathCopyData, contaminant,numRow, numColumns, minlat, maxlat, minlon, maxlon)
 
 
 init()
+
