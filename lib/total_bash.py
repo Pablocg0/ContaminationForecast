@@ -1,9 +1,12 @@
 import auto as au
 import testPrediction as tp
 import configparser
-
+import sys
 
 def init():
+
+    contaminant = str(sys.argv[1])
+    columnContaminant = str(sys.argv[2])
     config = configparser.ConfigParser()
     # config.read('confTraining.conf')
     config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/training/confTraining.conf')
@@ -20,8 +23,8 @@ def init():
     # Fecha hasta donde se tomaran los datos para el entrenamiento
     fechaInicio = config.get('total_bash', 'fechaInicio')
     fechaFinal = config.get('total_bash', 'fechaFinal')
-    contaminant = config.get('total_bash', 'contaminant')
-    columnContaminant = config.get('total_bash', 'columnContaminant')
+    #contaminant = config.get('total_bash', 'contaminant')
+    #columnContaminant = config.get('total_bash', 'columnContaminant')
     option = int(config.get('total_bash', 'option'))
     iteraciones = int(config.get('total_bash', 'iteraciones'))
     est = est.split()
