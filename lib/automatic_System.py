@@ -214,7 +214,8 @@ def prediccion(estacion, data, dirData, dirTrain, contaminant):
     dataPred = convert(dataPred)
     prediccion = pre.prediction(estacion, contaminant, [dataPred], dirTrain, dirData)
     print(prediccion)
-    prediccion1 = pre.desNorm(prediccion, estacion, contaminant, dirData)
+    columnContaminant = findTable2(contaminant)
+    prediccion1 = pre.desNorm(prediccion, estacion, contaminant, dirData, columnContaminant + '_')
     return prediccion1
 
 
@@ -309,10 +310,21 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
         data = data.merge(dataTemp, how='left', on='fecha')
-    fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
-    filterData = data[(data['fecha'] == fechaM)]
-    filterData = filterData.reset_index(drop=True)
-    return filterData
+    if numString(fechaComplete.hours) == "00":
+        fechaComplete = fechaComplete + timedelta(days=1)
+        fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+        filterData = data[(data['fecha'] == fechaM)]
+        if filterData.empty:
+            fechaComplete = fechaComplete - timedelta(days=1)
+            fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+            filterData = data[(data['fecha'] == fechaM)]
+        filterData = filterData.reset_index(drop=True)
+        return filterData
+    else:
+        fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
+        filterData = data[(data['fecha'] == fechaM)]
+        filterData = filterData.reset_index(drop=True)
+        return filterData
 
 
 def convertDates(data):
@@ -365,9 +377,16 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
     :type valor: float32
     """
     print(findT(contaminant))
-    fecha = fecha + timedelta(days=1)
-    fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-    fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+    if estacion == 'NEZ' or estacion == 'SFE' or estacion == 'TAH' or estacion == 'UAX':
+        fecha = fecha + timedelta(days = 1)
+        fecha1 = fecha + timedelta(hours = 6)
+        fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
+        print(fechaActual)
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+    else:
+        fecha = fecha + timedelta(days=1)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
 
 
 def filterData(data, dirData):
@@ -387,7 +406,10 @@ def filterData(data, dirData):
 
 
 def back(dirData, contaminant):
-    temp = df.read_csv(dirData + "MGH_" + contaminant + ".csv")
+    if contaminant == 'PM10':
+        temp = df.read_csv(dirData + 'TAH_' + contaminant + '.csv')
+    else:
+        temp = df.read_csv(dirData + "MGH_" + contaminant + ".csv")
     return temp.loc[:0]
 
 
@@ -400,6 +422,8 @@ def numString(num):
     :return : string with two digits
     :type return: String
     """
+    if num == 0:
+        return "00"
     if num < 10:
         return "0" + str(num)
     else:
@@ -542,6 +566,37 @@ def findT(fileName):
         if "SO2" in fileName:
             return "forecast_sodos"
 
+def findTable2(fileName):
+        if "PM2.5" in fileName:
+            return "cont_pmdoscinco"
+
+        if "PM10" in fileName:
+            return "cont_pmdiez"
+
+        if "NOX" in fileName:
+            return "cont_nox"
+
+        if "CO2" in fileName:
+            return "cont_codos"
+
+        if "PMCO" in fileName:
+            return "cont_pmco"
+
+        if "CO" in fileName:
+            return "cont_co"
+
+        if "NO2" in fileName:
+            return "cont_nodos"
+
+        if "NO" in fileName:
+            return "cont_no"
+
+        if "O3" in fileName:
+            return "cont_otres"
+
+        if "SO2" in fileName:
+            return "cont_sodos"
+
 
 
 def init():
@@ -569,10 +624,10 @@ def init():
     information = configuracion(variables)
     contaminant = contaminant.split()
     print(contaminant)
-    #for i in range(1, 24):
+    #for i in range(23, 24):
         #nameNetcdf = "wrfout_d02_"
-        #hoy= datetime.strptime("2018-01-23 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
-        #dayer = datetime.strptime("2018-01-23 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
+        #hoy= datetime.strptime("2018-02-20 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
+        #dayer = datetime.strptime("2018-02-19 " + str(i) + ":00:00",'%Y-%m-%d %H:%M:%S')
         #actualNetcdf = nameNetcdf+ str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+"_00.nc";
         #actualCsv = variables[0]+"_"+str(hoy.year)+ "-"+ str(hoy.month)+ "-"+str(hoy.day)+".csv";
         #ayerCsv = variables[0]+"_"+str(dayer.year)+ "-"+ str(dayer.month)+ "-"+str(dayer.day)+".csv";

@@ -57,15 +57,16 @@ def forecastDate(station, dirData, dirrDataC, dirTrain, contaminant, columnConta
     data = filterData(data, dirData + name + '.csv')
     data = data.fillna(value=-1.0)
     dataTemp = data['fecha'].values
+    print(dataTemp)
     nameColumn = columnContaminant +'_'+ sta + '_delta'
-    inf = build[nameColumn].values
     index = data.index.values
+    arrayPred = []
     for x in index:
         pred = data.ix[x].values
         valPred = pred[1:]
         valNorm = pre.normalize(valPred, sta, contaminant, dirData)
         arrayPred.append(convert(valNorm))
-    result = pre.prediction(sta, contaminant, arrayPred, dirTrain, dirData)
+    result = pre.prediction(sta, contaminant, arrayPred, dirTrain + contaminant + '/', dirData)
     real = desNorm(result, sta, contaminant, dirData, columnContaminant)
     dataPrediccion = real
     savePrediccion(station, dataPrediccion, contaminant, dataTemp)
@@ -146,9 +147,10 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     for i in range(size):
         fecha = fechas[i]
         Valor = dataPrediccion[i]
+        fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
         fecha = fecha + timedelta(days=1)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fd.saveData(estacion, fechaActual, [Valor], findT(contaminant))
 
 
 def findT(fileName):
@@ -196,6 +198,7 @@ def init():
     fechaInicio = config.get('forecastDate', 'fechaInicio')
     fechaFin = config.get('forecastDate', 'fechaFin')
     est = config.get('forecastDate', 'estaciones' + contaminant)
-    totalPredection(est, dirData+'B'+ contaminant+'/', dirrDataC+'B'+ contaminant+'/, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
+    est  = est.split()
+    totalPredection(est, dirData+'B'+ contaminant+'/', dirrDataC+'B'+ contaminant+'/', dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
 
 init()
