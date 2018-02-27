@@ -1,3 +1,11 @@
+'''
+File name : Utilites.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
+
 import numpy as np
 from Utilites.oztools import ContIOTools
 from sklearn import preprocessing
@@ -59,7 +67,7 @@ def prepro(data,build,contaminant):
 def prepro2(data,build,contaminant):
     """
     Function to normalize the data of the neuronal network
-    
+
     :param data: training data
     :param build: training data
     :param contaminant: name of the contaminant

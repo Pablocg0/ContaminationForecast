@@ -1,3 +1,12 @@
+'''
+File name : neuralNetwork.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+tensorflow version: r1.6
+Date last modified: 27/02/2018
+'''
+
+
 import numpy as np
 import pandas as df
 import tensorflow as tf
@@ -19,7 +28,7 @@ def init_weight(shape):
 def init_bias(shape):
     """
     Function for the define Variable function weight
-    
+
     :param shape: Matrix containing bias
     :type shape : matrix float32
     :return: matrix bias

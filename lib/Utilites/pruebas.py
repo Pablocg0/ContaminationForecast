@@ -1,3 +1,11 @@
+'''
+File name : pruebas.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
+
 from tests.neuralNetworkGpu import train as nng
 from tests.neuralNetwork import train as nn
 from Utilites.FormatData import FormatData

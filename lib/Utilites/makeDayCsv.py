@@ -1,3 +1,12 @@
+'''
+File name : makeDayCsv.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
+
+
 from datetime import datetime, timedelta
 from pandas import concat
 import pandas as df
@@ -74,7 +83,7 @@ def hours24(anio):
 def makeDates(anio):
     """
     Function to create the dates
-    
+
     :param anio: start year
     :type anio: int
     :return datetime array

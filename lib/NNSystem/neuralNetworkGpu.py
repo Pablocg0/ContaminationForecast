@@ -1,3 +1,12 @@
+'''
+File name : auto.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+tensorflow version: r1.6
+Date last modified: 27/02/2018
+'''
+
+
 import numpy as np
 import pandas as df
 import tensorflow as tf

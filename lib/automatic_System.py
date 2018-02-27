@@ -1,3 +1,11 @@
+'''
+File name : automatic_System.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
+
 from datetime import datetime, timedelta
 from Utilites.FormatData import FormatData as fd
 from Utilites.Utilites import prepro as an
