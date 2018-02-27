@@ -1,3 +1,10 @@
+'''
+File name : total_bash.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
 import auto as au
 import testPrediction as tp
 import configparser

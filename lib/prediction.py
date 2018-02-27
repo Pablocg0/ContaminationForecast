@@ -1,3 +1,10 @@
+'''
+File name : prediction.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
 import tensorflow as tf
 import pandas as df
 

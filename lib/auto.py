@@ -1,3 +1,10 @@
+'''
+File name : auto.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
 from Utilites.Utilites import prepro as an
 from NNSystem.neuralNetworkGpu import train as nng
 import pandas as df
@@ -27,7 +34,7 @@ def trainNeuralNetworks(est, dirr, dirTrain, fechaFinal, contaminant, iteracione
         station = est[i]
         print(station)
         name = station + '_' + contaminant  # name the file with the data
-        newD = dirr + 'B' +contaminant +'/' + name 
+        newD = dirr + 'B' +contaminant +'/' + name
         if not os.path.exists(dirTrain):
             os.makedirs(dirTrain)
         print(newD+ '.csv')

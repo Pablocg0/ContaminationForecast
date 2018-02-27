@@ -1,3 +1,10 @@
+'''
+File name : informationContaminant.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta

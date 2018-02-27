@@ -1,3 +1,10 @@
+'''
+File name : InformationDataFrame.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
 from datetime import datetime, timedelta
 import matplotlib
 import numpy as np
@@ -174,7 +181,7 @@ def nameC(nameColumn):
 def colormap(name, est, nameColumn):
     """
     function to create a heatmap
-    
+
     :param name: station name
     :type name: String
     :param est: station

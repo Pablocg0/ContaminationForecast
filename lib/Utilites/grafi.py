@@ -1,3 +1,11 @@
+'''
+File name : grafi.py
+Author: Pablo Camacho Gonzalez
+Python version: 3.6.4
+Date last modified: 27/02/2018
+'''
+
+
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
