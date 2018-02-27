@@ -90,7 +90,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print("Informacion insuficiente para la prediccion")
-                guardarPrediccion(value, informacion[0], [-1], contaminant)
+                #guardarPrediccion(value, informacion[0], [-1], contaminant)
             else:
                 # data = data.merge(dataMet,how='left', on='fecha');
                 data = separateDate(data)
@@ -120,7 +120,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                 data = data.fillna(value=-1)
                 valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                 print("Informacion insuficiente para la prediccion")
-                guardarPrediccion(value, informacion[0], [-1], contaminant)
+                #guardarPrediccion(value, informacion[0], [-1], contaminant)
             else:
                 data = separateDate(data)
                 data = unionData(data, informacion[0], dirFestivos)
@@ -149,7 +149,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     data = data.fillna(value=-1)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print("Informacion insuficiente para la prediccion")
-                    guardarPrediccion(value, informacion[0], [-1], contaminant);
+                    #guardarPrediccion(value, informacion[0], [-1], contaminant);
                 else:
                     data = separateDate(data)
                     data = unionData(data, informacion[0], dirFestivos)
@@ -177,7 +177,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     data = data.fillna(value=-1)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print("Informacion insuficiente para la prediccion")
-                    guardarPrediccion(value, informacion[0], [-1],contaminant)
+                    #guardarPrediccion(value, informacion[0], [-1],contaminant)
                 else:
                     data = separateDate(data)
                     data = unionData(data, informacion[0], dirFestivos)
@@ -310,7 +310,7 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
         data = data.merge(dataTemp, how='left', on='fecha')
-    if numString(fechaComplete.hours) == "00":
+    if numString(fechaComplete.hour) == "00":
         fechaComplete = fechaComplete + timedelta(days=1)
         fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
         filterData = data[(data['fecha'] == fechaM)]
