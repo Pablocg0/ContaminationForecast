@@ -7,3 +7,4 @@ trainData/
 .ropeproject/
 *.save
 *.save.1
+*.pyc

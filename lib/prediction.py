@@ -32,7 +32,7 @@ def normalize(data, station, contaminant, dirData):
     return valNorm
 
 
-def desNorm(data, station, contaminant, dirData):
+def desNorm(data, station, contaminant, dirData, columnContaminant):
     """
      function to denormalize a value
 
@@ -46,7 +46,7 @@ def desNorm(data, station, contaminant, dirData):
     :type dirData: String
     """
     real = []
-    nameC = 'cont_otres_' + station.lower()
+    nameC = columnContaminant + station.lower()
     # nameC= 'cont_otres'
     name = station + '_' + contaminant
     values = df.read_csv(dirData + name + '_MaxMin.csv')
