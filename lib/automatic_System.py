@@ -90,7 +90,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
             print(value)
-            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fecha)
+            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
             data = baseContaminantes(informacion[0], value, contaminant)
             if data.empty:
                 data = dataBackup
@@ -121,7 +121,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
-            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fecha)
+            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
             data = baseContaminantes(informacion[0], value, contaminant)
             if data.empty:
                 data = dataBackup
@@ -151,7 +151,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fechaAyer)
+                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
                     data = dataBackup
@@ -180,7 +180,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fechaAnteAyer)
+                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
                     data = dataBackup
