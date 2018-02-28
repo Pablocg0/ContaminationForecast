@@ -2,7 +2,7 @@
 File name : automatic_System.py
 Author: Pablo Camacho Gonzalez
 Python version: 3.6.4
-Date last modified: 27/02/2018
+Date last modified: 28/02/2018
 '''
 
 
@@ -90,6 +90,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
             print(value)
+            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fecha)
             data = baseContaminantes(informacion[0], value, contaminant)
             if data.empty:
                 data = dataBackup
@@ -120,6 +121,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
+            update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fecha)
             data = baseContaminantes(informacion[0], value, contaminant)
             if data.empty:
                 data = dataBackup
@@ -149,6 +151,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
+                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fechaAyer)
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
                     data = dataBackup
@@ -177,6 +180,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
+                update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, variables, fechaAnteAyer)
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
                     data = dataBackup
@@ -542,6 +546,116 @@ def weekday(year, month, day):
     week = week + 1
     sinWeek = (1 + np.sin(((week - 1) / 7) * (2 * np.pi))) * 0.5
     return [week, sinWeek]
+
+
+def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFestivos, variables, fechaString):
+    """
+    function to make the last 4 hours of forecast
+
+    :param estacion: name of the weather station
+    :type estacion: String
+    :param contaminant: name of the pollutant
+    :type contaminant: String
+    :param fecha: current day
+    :type fecha: datetime
+    :param dirData: address of the files with training information
+    :type dirData: String
+    :param dirTrain: address of the training files of the neural network
+    :type dirTrain: String
+    :param dirCsv: Address of processed meteorology archives
+    :type dirCsv : String
+    :param dirFestivos: address of the file with the holidays
+    :type dirFestivos: String
+    :param variables: meteorological variables
+    :type variables: list(Strings)
+    """
+    fecha = fecha + timedelta(days=1)
+    fecha2 = fecha - timedelta(hours = 2)
+    fechaInicio = fecha - timedelta(hours= 5)
+    fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
+    fechai = str(fechaInicio.year) + '-' + numString(fechaInicio.month) + '-' + numString(fechaInicio.day)+' '+numString(fechaInicio.hour)+':00:00'
+    nameC = findT(contaminant)
+    dataForecast= fd.get_forecast(nameC,estacion)
+    print(dataForecast)
+    fechaUltima = dataForecast['fecha'][0]
+    if fechaUltima.hour < fecha2.hour:
+        print('retrasado')
+        fechaUltima = fechaUltima -  timedelta(days=1)
+        fechaInicio= str(fechaUltima.year) + '-' + numString(fechaUltima.month) + '-' + numString(fechaUltima.day)+' '+numString(fechaUltima.hour)+':00:00'
+        fechaFin = fecha2 - timedelta(days=1)
+        fechafin_str = str(fechaFin.year) + '-' + numString(fechaFin.month) + '-' + numString(fechaFin.day)+' '+numString(fechaFin.hour)+':00:00'
+        data = fd.readData(fechafin_str,fechaInicio,[estacion],contaminant)
+        data = data.drop_duplicates(keep='first')
+        dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaUltima, fechaFin)
+        if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
+            print('climatologia')
+            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet)
+        elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
+            print('SAVE THE QUEEN')
+        else:
+            fechas_array = data['fecha'].values
+            print(data)
+            sys.out.exit()
+            data = separateDate(data)
+            data = unionData(data, informacion[0], dirFestivos)
+            data = df.concat([data, dataMet], axis=1)
+            data = data.fillna(value=-1)
+            data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+            data = data.fillna(value=-1)
+            index = data.index.values
+            for x in index:
+                pred = data.ix[x].values
+                valPred = pred[1:]
+                valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
+                arrayPred.append(convert(valNorm))
+            result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
+            columnContaminant = findT(contaminant)
+            real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
+            for xs in range(len(real)):
+                fechaPronostico = fechas_array[xs]
+                pronostico = real[xs]
+                guardarPrediccion(estacion, fechaPronostico, pronostico,contaminant)
+    else:
+        print('corriente')
+
+
+def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet):
+    """
+    function to make the forecast using climatologies
+
+    :param contaminant: name of the pollutant
+    :type contaminant: String
+    :param estacion: name of the weather station
+    :type estacion: String
+    :param fechaInicio: range of data wit wich the vaues of tue query are extracted
+    :type fechaInicio: datetime
+    :param fechaFinal: range of data wit wich the vaues of tue query are extracted
+    :type fechaFinal: datetime
+    :param dataMet: dataframe with the climatological information
+    :type dataMet: DataFrame
+    """
+    data = fd.get_climatology(fechaInicio, fechaFinal, estacion)
+    print(data)
+    sys.out
+    data = separateDate(data)
+    data = unionData(data, informacion[0], dirFestivos)
+    data = df.concat([data, dataMet], axis=1)
+    data = data.fillna(value=-1)
+    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+    data = data.fillna(value=-1)
+    index = data.index.values
+    for x in index:
+        pred = data.ix[x].values
+        valPred = pred[1:]
+        valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
+        arrayPred.append(convert(valNorm))
+    result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
+    real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant)
+    fechaPronostico = fechaInicio
+    for xs in real:
+        guardarPrediccion(estacion, fechaPronostico, xs, contaminant)
+        fechaPronostico = fechaPronostico + timedelta(hours=1)
+
 
 def findT(fileName):
         if "PM2.5" in fileName:
