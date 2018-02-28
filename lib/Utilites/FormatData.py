@@ -2,7 +2,7 @@
 File name : FormatData.py
 Author: Pablo Camacho Gonzalez
 Python version: 3.6.4
-Date last modified: 27/02/2018
+Date last modified: 28/02/2018
 '''
 
 import numpy as np
@@ -158,6 +158,61 @@ class FormatData(object):
         cur.close();
         #The connection to the database is closed
         return build;
+
+
+    def get_forecast(nameContaminant, estacion):
+        """
+        function that brings from the database the last prediction saved
+
+        :param nameContaminant: name of the pollutant
+        :type nameContaminant: SyntaxWarning
+        :param estacion: name of the weather station
+        :type estacion:  String
+        :return: DataFrame
+        """
+        oztool = ContIOTools()
+        conexion =  SqlCont()
+        conn = conexion.getPostgresConn()
+        cur = conn.cursor()
+        nameTable = nameContaminant
+        tempDataValues = pd.read_sql_query("""SELECT * FROM {0} WHERE id_est = '{1}' ORDER BY fecha DESC LIMIT 1; """.format(nameTable,estacion),conn);
+        conn.commit()
+        cur.close()
+        return tempDataValues
+
+
+    def get_climatology(fechaInicio, fechaFinal, estacion):
+        """
+        function to bring the climatology data stored in the database
+
+        :param fechaInicio: range of data wit wich the vaues of tue query are extracted.
+        :type fechaInicio: datetime
+        :param fechaFinal: range of data wit wich the vaues of tue query are extracted.
+        :type fechaFinal: datetime
+        :param estacion: set the stations to get the values
+        :type estacion: String
+        :return:  all data that was taken from the database.
+        """
+        month_init = fechaInicio.month
+        month_fin = fechaFinal.month
+        hour_init =  datetime.strptime(str(fechaInicio.hour)+ ':00:00', '%H:%M:%S' )
+        hour_fin = datetime.strptime(str(fechaFinal.hour) + ':00:00', '%H:%M:%S')
+        oztool = ContIOTools()
+        conexion =  SqlCont()
+        conn = conexion.getPostgresConn()
+        cur = conn.cursor()
+        tempData = pd.read_sql_query("""SELECT hora FROM climatologia WHERE id_est = '{0}' AND mes >= {1} AND mes <= {2} AND hora >= '{3}' AND hora <= '{4}' AND id_tabla = '{5}';""".format(estacion, month_init, month_fin, hour_init, hour_fin, 'cont_otres'), conn)
+        contaminants = oztool.getTables()
+        for xs in contaminants:
+            temp = pd.read_sql_query("""SELECT hora, val FROM climatologia WHERE id_est = '{0}' AND mes >= {1} AND mes <= {2} AND hora >= '{3}' AND hora <= '{4}' AND id_tabla = '{5}';""".format(estacion, month_init, month_fin, hour_init, hour_fin, xs), conn)
+            temp.rename(columns={'fecha':'fecha','val': xs+'_'+estacion.lower()}, inplace= True)
+            if temp.empty:
+                pass
+            else:
+                tempData = tempData.merge(temp, how='left', on='hora')
+        conn.commit()
+        cur.close()
+        return tempData
 
 
     def saveData(estacion, fecha, Valor, contaminant):
