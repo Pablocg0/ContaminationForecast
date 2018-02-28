@@ -377,6 +377,14 @@ def unionData(data, fechaComplete, dirFestivos):
     return data
 
 
+def totalUnionData(data,dirFestivos):
+    dataFestivos = df.read_csv(dirFestivos)
+    dataFestivos = dataFestivos.drop(labels='Unnamed: 0', axis=1)
+    dataFestivos2 = convertDates(dataFestivos)
+    totalData = data.merge(dataFestivos2, how='left', on='fecha')
+    return totalData
+
+
 def guardarPrediccion(estacion, fecha, Valor,contaminant):
     """
     function to save the prediction in the database
@@ -595,10 +603,9 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         else:
             fechas_array = data['fecha'].values
             print(data)
-            sys.out.exit()
             data = separateDate(data)
-            data = unionData(data, informacion[0], dirFestivos)
-            data = df.concat([data, dataMet], axis=1)
+            data = totalUnionData(data, dirFestivos)
+            #data = df.concat([data, dataMet], axis=1)
             data = data.fillna(value=-1)
             data = filterData(data, dirData + value + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
@@ -638,8 +645,8 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet):
     print(data)
     sys.out
     data = separateDate(data)
-    data = unionData(data, informacion[0], dirFestivos)
-    data = df.concat([data, dataMet], axis=1)
+    data = totalUnionData(data, dirFestivos)
+    #data = df.concat([data, dataMet], axis=1)
     data = data.fillna(value=-1)
     data = filterData(data, dirData + value + "_" + contaminant + ".csv")
     data = data.fillna(value=-1)
