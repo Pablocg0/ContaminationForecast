@@ -90,29 +90,32 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
             print(value)
-            #update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
-            data = baseContaminantes(informacion[0], value, contaminant)
-            if data.empty:
-                data = dataBackup
-                data = data.fillna(value=-1)
-                data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                data = data.fillna(value=-1)
-                valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                print("Informacion insuficiente para la prediccion")
-                #guardarPrediccion(value, informacion[0], [-1], contaminant)
+            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            if option == 0:
+                data = baseContaminantes(informacion[0], value, contaminant)
+                if data.empty:
+                    data = dataBackup
+                    data = data.fillna(value=-1)
+                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                    data = data.fillna(value=-1)
+                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                    print("Informacion insuficiente para la prediccion")
+                    #guardarPrediccion(value, informacion[0], [-1], contaminant)
+                else:
+                    # data = data.merge(dataMet,how='left', on='fecha');
+                    data = separateDate(data)
+                    data = unionData(data, informacion[0], dirFestivos)
+                    data = df.concat([data, dataMet], axis=1)
+                    data = data.fillna(value=-1)
+                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                    data = data.fillna(value=-1)
+                    data = data.loc[0:0]
+                    print(data)
+                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                    print(valPred)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                # data = data.merge(dataMet,how='left', on='fecha');
-                data = separateDate(data)
-                data = unionData(data, informacion[0], dirFestivos)
-                data = df.concat([data, dataMet], axis=1)
-                data = data.fillna(value=-1)
-                data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                data = data.fillna(value=-1)
-                data = data.loc[0:0]
-                print(data)
-                valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                print(valPred)
-                guardarPrediccion(value, informacion[0], valPred, contaminant)
+                pass
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
         direccioNetCDF = dirNetCDF +'0' +str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
         data = open_netcdf(direccioNetCDF + informacion[2], informacion[2], informacion[2], pathCopyData);
@@ -121,28 +124,31 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
-            #update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
-            data = baseContaminantes(informacion[0], value, contaminant)
-            if data.empty:
-                data = dataBackup
-                data = data.fillna(value=-1)
-                data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                data = data.fillna(value=-1)
-                valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                print("Informacion insuficiente para la prediccion")
-                #guardarPrediccion(value, informacion[0], [-1], contaminant)
+            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            if option == 0:
+                data = baseContaminantes(informacion[0], value, contaminant)
+                if data.empty:
+                    data = dataBackup
+                    data = data.fillna(value=-1)
+                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                    data = data.fillna(value=-1)
+                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                    print("Informacion insuficiente para la prediccion")
+                    #guardarPrediccion(value, informacion[0], [-1], contaminant)
+                else:
+                    data = separateDate(data)
+                    data = unionData(data, informacion[0], dirFestivos)
+                    data = df.concat([data, dataMet], axis=1)
+                    data = data.fillna(value=-1)
+                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                    data = data.fillna(value=-1)
+                    data = data.loc[0:0]
+                    print(data)
+                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                    print(valPred)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                data = separateDate(data)
-                data = unionData(data, informacion[0], dirFestivos)
-                data = df.concat([data, dataMet], axis=1)
-                data = data.fillna(value=-1)
-                data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                data = data.fillna(value=-1)
-                data = data.loc[0:0]
-                print(data)
-                valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                print(valPred)
-                guardarPrediccion(value, informacion[0], valPred, contaminant)
+                pass
     else:
         if buscarArchivo(informacion[4], dirCsv):
             # buscarArchivo(informacion[4]); #csv ayer
@@ -151,27 +157,30 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                #update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
-                data = baseContaminantes(informacion[0], value, contaminant)
-                if data.empty:
-                    data = dataBackup
-                    data = data.fillna(value=-1)
-                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                    data = data.fillna(value=-1)
-                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                    print("Informacion insuficiente para la prediccion")
-                    #guardarPrediccion(value, informacion[0], [-1], contaminant);
+                option =update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
+                if option == 0:
+                    data = baseContaminantes(informacion[0], value, contaminant)
+                    if data.empty:
+                        data = dataBackup
+                        data = data.fillna(value=-1)
+                        data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                        data = data.fillna(value=-1)
+                        valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                        print("Informacion insuficiente para la prediccion")
+                        #guardarPrediccion(value, informacion[0], [-1], contaminant);
+                    else:
+                        data = separateDate(data)
+                        data = unionData(data, informacion[0], dirFestivos)
+                        data = df.concat([data, dataMet], axis=1)
+                        data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                        data = data.fillna(value=-1)
+                        data = data.loc[0:0]
+                        print(data)
+                        valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                        print(valPred)
+                        guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    data = separateDate(data)
-                    data = unionData(data, informacion[0], dirFestivos)
-                    data = df.concat([data, dataMet], axis=1)
-                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                    data = data.fillna(value=-1)
-                    data = data.loc[0:0]
-                    print(data)
-                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                    print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred, contaminant)
+                    pass
         else:
             anteAyer = informacion[1] - timedelta(days=1)
             nameCsv = variables[0]+"_"+str(anteAyer.year)+ "-"+ numString(anteAyer.month)+ "-"+numString(anteAyer.day)+".csv";
@@ -180,27 +189,30 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                #update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
-                data = baseContaminantes(informacion[0], value, contaminant)
-                if data.empty:
-                    data = dataBackup
-                    data = data.fillna(value=-1)
-                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                    data = data.fillna(value=-1)
-                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                    print("Informacion insuficiente para la prediccion")
-                    #guardarPrediccion(value, informacion[0], [-1],contaminant)
+                option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
+                if option == 0:
+                    data = baseContaminantes(informacion[0], value, contaminant)
+                    if data.empty:
+                        data = dataBackup
+                        data = data.fillna(value=-1)
+                        data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                        data = data.fillna(value=-1)
+                        valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                        print("Informacion insuficiente para la prediccion")
+                        #guardarPrediccion(value, informacion[0], [-1],contaminant)
+                    else:
+                        data = separateDate(data)
+                        data = unionData(data, informacion[0], dirFestivos)
+                        data = df.concat([data, dataMet], axis=1)
+                        data = filterData(data, dirData + value + "_" + contaminant + ".csv")
+                        data = data.fillna(value=-1)
+                        data = data.loc[0:0]
+                        print(data)
+                        valPred = prediccion(value, data, dirData, dirTrain, contaminant)
+                        print(valPred)
+                        guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    data = separateDate(data)
-                    data = unionData(data, informacion[0], dirFestivos)
-                    data = df.concat([data, dataMet], axis=1)
-                    data = filterData(data, dirData + value + "_" + contaminant + ".csv")
-                    data = data.fillna(value=-1)
-                    data = data.loc[0:0]
-                    print(data)
-                    valPred = prediccion(value, data, dirData, dirTrain, contaminant)
-                    print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred, contaminant)
+                    pass
     # for x in estaciones:
         # training(informacion[1],x,dirTrain,dirData, dirFestivos, variables, contaminant);
 
@@ -587,34 +599,40 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     :param variables: meteorological variables
     :type variables: list(Strings)
     """
+    fechaB = fecha
     fecha = fecha + timedelta(days=1)
     fecha2 = fecha - timedelta(hours = 2)
     fechaInicio = fecha - timedelta(hours= 5)
-    fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
+    fechaActual = str(fechaB.year) + '-' + numString(fechaB.month) + '-' + numString(fechaB.day)+' '+numString(fechaB.hour)+':00:00'
     fechai = str(fechaInicio.year) + '-' + numString(fechaInicio.month) + '-' + numString(fechaInicio.day)+' '+numString(fechaInicio.hour)+':00:00'
     nameC = findT(contaminant)
     dataForecast= fd.get_forecast(nameC,estacion)
     print(dataForecast)
-    fechaUltima = dataForecast['fecha'][0]
-    if fechaUltima.hour < fecha2.hour:
+    if dataForecast.empty;
+        print('La satisfacción de un momento es la ruina del siguiente.')
+    else:
+        fechaUltima = dataForecast['fecha'][0]
+    if fechaUltima < fecha2:
         print('retrasado')
         fechaUltima = fechaUltima -  timedelta(days=1)
         fechaInicio= str(fechaUltima.year) + '-' + numString(fechaUltima.month) + '-' + numString(fechaUltima.day)+' '+numString(fechaUltima.hour)+':00:00'
         fechaFin = fecha2 - timedelta(days=1)
         fechafin_str = str(fechaFin.year) + '-' + numString(fechaFin.month) + '-' + numString(fechaFin.day)+' '+numString(fechaFin.hour)+':00:00'
-        data = fd.readData(fechafin_str,fechaInicio,[estacion],contaminant)
+        data = fd.readData(fechaInicio,fechaActual,[estacion],contaminant)
         data = data.drop_duplicates(keep='first')
-        dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechafin_str)
+        dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
         if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
             print('climatologia')
             useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain)
+            return 1
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
             print('SAVE THE QUEEN')
+            return 0
         elif data.empty:
             print('La satisfacción de un momento es la ruina del siguiente.')
+            return 0
             #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
         else:
-            fechas_array = data['fecha'].values
             print(data)
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
@@ -630,14 +648,16 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
                 valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
                 arrayPred.append(convert(valNorm))
             result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
-            columnContaminant = findT(contaminant)
+            columnContaminant = findTable2(contaminant)
             real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
             for xs in range(len(real)):
-                fechaPronostico = fechas_array[xs]
+                fechaPronostico = data['fecha'].loc[xs]
                 pronostico = real[xs]
-                guardarPrediccion(estacion, fechaPronostico, pronostico,contaminant)
+                guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
+            return 1
     else:
         print('corriente')
+        return 0
 
 
 def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirData,dirTrain):
@@ -673,11 +693,11 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
         valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
         arrayPred.append(convert(valNorm))
     result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
-    columnContaminant = findT(contaminant)
+    columnContaminant = findTable2(contaminant)
     real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
     fechaPronostico = fechaInicio
     for xs in real:
-        guardarPrediccion(estacion, fechaPronostico, xs, contaminant)
+        guardarPrediccion(estacion, fechaPronostico, [xs], contaminant)
         fechaPronostico = fechaPronostico + timedelta(hours=1)
 
 
@@ -688,7 +708,7 @@ def makeDates(fechaInicio, fechaFinal, data):
         fechaInicio = fechaInicio + timedelta(hours=1)
         dates.append(fechaInicio)
     frameDates = df.DataFrame(dates, columns=['fecha'])
-    data = data.drop(columns=['hora'])
+    data = data.drop('hora', axis=1)
     frameDates = df.concat([frameDates, data], axis=1
     return frameDates
 
