@@ -611,8 +611,8 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
             print('SAVE THE QUEEN')
         elif data.empty:
-            print('Climatologia')
-            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
+            print('La satisfacción de un momento es la ruina del siguiente.')
+            #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
         else:
             fechas_array = data['fecha'].values
             print(data)
@@ -656,6 +656,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     :type dataMet: DataFrame
     """
     data = fd.get_climatology(fechaInicio, fechaFinal, estacion)
+    data = makeDates(fechaInicio,fechaFinal,data)
     print(data)
     #sys.out
     data = separateDate(data)
@@ -678,6 +679,18 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     for xs in real:
         guardarPrediccion(estacion, fechaPronostico, xs, contaminant)
         fechaPronostico = fechaPronostico + timedelta(hours=1)
+
+
+def makeDates(fechaInicio, fechaFinal, data):
+    dates=[]
+    dates.append(fechaInicio)
+    while fechaInicio < fechaFinal:
+        fechaInicio = fechaInicio + timedelta(hours=1)
+        dates.append(fechaInicio)
+    frameDates = df.DataFrame(dates, columns=['fecha'])
+    data = data.drop(columns=['hora'])
+    frameDates = df.concat([frameDates, data], axis=1
+    return frameDates
 
 
 def findT(fileName):
