@@ -193,26 +193,30 @@ class FormatData(object):
         :type estacion: String
         :return:  all data that was taken from the database.
         """
-        month_init = fechaInicio.month
-        month_fin = fechaFinal.month
-        hour_init =  datetime.strptime(str(fechaInicio.hour)+ ':00:00', '%H:%M:%S' )
-        hour_fin = datetime.strptime(str(fechaFinal.hour) + ':00:00', '%H:%M:%S')
         oztool = ContIOTools()
         conexion =  SqlCont()
         conn = conexion.getPostgresConn()
         cur = conn.cursor()
-        tempData = pd.read_sql_query("""SELECT hora FROM climatologia WHERE id_est = '{0}' AND mes >= {1} AND mes <= {2} AND hora >= '{3}' AND hora <= '{4}' AND id_tabla = '{5}';""".format(estacion, month_init, month_fin, hour_init, hour_fin, 'cont_otres'), conn)
-        contaminants = oztool.getTables()
-        for xs in contaminants:
-            temp = pd.read_sql_query("""SELECT hora, val FROM climatologia WHERE id_est = '{0}' AND mes >= {1} AND mes <= {2} AND hora >= '{3}' AND hora <= '{4}' AND id_tabla = '{5}';""".format(estacion, month_init, month_fin, hour_init, hour_fin, xs), conn)
-            temp.rename(columns={'fecha':'fecha','val': xs+'_'+estacion.lower()}, inplace= True)
-            if temp.empty:
-                pass
-            else:
-                tempData = tempData.merge(temp, how='left', on='hora')
-        conn.commit()
-        cur.close()
-        return tempData
+        allData =pd.DataFrame()
+        fechaMeta = fechaInicio
+        while fechaMeta <= fechaFinal:
+            month_init = fechaMeta.month
+            hour_init = datetime.strptime(str(fechaMeta.hour) + ':00:00','%H:%M:%S' )
+            tempData = pd.read_sql_query("""SELECT hora FROM climatologia WHERE id_est = '{0}' AND mes = {1} AND hora = '{2}' AND id_tabla = '{3}';""".format(estacion, month_init, hour_init, 'cont_otres'), conn)
+            contaminants = oztool.getTables()
+            for xs in contaminants:
+                temp = pd.read_sql_query("""SELECT hora, val FROM climatologia WHERE id_est = '{0}' AND mes = {1} AND hora = '{2}' AND id_tabla = '{3}';""".format(estacion, month_init, hour_init, xs), conn)
+                temp.rename(columns={'fecha':'fecha','val': xs+'_'+estacion.lower()}, inplace= True)
+                if temp.empty:
+                    pass
+                else:
+                    tempData = tempData.merge(temp, how ='left', on='hora')
+            conn.commit()
+            cur.close()
+            allData = pd.concat([allData,tempData],axis=0)
+            fechaMeta = fechaMeta + timedelta(hours=1)
+        allData = allData.reset_index(drop=True)
+        return allData
 
 
     def saveData(estacion, fecha, Valor, contaminant):
