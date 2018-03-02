@@ -90,7 +90,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
             print(value)
-            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            option = 0
             if option == 0:
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
@@ -124,7 +125,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
-            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            option = 0
             if option == 0:
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
@@ -157,7 +159,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                option =update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
+                #option =update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
+                option = 0
                 if option == 0:
                     data = baseContaminantes(informacion[0], value, contaminant)
                     if data.empty:
@@ -189,7 +192,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
+                #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
+                option = 0
                 if option == 0:
                     data = baseContaminantes(informacion[0], value, contaminant)
                     if data.empty:
@@ -608,8 +612,9 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     nameC = findT(contaminant)
     dataForecast= fd.get_forecast(nameC,estacion)
     print(dataForecast)
-    if dataForecast.empty;
+    if dataForecast.empty:
         print('La satisfacción de un momento es la ruina del siguiente.')
+        return 0
     else:
         fechaUltima = dataForecast['fecha'][0]
     if fechaUltima < fecha2:
@@ -623,7 +628,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
         if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
             print('climatologia')
-            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain)
+            #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain)
             return 1
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
             print('SAVE THE QUEEN')
@@ -709,7 +714,7 @@ def makeDates(fechaInicio, fechaFinal, data):
         dates.append(fechaInicio)
     frameDates = df.DataFrame(dates, columns=['fecha'])
     data = data.drop('hora', axis=1)
-    frameDates = df.concat([frameDates, data], axis=1
+    frameDates = df.concat([frameDates, data], axis=1)
     return frameDates
 
 
