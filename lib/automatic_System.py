@@ -641,7 +641,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             print(data)
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
-            #data = df.concat([data, dataMet], axis=1)
+            data = df.concat([data, dataMet], axis=1)
             data = data.fillna(value=-1)
             data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
@@ -686,7 +686,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     #sys.out
     data = separateDate(data)
     data = totalUnionData(data, dirFestivos)
-    #data = df.concat([data, dataMet], axis=1)
+    data = df.concat([data, dataMet], axis=1)
     data = data.fillna(value=-1)
     data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
     data = data.fillna(value=-1)
