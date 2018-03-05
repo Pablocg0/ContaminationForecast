@@ -628,7 +628,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
         if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
             print('climatologia')
-            #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain)
+            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
             return 1
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
             print('SAVE THE QUEEN')
@@ -649,14 +649,15 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             arrayPred = []
             for x in index:
                 pred = data.ix[x].values
-                valPred = pred[1:]
+                valPred = pred[2:]
                 valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
                 arrayPred.append(convert(valNorm))
             result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
             columnContaminant = findTable2(contaminant)
             real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
             for xs in range(len(real)):
-                fechaPronostico = data['fecha'].loc[xs]
+                fechaPronostico = data['fecha'].iloc[xs].values
+                fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
                 pronostico = real[xs]
                 guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
             return 1
@@ -665,7 +666,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         return 0
 
 
-def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirData,dirTrain):
+def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirData,dirTrain,dirFestivos):
     """
     function to make the forecast using climatologies
 
@@ -694,7 +695,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     arrayPred = []
     for x in index:
         pred = data.ix[x].values
-        valPred = pred[1:]
+        valPred = pred[2:]
         valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
         arrayPred.append(convert(valNorm))
     result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)

@@ -144,6 +144,7 @@ def prediction(station, contaminant, arrayPred, dirTrain, dirData):
         #saver = tf.train.import_meta_graph(dirTrain + station + '/' + name + '-1000.meta')
         saver = tf.train.Saver()
         saver.restore(sess, tf.train.latest_checkpoint(dirTrain + station + '/'))# load training
+        #sess.run(tf.global_variables_initializer())
         # print(sess.run(final_output, feed_dict={x_data:values}));
         for x in arrayPred:
             r = sess.run(final_output, feed_dict={x_data: x})
