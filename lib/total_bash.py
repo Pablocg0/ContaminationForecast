@@ -46,7 +46,7 @@ def init():
     if option == 2:
         for xs in range(num):
             # tp.init(datos[0],datosComp[0],graficas[numEs],train[numEs])
-            tp.init(datos[xs]+contaminant[xs]+'/', datosComp[xs]+contaminant[xs]+'/', graficas[xs], train[xs]+contaminant[xs]+'/', contaminant[xs], columnContaminant[xs], fechaInicio, fechaFinal,est)
+            tp.init(datos+contaminant[xs]+'/', datosComp[xs]+contaminant[xs]+'/', graficas[xs], train+contaminant[xs]+'/', contaminant[xs], columnContaminant[xs], fechaInicio, fechaFinal,est)
     elif option == 1:
         for xs in range(num):
             au.trainNeuralNetworks(est, datos, train+contaminant[xs]+'/', fechaFinal, contaminant[xs], iteraciones)

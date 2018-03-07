@@ -33,7 +33,7 @@ def conver1D(array):
     l = array.shape
     total = np.zeros((0, l[1] * l[2]), dtype=np.float32)
     i = 0
-    for i in range(24):
+    for i in range(72):
         tempData = array[i]
         array1D = []
         for x in tempData:
@@ -54,7 +54,7 @@ def divData(data, numRow, numColumns):
     """
     totalArrays = numRow * numColumns
     total = np.zeros((0, totalArrays), dtype=np.float32)
-    for i in range(48):
+    for i in range(72):
         dataValue = data[i]
         array1D = []
         # size = dataValue.shape
@@ -99,7 +99,7 @@ def makeDates(date):
     date = date + ' 00:00:00'
     d = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     listDates.append(d)
-    for x in range(47):
+    for x in range(71):
         d = d + timedelta(hours=1)
         listDates.append(d)
     allData = df.DataFrame(listDates, columns=['fecha'])

@@ -90,8 +90,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
             print(value)
-            #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
-            option = 0
+            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            #option = 0
             if option == 0:
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
@@ -116,7 +116,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(valPred)
                     guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                pass
+                print('Climatologia')
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
         direccioNetCDF = dirNetCDF +'0' +str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
         data = open_netcdf(direccioNetCDF + informacion[2], informacion[2], informacion[2], pathCopyData);
@@ -125,8 +125,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
         dataMet = dataMet.drop('fecha', axis=1)
         for value in estaciones:
-            #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
-            option = 0
+            option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fecha)
+            #option = 0
             if option == 0:
                 data = baseContaminantes(informacion[0], value, contaminant)
                 if data.empty:
@@ -150,7 +150,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(valPred)
                     guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                pass
+                print('Climatologia')
     else:
         if buscarArchivo(informacion[4], dirCsv):
             # buscarArchivo(informacion[4]); #csv ayer
@@ -159,8 +159,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                #option =update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
-                option = 0
+                option =update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv, dirFestivos, variables, fechaAyer)
+                #option = 0
                 if option == 0:
                     data = baseContaminantes(informacion[0], value, contaminant)
                     if data.empty:
@@ -183,7 +183,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(valPred)
                         guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    pass
+                    print('Climatologia')
         else:
             anteAyer = informacion[1] - timedelta(days=1)
             nameCsv = variables[0]+"_"+str(anteAyer.year)+ "-"+ numString(anteAyer.month)+ "-"+numString(anteAyer.day)+".csv";
@@ -192,8 +192,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             dataMet = dataMet.drop('fecha', axis=1)
             for value in estaciones:
                 print(value)
-                #option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
-                option = 0
+                option = update4hours(value, contaminant, informacion[0], dirData, dirTrain, dirCsv,dirFestivos, variables, fechaAnteAyer)
+                #option = 0
                 if option == 0:
                     data = baseContaminantes(informacion[0], value, contaminant)
                     if data.empty:
@@ -216,7 +216,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(valPred)
                         guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    pass
+                    print('Climatologia')
     # for x in estaciones:
         # training(informacion[1],x,dirTrain,dirData, dirFestivos, variables, contaminant);
 
@@ -338,7 +338,6 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
         data = data.merge(dataTemp, how='left', on='fecha')
-    if numString(fechaComplete.hour) == "00":
         fechaComplete = fechaComplete + timedelta(days=1)
         fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
         filterData = data[(data['fecha'] == fechaM)]
@@ -346,13 +345,8 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
             fechaComplete = fechaComplete - timedelta(days=1)
             fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
             filterData = data[(data['fecha'] == fechaM)]
-        filterData = filterData.reset_index(drop=True)
-        return filterData
-    else:
-        fechaM = str(fechaComplete.year) + '-' + numString(fechaComplete.month) + '-'+numString(fechaComplete.day)+' '+numString(fechaComplete.hour)+':00:00';
-        filterData = data[(data['fecha'] == fechaM)]
-        filterData = filterData.reset_index(drop=True)
-        return filterData
+        filterData = filterData.reset_index(drop = True)
+    return filterData
 
 
 def unionTotalMeteorologia(fecha, dirCsv, variables, fechaInicio, fechaFinal):
@@ -422,12 +416,25 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
     :param valor: prediction value
     :type valor: float32
     """
-    print(findT(contaminant))
-    if estacion == 'NEZ' or estacion == 'SFE' or estacion == 'TAH' or estacion == 'UAX':
+    if estacion == 'SFE':
         fecha = fecha + timedelta(days = 1)
         fecha1 = fecha + timedelta(hours = 6)
         fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
-        print(fechaActual)
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+    elif estacion == 'NEZ':
+        #fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours = 10)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+    elif estacion == 'TAH':
+        #fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours=11)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+    elif estacion == 'UAX':
+        #fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours=13)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     else:
         fecha = fecha + timedelta(days=1)
@@ -638,13 +645,13 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             return 0
             #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
         else:
-            print(data)
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
             data = df.concat([data, dataMet], axis=1)
             data = data.fillna(value=-1)
             data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
+            print(data)
             index = data.index.values
             arrayPred = []
             for x in index:
@@ -683,7 +690,6 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     """
     data = fd.get_climatology(fechaInicio, fechaFinal, estacion)
     data = makeDates(fechaInicio,fechaFinal,data)
-    print(data)
     #sys.out
     data = separateDate(data)
     data = totalUnionData(data, dirFestivos)
@@ -705,6 +711,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     for xs in real:
         guardarPrediccion(estacion, fechaPronostico, [xs], contaminant)
         fechaPronostico = fechaPronostico + timedelta(hours=1)
+    print('Climatologia:' + estacion)
 
 
 def makeDates(fechaInicio, fechaFinal, data):
