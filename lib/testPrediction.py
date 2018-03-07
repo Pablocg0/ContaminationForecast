@@ -83,13 +83,16 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     location = l[1]
     print(labels)
     if (station == 'SAG') | (station == 'UIZ'):
-        loc = labels.index('Marzo')
-        lugar = location[loc] + 1
-        nombre = labels[loc]
+        #loc = labels.index('Marzo')
+        #lugar = location[loc] + 1
+        #nombre = labels[loc]
+        nombre = 'anio'
     else:
-        loc = labels.index('Marzo')
-        lugar = location[loc] + 1
-        nombre = labels[loc]
+        print('no mes')
+        #loc = labels.index('Marzo')
+        #lugar = location[loc] + 1
+        #nombre = labels[loc]
+        nombre = 'anio'
     arrayPred = []
     nameColumn = columnContaminant +'_'+ sta + '_delta'
     inf = build[nameColumn].values
@@ -101,20 +104,20 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
         arrayPred.append(convert(valNorm))
     result = pre.prediction(sta, contaminant, arrayPred, dirTrain, dirData)
     real = desNorm(result, sta, contaminant, dirData, columnContaminant)
-    metri.append(metricas(inf, real, station))
+    #metri.append(metricas(inf, real, station))
     plt.figure(figsize=(22.2, 11.4))
     plt.plot(inf, color='tomato', linestyle="solid", marker='o', label='Valor observado.');
     plt.plot(real, color='darkgreen', linestyle='solid', marker='o', label='Pronóstico 24h NN.');
     plt.title(nombreEst(station) + ' (' + station + ') comparación de ' + contaminant+' observado vs red neuronal' + ' para la primer semana de ' + nombre + ' 2016' ,fontsize=25, y=1.1 )
-    #plt.xlabel('Fecha', fontsize=18)
-    n = 'Primera semana de '+nombre
-    plt.xlabel(n,fontsize=22);
+    plt.xlabel('Fecha', fontsize=18)
+    #n = 'Primera semana de '+nombre
+    #plt.xlabel(n,fontsize=22);
     plt.ylabel('Partes por millon (PPM)', fontsize=22)
     plt.legend(loc='best')
     plt.grid(True, axis='both', alpha= 0.3, linestyle="--", which="both")
     # plt.xticks(location,labels,fontsize=8,rotation=80)
     plt.xticks(location,labels,fontsize=16,rotation=80)
-    plt.xlim(lugar,lugar+144);
+    #plt.xlim(lugar,lugar+144);
     plt.axhspan(20, 40, color='lightgray', alpha=0.3)
     plt.axhspan(60, 80, color='lightgray', alpha=0.3)
     plt.axhspan(100, 120, color='lightgray', alpha=0.3)
@@ -127,7 +130,7 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
     plt.show();
     plt.clf();
     plt.close()
-    gError(inf, real, location, labels, station, dirGraficas)
+    #gError(inf, real, location, labels, station, dirGraficas)
     # graSubPlot(inf,real,station,location,dirGraficas,labels)
 
 
@@ -347,6 +350,7 @@ def desNorm(data, station, contaminant, dirData, columnContaminant):
     real = []
     nameC = columnContaminant + '_' + station.lower()
     # nameC= columnContaminant
+    print(nameC)
     name = station + '_' + contaminant
     values = df.read_csv(dirData + name + '_MaxMin.csv')
     index = values.columns[0]
