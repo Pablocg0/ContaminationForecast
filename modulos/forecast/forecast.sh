@@ -10,4 +10,4 @@ python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.
 #python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.py NO2
 #python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.py NO
 python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.py SO2
-#python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.py PM10
+python /ServerScript/AirQualityModel/ContaminationForecast/lib/automatic_System.py PM10
