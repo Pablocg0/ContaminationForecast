@@ -350,7 +350,10 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
 
 
 def unionTotalMeteorologia(fecha, dirCsv, variables, fechaInicio, fechaFinal):
+    #fechaInicio = fechaInicio + timedelta(days=1)
+    #fechaFinal = fechaFinal + timedelta(days=1)
     data = df.read_csv(dirCsv + "U10_" + fecha + ".csv")
+    variables.pop(0)
     for i in variables:
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
@@ -422,17 +425,17 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     elif estacion == 'NEZ':
-        #fecha = fecha + timedelta(days=1)
-        fecha = fecha + timedelta(hours = 10)
+        fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours = 15)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     elif estacion == 'TAH':
-        #fecha = fecha + timedelta(days=1)
-        fecha = fecha + timedelta(hours=11)
+        fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours=15)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     elif estacion == 'UAX':
-        #fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours=13)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
@@ -540,13 +543,20 @@ def separateDate(data):
         # d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
         wD = weekday(d.year, d.month, d.day)
         wDay[i] = wD[0]
+        print(wDay[i])
         sinWday[i] = wD[1]
+        print(sinWday[i])
         years[i] = d.year
+        print(years[i])
         # sinYears[i]= np.sin(d.year);
         months[i] = d.month
+        print(months[i])
         sinMonths[i] = (1 + np.sin(((d.month - 1) / 11) * (2 * np.pi))) * 0.5
+        print(sinMonths[i])
         days[i] = d.day
+        print(days[i])
         sinDays[i] = (1 + np.sin(((d.day - 1) / 23) * (2 * np.pi))) * 0.5
+        print(sinDays[i])
         i += 1
     weekD = df.DataFrame(wDay, columns=['weekday'])
     data['weekday'] = weekD
@@ -647,11 +657,11 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         else:
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
-            data = df.concat([data, dataMet], axis=1)
-            data = data.fillna(value=-1)
+            data = df.concat([data, dataMet], axis=1, join='inner')
+            #data =  data.merge(dataMet, how='left', on='fecha')
+            print(data)
             data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
-            print(data)
             index = data.index.values
             arrayPred = []
             for x in index:
@@ -693,7 +703,8 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     #sys.out
     data = separateDate(data)
     data = totalUnionData(data, dirFestivos)
-    data = df.concat([data, dataMet], axis=1)
+    data = df.concat([data, dataMet], axis=1, join='inner')
+    #data = data.merge(dataMet, how='left', on='fecha')
     data = data.fillna(value=-1)
     data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
     data = data.fillna(value=-1)
@@ -717,7 +728,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
 def makeDates(fechaInicio, fechaFinal, data):
     dates=[]
     dates.append(fechaInicio)
-    while fechaInicio < fechaFinal:
+    while fechaInicio <= fechaFinal:
         fechaInicio = fechaInicio + timedelta(hours=1)
         dates.append(fechaInicio)
     frameDates = df.DataFrame(dates, columns=['fecha'])
