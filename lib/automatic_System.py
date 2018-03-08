@@ -353,7 +353,7 @@ def unionTotalMeteorologia(fecha, dirCsv, variables, fechaInicio, fechaFinal):
     #fechaInicio = fechaInicio + timedelta(days=1)
     #fechaFinal = fechaFinal + timedelta(days=1)
     data = df.read_csv(dirCsv + "U10_" + fecha + ".csv")
-    variables.pop(0)
+    #variables.pop(0)
     for i in variables:
         name = i + "_" + fecha + ".csv"
         dataTemp = df.read_csv(dirCsv + name)
@@ -543,37 +543,37 @@ def separateDate(data):
         # d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
         wD = weekday(d.year, d.month, d.day)
         wDay[i] = wD[0]
-        print(wDay[i])
         sinWday[i] = wD[1]
-        print(sinWday[i])
         years[i] = d.year
-        print(years[i])
         # sinYears[i]= np.sin(d.year);
         months[i] = d.month
-        print(months[i])
         sinMonths[i] = (1 + np.sin(((d.month - 1) / 11) * (2 * np.pi))) * 0.5
-        print(sinMonths[i])
         days[i] = d.day
-        print(days[i])
         sinDays[i] = (1 + np.sin(((d.day - 1) / 23) * (2 * np.pi))) * 0.5
-        print(sinDays[i])
         i += 1
     weekD = df.DataFrame(wDay, columns=['weekday'])
-    data['weekday'] = weekD
+    data = df.concat([data,weekD], axis=1)
+    #data['weekday'] = weekD
     sinWeekD = df.DataFrame(sinWday, columns=['sinWeekday'])
-    data['sinWeekday'] = sinWeekD
+    data = df.concat([data,sinWeekD], axis=1)
+    #data['sinWeekday'] = sinWeekD
     dataYear = df.DataFrame(years, columns=['year'])
-    data['year'] = dataYear
+    data = df.concat([data,dataYear], axis=1)
+    #data['year'] = dataYear
     # dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data);
     # data['sinYear'] = dataSinYear
     dataMonths = df.DataFrame(months, columns=['month'])
-    data['month'] = dataMonths
+    data = df.concat([data,dataMonths], axis=1)
+    #data['month'] = dataMonths
     dataSinMonths = df.DataFrame(sinMonths, columns=['sinMonth'])
-    data['sinMonth'] = dataSinMonths
+    data = df.concat([data,dataSinMonths], axis=1)
+    #data['sinMonth'] = dataSinMonths
     dataDay = df.DataFrame(days, columns=['day'])
-    data['day'] = dataDay
+    data = df.concat([data,dataDay], axis=1)
+    #data['day'] = dataDay
     dataSinDay = df.DataFrame(sinDays, columns=['sinDay'])
-    data['sinDay'] = dataSinDay
+    data = df.concat([data,dataSinDay], axis=1)
+    #data['sinDay'] = dataSinDay
     return data
 
 
@@ -634,6 +634,13 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         return 0
     else:
         fechaUltima = dataForecast['fecha'][0]
+        print(fechaUltima)
+    if estacion == 'SFE':
+        fechaUltima = fechaUltima -timedelta(hours=6)
+    elif estacion == 'NEZ' or estacion == 'TAH': 
+        fechaUltima = fechaUltima - timedelta(hours=15)
+    elif estacion == 'UAX':
+        fechaUltima = fechaUltima - timedelta(hours=13)
     if fechaUltima < fecha2:
         print('retrasado')
         fechaUltima = fechaUltima -  timedelta(days=1)
@@ -655,11 +662,12 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             return 0
             #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
         else:
+            data = data.reset_index(drop=True)
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
             data = df.concat([data, dataMet], axis=1, join='inner')
-            #data =  data.merge(dataMet, how='left', on='fecha')
             print(data)
+            #data =  data.merge(dataMet, how='left', on='fecha')
             data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
             index = data.index.values
@@ -701,6 +709,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     data = fd.get_climatology(fechaInicio, fechaFinal, estacion)
     data = makeDates(fechaInicio,fechaFinal,data)
     #sys.out
+    data = data.reset_index(drop=True)
     data = separateDate(data)
     data = totalUnionData(data, dirFestivos)
     data = df.concat([data, dataMet], axis=1, join='inner')
