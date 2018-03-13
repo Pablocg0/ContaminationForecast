@@ -637,7 +637,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         print(fechaUltima)
     if estacion == 'SFE':
         fechaUltima = fechaUltima -timedelta(hours=6)
-    elif estacion == 'TAH': 
+    elif estacion == 'TAH':
         fechaUltima = fechaUltima - timedelta(hours=15)
     elif estacion == 'UAX' or estacion == 'NEZ':
         fechaUltima = fechaUltima - timedelta(hours=13)
@@ -652,7 +652,8 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
         if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
             print('climatologia')
-            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+            #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+            dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos):
             return 1
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
             print('SAVE THE QUEEN')
@@ -732,6 +733,45 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
         guardarPrediccion(estacion, fechaPronostico, [xs], contaminant)
         fechaPronostico = fechaPronostico + timedelta(hours=1)
     print('Climatologia:' + estacion)
+
+
+def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos):
+    data_Corr = df.read_csv('/ServerScript/AirQualityModel/ContaminationForecast/Data/Correlacion_table.csv', index_col=0)
+    corr_est = data_Corr[estacion].sort_values(ascending=False)
+    estacion_corr = corr_est.index[1]
+    data = fd.readData_corr(fechaInicio, fechaFin, [estacion_corr], contaminant)
+    if data.empty:
+        useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+    else:
+        data = data.drop_duplicates(keep='first')
+        data = data.reset_index(drop=True)
+        index_values = data.columns.values[1:]
+        for xs in index_values:
+            data.rename(columns={xs:xs.replace(estacion_corr.lower(), estacion.lower())}, inplace = True)
+        print(data)
+        data = separateDate(data)
+        data = totalUnionData(data, dirFestivos)
+        data = df.concat([data, dataMet], axis=1, join='inner')
+        print(data)
+        #data =  data.merge(dataMet, how='left', on='fecha')
+        data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
+        data = data.fillna(value=-1)
+        index = data.index.values
+        arrayPred = []
+        for x in index:
+            pred = data.ix[x].values
+            print(valpred)
+            valPred = pred[2:]
+            valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
+            arrayPred.append(convert(valNorm))
+        result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
+        columnContaminant = findTable2(contaminant)
+        real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
+        for xs in range(len(real)):
+            fechaPronostico = data['fecha'].iloc[xs].values
+            fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
+            pronostico = real[xs]
+            guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
 
 
 def makeDates(fechaInicio, fechaFinal, data):
