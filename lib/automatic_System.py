@@ -426,7 +426,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     elif estacion == 'NEZ':
         fecha = fecha + timedelta(days=1)
-        fecha = fecha + timedelta(hours = 15)
+        fecha = fecha + timedelta(hours = 13)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
     elif estacion == 'TAH':
@@ -637,9 +637,9 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         print(fechaUltima)
     if estacion == 'SFE':
         fechaUltima = fechaUltima -timedelta(hours=6)
-    elif estacion == 'NEZ' or estacion == 'TAH': 
+    elif estacion == 'TAH': 
         fechaUltima = fechaUltima - timedelta(hours=15)
-    elif estacion == 'UAX':
+    elif estacion == 'UAX' or estacion == 'NEZ':
         fechaUltima = fechaUltima - timedelta(hours=13)
     if fechaUltima < fecha2:
         print('retrasado')
