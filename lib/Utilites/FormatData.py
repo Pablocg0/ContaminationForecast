@@ -61,6 +61,50 @@ class FormatData(object):
         #return allData.fillna(value=-1);
         return allData;
 
+    def readData_corr(startDate,endDate,estations,contaminant):
+        """
+        Function to extract information from the database.
+
+        :param startDate: range of data wit wich the vaues of tue query are extracted.
+        :type startDate: timedata
+        :param endDate : range of data wit wich the vaues of tue query are extracted.
+        :type endDate: timedata
+        :param estations: set the stations to get the values.
+        :type estations : list with the stations
+        :return : allData  all data that was taken from the database.
+        :rtype: DataFrame
+        """
+        oztool = ContIOTools();
+        tables_contaminants = oztool.getTables();
+        cont = oztool.findTable(contaminant)
+        conexion = SqlCont();
+        conn = conexion.getPostgresConn();
+        cur=conn.cursor();
+        #conexion for the database
+        allData= pd.read_sql_query("""SELECT fecha FROM {0} WHERE id_est ='{1}' AND fecha >= '{2}' AND fecha <= '{3}' ORDER BY fecha ASC;""".format(cont,estations[0],startDate, endDate), conn);
+        #query the dates in the gives range
+        numberows = len(allData.index)#Numbers the data given by the previous query
+        for x in estations:
+            for y in tables_contaminants:
+                name = y+'_'+x; #name the column in the DataFrame
+                tempDataValues = pd.read_sql_query("""SELECT fecha, val  as {0} FROM {1} WHERE id_est = '{2}' AND fecha >= '{3}' AND fecha <= '{4}'ORDER BY fecha ASC;""".format(name,y,x, startDate, endDate),conn);
+                #query the values in the gives rangefrom Utilites.FormatData import FormatData as fdfrom Utilites.FormatData import FormatData as fd
+                if tempDataValues.empty:
+                    #if the query is empty fill it will -1
+                    tempData = pd.DataFrame(np.ones((numberows,1))*-1,columns= [y + '_' + x.lower()]);
+                    allData[y + '_' + x.lower()]= tempData;
+                    #pass;
+                elif not tempDataValues.empty:
+                    allData = allData.merge(tempDataValues,how='left',on='fecha')
+                    #allData[name]=tempDataValues[y+'_'+x.lower()];
+        conn.commit();
+        cur.close();
+        #The connection to the database is closed
+        #allData=allData.dropna(how = 'any');
+        #return allData.fillna(value=-1);
+        return allData;
+
+
 
     def buildClass(allData,estation,contaminant,delta):
         """
@@ -217,6 +261,15 @@ class FormatData(object):
             fechaMeta = fechaMeta + timedelta(hours=1)
         allData = allData.reset_index(drop=True)
         return allData
+
+
+    def rev_data(estacion,fecha, contaminante):
+        oztool = ContIOTools()
+        conexion = SqlCont();
+        conn = conexion.getPostgresConn();
+        cur= conn.cursor();
+        tempData =pd.read_sql_query("""SELECT COUNT(fecha) FROM {0} WHERE fecha = \'{1}\' AND id_est = \'{2}\'; """.format(contaminante,fecha,estacion),conn)
+        return tempData['count'][0]
 
 
     def saveData(estacion, fecha, Valor, contaminant):
