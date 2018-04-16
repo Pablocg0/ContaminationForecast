@@ -116,7 +116,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(valPred)
                     guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                print('Climatologia')
+                print('update 4 hours')
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
         direccioNetCDF = dirNetCDF +'0' +str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
         data = open_netcdf(direccioNetCDF + informacion[2], informacion[2], informacion[2], pathCopyData);
@@ -150,7 +150,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(valPred)
                     guardarPrediccion(value, informacion[0], valPred, contaminant)
             else:
-                print('Climatologia')
+                print('update  4 hours')
     else:
         if buscarArchivo(informacion[4], dirCsv):
             # buscarArchivo(informacion[4]); #csv ayer
@@ -183,7 +183,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(valPred)
                         guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    print('Climatologia')
+                    print('update 4 hours')
         else:
             anteAyer = informacion[1] - timedelta(days=1)
             nameCsv = variables[0]+"_"+str(anteAyer.year)+ "-"+ numString(anteAyer.month)+ "-"+numString(anteAyer.day)+".csv";
@@ -216,7 +216,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(valPred)
                         guardarPrediccion(value, informacion[0], valPred, contaminant)
                 else:
-                    print('Climatologia')
+                    print('update 4 hours')
     # for x in estaciones:
         # training(informacion[1],x,dirTrain,dirData, dirFestivos, variables, contaminant);
 
@@ -350,8 +350,12 @@ def unionMeteorologia(fecha, fechaComplete, dirCsv, variables):
 
 
 def unionTotalMeteorologia(fecha, dirCsv, variables, fechaInicio, fechaFinal):
+    fechaInicio = datetime.strptime(fechaInicio, '%Y-%m-%d %H:%M:%S')
+    fechaFinal = datetime.strptime(fechaFinal, '%Y-%m-%d %H:%M:%S')
     #fechaInicio = fechaInicio + timedelta(days=1)
     #fechaFinal = fechaFinal + timedelta(days=1)
+    fechaInicio= str(fechaInicio.year) + '-' + numString(fechaInicio.month) + '-' + numString(fechaInicio.day)+' '+numString(fechaInicio.hour)+':00:00'
+    fechaFinal= str(fechaFinal.year) + '-' + numString(fechaFinal.month) + '-' + numString(fechaFinal.day)+' '+numString(fechaFinal.hour)+':00:00'
     data = df.read_csv(dirCsv + "U10_" + fecha + ".csv")
     #variables.pop(0)
     for i in variables:
@@ -422,27 +426,47 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
     if estacion == 'SFE':
         fecha = fecha + timedelta(days = 1)
         fecha1 = fecha + timedelta(hours = 6)
-        fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day+1)+' '+str(fecha1.hour)+':00:00'
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        if rept == 0:
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        else:
+            print('valor repetido')
     elif estacion == 'NEZ':
         fecha = fecha + timedelta(days=1)
-        fecha = fecha + timedelta(hours = 13)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fecha = fecha + timedelta(hours = 11)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        if rept == 0:
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        else:
+            print('valor repetido')
     elif estacion == 'TAH':
         fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours=15)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        if rept == 0:
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        else:
+            print('valor repetido')
     elif estacion == 'UAX':
         fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours=13)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        if rept == 0:
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        else:
+            print('valor repetido')
     else:
         fecha = fecha + timedelta(days=1)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        if rept == 0:
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+        else:
+            print('valor repetido')
 
 
 def filterData(data, dirData):
@@ -630,17 +654,19 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     dataForecast= fd.get_forecast(nameC,estacion)
     print(dataForecast)
     if dataForecast.empty:
-        print('La satisfacción de un momento es la ruina del siguiente.')
+        print('NO hay datos para la prediccion')
         return 0
     else:
         fechaUltima = dataForecast['fecha'][0]
-        print(fechaUltima)
-    if estacion == 'SFE':
-        fechaUltima = fechaUltima -timedelta(hours=6)
-    elif estacion == 'TAH':
-        fechaUltima = fechaUltima - timedelta(hours=15)
-    elif estacion == 'UAX' or estacion == 'NEZ':
-        fechaUltima = fechaUltima - timedelta(hours=13)
+        if estacion == 'SFE':
+            fechaUltima = fechaUltima -timedelta(hours=6)
+        elif estacion == 'TAH':
+            fechaUltima = fechaUltima - timedelta(hours=15)
+        elif estacion == 'UAX':
+            fechaUltima = fechaUltima - timedelta(hours=13)
+        elif estacion == 'NEZ':
+            fechaUltima = fechaUltima - timedelta(hours=11)
+    fechaUltima = fechaUltima + timedelta(seconds=40)
     if fechaUltima < fecha2:
         print('retrasado')
         fechaUltima = fechaUltima -  timedelta(days=1)
@@ -652,14 +678,14 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
         if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
             print('climatologia')
-            #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
-            dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos):
+            useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+            #dataCorrelacion(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
             return 1
         elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
-            print('SAVE THE QUEEN')
+            print('Climatologia cada 4 hrs.')
             return 0
         elif data.empty:
-            print('La satisfacción de un momento es la ruina del siguiente.')
+            print('No hay datos para la prediccion')
             return 0
             #useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet, dirData, dirTrain)
         else:
@@ -667,7 +693,6 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             data = separateDate(data)
             data = totalUnionData(data, dirFestivos)
             data = df.concat([data, dataMet], axis=1, join='inner')
-            print(data)
             #data =  data.merge(dataMet, how='left', on='fecha')
             data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
             data = data.fillna(value=-1)
@@ -684,6 +709,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             for xs in range(len(real)):
                 fechaPronostico = data['fecha'].iloc[xs].values
                 fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
+                fechaPronostico = fechaPronostico - timedelta(days=1)
                 pronostico = real[xs]
                 guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
             return 1
@@ -736,6 +762,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
 
 
 def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos):
+    print('COrrelacion')
     data_Corr = df.read_csv('/ServerScript/AirQualityModel/ContaminationForecast/Data/Correlacion_table.csv', index_col=0)
     corr_est = data_Corr[estacion].sort_values(ascending=False)
     estacion_corr = corr_est.index[1]
@@ -748,7 +775,6 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
         index_values = data.columns.values[1:]
         for xs in index_values:
             data.rename(columns={xs:xs.replace(estacion_corr.lower(), estacion.lower())}, inplace = True)
-        print(data)
         data = separateDate(data)
         data = totalUnionData(data, dirFestivos)
         data = df.concat([data, dataMet], axis=1, join='inner')
@@ -760,8 +786,8 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
         arrayPred = []
         for x in index:
             pred = data.ix[x].values
-            print(valpred)
             valPred = pred[2:]
+            print(valPred)
             valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
             arrayPred.append(convert(valNorm))
         result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)

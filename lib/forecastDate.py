@@ -207,6 +207,6 @@ def init():
     fechaFin = config.get('forecastDate', 'fechaFin')
     est = config.get('forecastDate', 'estaciones' + contaminant)
     est  = est.split()
-    totalPredection(est, dirData+'B'+ contaminant+'/', dirrDataC+'B'+ contaminant+'/', dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
+    totalPredection(est, dirData+ contaminant+'/', dirrDataC+ contaminant+'/', dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
 
 init()

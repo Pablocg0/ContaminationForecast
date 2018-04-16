@@ -318,8 +318,9 @@ def init():
         startDate = startDate.split()
         est = est.split()
         saveData(est, startDate, nameContaminant, endDate, dirr, dirTotalCsv, contaminant, mode)
+    print(bootstrap)
     if bootstrap == 'S':
-        completeTable.init()
+       completeTable.init()
 
 
 init()
