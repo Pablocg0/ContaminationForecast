@@ -272,7 +272,7 @@ class FormatData(object):
         return tempData['count'][0]
 
 
-    def saveData(estacion, fecha, Valor, contaminant):
+    def saveData(estacion, fecha, Valor, contaminant, tipo):
         """
         function to save the prediction in the database
 
@@ -289,7 +289,7 @@ class FormatData(object):
         conn = conexion.getPostgresConn();
         cur= conn.cursor();
         #conexion database
-        sql = """INSERT INTO {0}(fecha,val,id_est) VALUES (\'{1}\',{2},\'{3}\');""".format(table,fecha,Valor[0],estacion);
+        sql = """INSERT INTO {0}(fecha,val,id_est, tipo_pronostico) VALUES (\'{1}\',{2},\'{3}\',\'{4}\');""".format(table,fecha,Valor[0],estacion,tipo);
         cur.execute(sql)
         conn.commit()
         cur.close()

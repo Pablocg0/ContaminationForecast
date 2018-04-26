@@ -114,7 +114,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(data)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred, contaminant)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant,'Normal')
             else:
                 print('update 4 hours')
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
@@ -148,7 +148,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                     print(data)
                     valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                     print(valPred)
-                    guardarPrediccion(value, informacion[0], valPred, contaminant)
+                    guardarPrediccion(value, informacion[0], valPred, contaminant, 'Normal')
             else:
                 print('update  4 hours')
     else:
@@ -181,7 +181,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(data)
                         valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                         print(valPred)
-                        guardarPrediccion(value, informacion[0], valPred, contaminant)
+                        guardarPrediccion(value, informacion[0], valPred, contaminant,'Normal')
                 else:
                     print('update 4 hours')
         else:
@@ -214,7 +214,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
                         print(data)
                         valPred = prediccion(value, data, dirData, dirTrain, contaminant)
                         print(valPred)
-                        guardarPrediccion(value, informacion[0], valPred, contaminant)
+                        guardarPrediccion(value, informacion[0], valPred, contaminant,'Normal')
                 else:
                     print('update 4 hours')
     # for x in estaciones:
@@ -412,7 +412,7 @@ def totalUnionData(data,dirFestivos):
     return totalData
 
 
-def guardarPrediccion(estacion, fecha, Valor,contaminant):
+def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
     """
     function to save the prediction in the database
 
@@ -429,7 +429,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day+1)+' '+str(fecha1.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
         if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
     elif estacion == 'NEZ':
@@ -438,7 +438,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
         if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
     elif estacion == 'TAH':
@@ -447,7 +447,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
         if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
     elif estacion == 'UAX':
@@ -456,7 +456,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
         if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
     else:
@@ -464,9 +464,45 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant):
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day+1)+' '+str(fecha.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
         if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant))
+            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
+
+def guardarPrediccionRep(estacion, fecha, Valor,contaminant,tipo):
+    """
+    function to save the prediction in the database
+
+    :param estacion: name the station
+    :type estacion: string
+    :param fecha: current date
+    :type fecha: date
+    :param valor: prediction value
+    :type valor: float32
+    """
+    if estacion == 'SFE':
+        fecha = fecha + timedelta(days = 1)
+        fecha1 = fecha + timedelta(hours = 6)
+        fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
+    elif estacion == 'NEZ':
+        fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours = 11)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
+    elif estacion == 'TAH':
+        fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours=15)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
+    elif estacion == 'UAX':
+        fecha = fecha + timedelta(days=1)
+        fecha = fecha + timedelta(hours=13)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
+    else:
+        fecha = fecha + timedelta(days=1)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
 
 
 def filterData(data, dirData):
@@ -646,7 +682,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     """
     fechaB = fecha
     fecha = fecha + timedelta(days=1)
-    fecha2 = fecha - timedelta(hours = 2)
+    fecha2 = fecha
     fechaInicio = fecha - timedelta(hours= 5)
     fechaActual = str(fechaB.year) + '-' + numString(fechaB.month) + '-' + numString(fechaB.day)+' '+numString(fechaB.hour)+':00:00'
     fechai = str(fechaInicio.year) + '-' + numString(fechaInicio.month) + '-' + numString(fechaInicio.day)+' '+numString(fechaInicio.hour)+':00:00'
@@ -666,7 +702,12 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             fechaUltima = fechaUltima - timedelta(hours=13)
         elif estacion == 'NEZ':
             fechaUltima = fechaUltima - timedelta(hours=11)
-    fechaUltima = fechaUltima + timedelta(seconds=40)
+    fechaUltima = fechaUltima + timedelta(seconds=1800)
+    print(fechaUltima)
+    print(fecha2)
+    print(fechaUltima < fecha2)
+    print(fechaUltima - fecha2)
+    print(str(fechaUltima) < str(fecha2))
     if fechaUltima < fecha2:
         print('retrasado')
         fechaUltima = fechaUltima -  timedelta(days=1)
@@ -676,12 +717,12 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         data = fd.readData(fechaInicio,fechaActual,[estacion],contaminant)
         data = data.drop_duplicates(keep='first')
         dataMet = unionTotalMeteorologia(fechaString, dirCsv, variables,fechaInicio, fechaActual)
-        if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=4):
+        if data.empty and (fechaFin - fechaUltima) >  timedelta(hours=3):
             print('climatologia')
             useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
             #dataCorrelacion(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
             return 1
-        elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=4):
+        elif data.empty and (fechaFin - fechaUltima) <=  timedelta(hours=3):
             print('Climatologia cada 4 hrs.')
             return 0
         elif data.empty:
@@ -711,7 +752,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
                 fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
                 fechaPronostico = fechaPronostico - timedelta(days=1)
                 pronostico = real[xs]
-                guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
+                guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant,'Normal')
             return 1
     else:
         print('corriente')
@@ -756,7 +797,10 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
     fechaPronostico = fechaInicio
     for xs in real:
-        guardarPrediccion(estacion, fechaPronostico, [xs], contaminant)
+        print(fechaPronostico)
+        fechaUpdate = fechaPronostico
+        fechaUpdate = fechaUpdate - timedelta(days=1)
+        guardarPrediccion(estacion, fechaUpdate, [xs], contaminant,'Climatologia')
         fechaPronostico = fechaPronostico + timedelta(hours=1)
     print('Climatologia:' + estacion)
 
@@ -797,7 +841,7 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
             fechaPronostico = data['fecha'].iloc[xs].values
             fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
             pronostico = real[xs]
-            guardarPrediccion(estacion, fechaPronostico, [pronostico],contaminant)
+            guardarPrediccionRep(estacion, fechaPronostico, [pronostico],contaminant,'Correlacion')
 
 
 def makeDates(fechaInicio, fechaFinal, data):
