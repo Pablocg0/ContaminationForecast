@@ -10,3 +10,4 @@ trainData/
 *.pyc
 *.py.save.2
 *.py.save.*
+*.idea
