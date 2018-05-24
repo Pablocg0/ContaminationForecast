@@ -13,16 +13,17 @@ def forecast_month(month, year, dirData, dirTotalCsv, dirTrain,estacion, contami
     lastDay = calendar.monthrange(year,month)[1]
     fechaInicio =  str(year) + '-' + numString(month) + '-01 00:00:00'
     fechaFinal = str(year) + '-' + numString(month) + '-'+ numString(lastDay) +' 23:00:00'
-    print(fechaInicio)
-    print(fechaFinal)
-    data = fd.readData(fechaInicio, fechaFinal, ['AJM'], 'O3')
+    #print(fechaInicio)
+    #print(fechaFinal)
+    data = fd.readData(fechaInicio, fechaFinal, [estacion], contaminant)
     data = separateDate(data)
     data = unionMeteorologia(data,dirTotalCsv)
     data = data.fillna(value=-1)
-    print(data)
+    #print(data)
     #sys.out
     frame_dates = data['fecha'].values
     data =  filterData(data, dirData + estacion + "_" + contaminant + ".csv")
+    data = data.fillna(value=-1)
     index = data.index.values
     arrayPred = []
     for x in index:
@@ -31,13 +32,14 @@ def forecast_month(month, year, dirData, dirTotalCsv, dirTrain,estacion, contami
         valNorm = pre.normalize(valPred,estacion, contaminant, dirData)
         arrayPred.append(convert(valNorm))
     result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
-    real = pre.desNorm(result, estacion,contaminant, dirData, 'cont_otres_')
+    nameCont = findTable2(contaminant)
+    real = pre.desNorm(result, estacion,contaminant, dirData, nameCont + '_')
     for xs in range(len(frame_dates)):
         fecha = frame_dates[xs]
         ts = df.to_datetime(str(fecha))
         fecha_string = ts.strftime('%Y-%m-%d %H:%M:%S')
         pronostico = real[xs]
-        guardarPrediccion(estacion, fecha_string,[pronostico],contaminant,'Datos Limpios')
+        guardarPrediccion(estacion, fecha_string,[pronostico],contaminant,4)
 
 
 def unionMeteorologia(data,dirTotalCsv):
@@ -170,7 +172,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
         fecha = fecha + timedelta(days = 1)
         fecha1 = fecha + timedelta(hours = 6)
         fechaActual = str(fecha1.year) + '-' + numString(fecha1.month) + '-' + numString(fecha1.day)+' '+numString(fecha1.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
@@ -179,7 +181,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
         fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours = 11)
         fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
@@ -188,7 +190,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
         fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours=15)
         fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
@@ -197,7 +199,7 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
         fecha = fecha + timedelta(days=1)
         fecha = fecha + timedelta(hours=13)
         fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
@@ -205,11 +207,44 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
     else:
         fecha = fecha + timedelta(days=1)
         fechaActual = str(fecha.year) + '-' + numString(fecha.month) + '-' + numString(fecha.day)+' '+numString(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant))
+        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
         else:
             print('valor repetido')
+
+
+def filterData(data, dirData):
+    """
+    function to remove the columns of a dataframe
+
+    :param data: dataframe to which the columns will be removed
+    :type data: DataFrame
+    :param dirData: address of the files with training information
+    :type dirData: String
+    :return: DataFrame
+    """
+    temp = df.read_csv(dirData)
+    listColumns = list(temp.columns)
+    data = data.loc[:, listColumns]
+    return data
+
+def convert(data):
+    """
+    function to convert a matrix into an array
+
+    :param data: matrix to convert
+    :type param: matrix
+    :return: array
+    :type return: array float32
+    """
+    size = len(data)
+    vl = np.ones([1, size])
+    i = 0
+    for x in data:
+        vl[0, i] = x
+        i += 1
+    return vl
 
 
 def numString(num):
@@ -228,6 +263,67 @@ def numString(num):
     else:
         return str(num)
 
+def findTable2(fileName):
+        if "PM2.5" in fileName:
+            return "cont_pmdoscinco"
+
+        if "PM10" in fileName:
+            return "cont_pmdiez"
+
+        if "NOX" in fileName:
+            return "cont_nox"
+
+        if "CO2" in fileName:
+            return "cont_codos"
+
+        if "PMCO" in fileName:
+            return "cont_pmco"
+
+        if "CO" in fileName:
+            return "cont_co"
+
+        if "NO2" in fileName:
+            return "cont_nodos"
+
+        if "NO" in fileName:
+            return "cont_no"
+
+        if "O3" in fileName:
+            return "cont_otres"
+
+        if "SO2" in fileName:
+            return "cont_sodos"
+
+def findT(fileName):
+        if "PM2.5" in fileName:
+            return "forecast_pmdoscinco"
+
+        if "PM10" in fileName:
+            return "forecast_pmdiez"
+
+        if "NOX" in fileName:
+            return "forecast_nox"
+
+        if "CO2" in fileName:
+            return "forecast_codos"
+
+        if "PMCO" in fileName:
+            return "forecast_pmco"
+
+        if "CO" in fileName:
+            return "forecast_co"
+
+        if "NO2" in fileName:
+            return "forecast_nodos"
+
+        if "NO" in fileName:
+            return "forecast_no"
+
+        if "O3" in fileName:
+            return "forecast_otres"
+
+        if "SO2" in fileName:
+            return "forecast_sodos"
 
 
 def init():
@@ -238,7 +334,7 @@ def init():
         month = 12
         year = year - 1
     else:
-        month = month -2
+        month = month -1
     contaminant = str(sys.argv[1])
     config = configparser.ConfigParser()
     config.read('/home/pablo/ContaminationForecast/modulos/forecast/confForecast_UpdateMonth.conf')
@@ -248,6 +344,7 @@ def init():
     estaciones = config.get('forecast_month', 'estaciones')
     estaciones = estaciones.split()
     for xs in estaciones:
-        forecast_month(month, year, dirData, dirTotalCsv, dirTrain,xs, contaminant)
+        print('Update mensual de la estacion: ' + xs)
+        forecast_month(month, year, dirData, dirTotalCsv, dirTrain +contaminant+ '/', xs, contaminant)
 
 init()

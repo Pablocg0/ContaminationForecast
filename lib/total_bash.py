@@ -49,7 +49,7 @@ def init():
             tp.init(datos+contaminant[xs]+'/', datosComp[xs]+contaminant[xs]+'/', graficas[xs], train+contaminant[xs]+'/', contaminant[xs], columnContaminant[xs], fechaInicio, fechaFinal,est)
     elif option == 1:
         for xs in range(num):
-            au.trainNeuralNetworks(est, datos, train+contaminant[xs]+'/', fechaFinal, contaminant[xs], iteraciones)
+            au.trainNeuralNetworks(est, datos, train+'B'+contaminant[xs]+'/', fechaFinal, contaminant[xs], iteraciones)
 
 
 init()
