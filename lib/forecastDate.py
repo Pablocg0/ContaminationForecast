@@ -138,7 +138,6 @@ def desNorm(data, station, contaminant, dirData, columnContaminant):
         real.append(realVal)
     return real
 
-
 def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     """
     function to save the prediction in the database
@@ -151,14 +150,57 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     :type valor: float32
     """
     print(findT(contaminant))
-    size = len(dataPrediccion)
-    for i in range(size):
-        fecha = fechas[i]
-        Valor = dataPrediccion[i]
-        fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
-        fecha = fecha + timedelta(days=1)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, [Valor], findT(contaminant))
+    if estacion == 'SFE':
+        size = len(dataPrediccion)
+        for i in range(size):
+            fecha = fechas[i]
+            Valor = dataPrediccion[i]
+            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            fecha = fecha + timedelta(days=1)
+            fecha = fecha + timedelta(hours = 6)
+            fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+    elif estacion == 'NEZ':
+        size = len(dataPrediccion)
+        for i in range(size):
+            fecha = fechas[i]
+            Valor = dataPrediccion[i]
+            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            fecha = fecha + timedelta(days=1)
+            fecha = fecha + timedelta(hours = 11)
+            fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+    elif estacion == 'TAH':
+        size = len(dataPrediccion)
+        for i in range(size):
+            fecha = fechas[i]
+            Valor = dataPrediccion[i]
+            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            fecha = fecha + timedelta(days=1)
+            fecha = fecha + timedelta(hours = 15)
+            fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+    elif estacion == 'UAX':
+        size = len(dataPrediccion)
+        for i in range(size):
+            fecha = fechas[i]
+            Valor = dataPrediccion[i]
+            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            fecha = fecha + timedelta(days=1)
+            fecha = fecha + timedelta(hours = 13)
+            fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+    else:
+        size = len(dataPrediccion)
+        for i in range(size):
+            fecha = fechas[i]
+            Valor = dataPrediccion[i]
+            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            fecha = fecha + timedelta(days=1)
+            fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+
+
 
 
 def findT(fileName):

@@ -55,7 +55,7 @@ def divData(data, numRow, numColumns):
     """
     totalArrays = numRow * numColumns
     total = np.zeros((0, totalArrays), dtype=np.float32)
-    for i in range(72):
+    for i in range(48):
         dataValue = data[i]
         array1D = []
         # size = dataValue.shape
@@ -100,7 +100,7 @@ def makeDates(date):
     date = date + ' 00:00:00'
     d = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     listDates.append(d)
-    for x in range(71):
+    for x in range(47):
         d = d + timedelta(hours=1)
         listDates.append(d)
     allData = df.DataFrame(listDates, columns=['fecha'])

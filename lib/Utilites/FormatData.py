@@ -263,12 +263,12 @@ class FormatData(object):
         return allData
 
 
-    def rev_data(estacion,fecha, contaminante):
+    def rev_data(estacion,fecha, contaminante, tipo):
         oztool = ContIOTools()
         conexion = SqlCont();
         conn = conexion.getPostgresConn();
         cur= conn.cursor();
-        tempData =pd.read_sql_query("""SELECT COUNT(fecha) FROM {0} WHERE fecha = \'{1}\' AND id_est = \'{2}\'; """.format(contaminante,fecha,estacion),conn)
+        tempData =pd.read_sql_query("""SELECT COUNT(fecha) FROM {0} WHERE fecha = '{1}' AND id_est = '{2}' AND  id_tipo_pronostico = {3}; """.format(contaminante,fecha,estacion,tipo),conn)
         return tempData['count'][0]
 
 
@@ -289,7 +289,7 @@ class FormatData(object):
         conn = conexion.getPostgresConn();
         cur= conn.cursor();
         #conexion database
-        sql = """INSERT INTO {0}(fecha,val,id_est, tipo_pronostico) VALUES (\'{1}\',{2},\'{3}\',\'{4}\');""".format(table,fecha,Valor[0],estacion,tipo);
+        sql = """INSERT INTO {0}(fecha,val,id_est, id_tipo_pronostico) VALUES (\'{1}\',{2},\'{3}\',{4});""".format(table,fecha,Valor[0],estacion,tipo);
         cur.execute(sql)
         conn.commit()
         cur.close()

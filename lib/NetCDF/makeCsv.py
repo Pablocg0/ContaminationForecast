@@ -33,7 +33,7 @@ def conver1D(array):
     l = array.shape
     total = np.zeros((0, l[1] * l[2]), dtype=np.float32)
     i = 0
-    for i in range(72):
+    for i in range(48):
         tempData = array[i]
         array1D = []
         for x in tempData:
@@ -54,7 +54,7 @@ def divData(data, numRow, numColumns):
     """
     totalArrays = numRow * numColumns
     total = np.zeros((0, totalArrays), dtype=np.float32)
-    for i in range(72):
+    for i in range(47):
         dataValue = data[i]
         array1D = []
         # size = dataValue.shape
@@ -216,13 +216,70 @@ def readCsv(variables, path, pathCsv):
         for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath + value)
-                tempData = completeMet(tempData)
+                tempData = prom(tempData,variables)
                 tempData = tempData.iloc[0:24, :]
                 dataVa = concat([tempData, dataVa], axis=0)
     dataVa = dataVa.reset_index()
     dataVa = dataVa.drop(labels='index', axis=1)
-    dataVa.to_csv(pathCsv + variables + '_total.csv', encoding='utf-8', index=False)
+    dataVa.to_csv(pathCsv + variables + '_total_prom.csv', encoding='utf-8', index=False)
     dataVa = df.DataFrame()
+
+
+def met_24(data,variable):
+    tempData = data
+    total_24 = df.DataFrame()
+    for i in range(24):
+        data = tempData.iloc[0+i:25+i,:]
+        primer= data.iloc[0,:]
+        fechauno = primer['fecha']
+        complete = df.DataFrame([fechauno], columns=['fecha'])
+        data = data.reset_index(drop=True)
+        for yx in range(25):
+            tempTotal = data.iloc[yx,:]
+            tempTotal = tempTotal.drop('fecha')
+            array = tempTotal.values
+            frame_val = convert(array,variable)
+            complete = df.concat([complete,frame_val],axis=1)
+        total_24 = df.concat([total_24, complete], axis=0)
+        complete=df.DataFrame
+    total_24 =total_24.reset_index(drop=True)
+    return total_24
+
+def convert(data,variable):
+    total = df.DataFrame()
+    for xs in data:
+        temp = df.DataFrame([xs],columns=[variable])
+        total = df.concat([total,temp], axis=1)
+    return total
+
+def prom(data,variable):
+    tempData = data
+    total_24 = df.DataFrame()
+    for i in range(24):
+        data = tempData.iloc[0+i:(0+i)+1,:]
+        primer= data.iloc[0,:]
+        fechauno = primer['fecha']
+        complete = df.DataFrame([fechauno], columns=['fecha'])
+        data = data.reset_index(drop=True)
+        for yx in range(1):
+            tempTotal = data.iloc[yx,:]
+            tempTotal = tempTotal.drop('fecha')
+            array = tempTotal.values
+            prom = array_prom(array,variable)
+            complete = df.concat([complete, prom], axis=1)
+        total_24 = df.concat([total_24,complete], axis=0)
+        complete = df.DataFrame
+    total_24 = total_24.reset_index(drop = True)
+    return total_24
+
+def array_prom(data, variable):
+    prom = []
+    suma = 0
+    for xs in data:
+        suma =+ xs
+    prom.append(suma/len(data))
+    promedio = df.DataFrame(prom,columns=[variable])
+    return promedio
 
 
 def completeMet(data):
