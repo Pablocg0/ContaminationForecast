@@ -54,7 +54,7 @@ def divData(data, numRow, numColumns):
     """
     totalArrays = numRow * numColumns
     total = np.zeros((0, totalArrays), dtype=np.float32)
-    for i in range(47):
+    for i in range(119):
         dataValue = data[i]
         array1D = []
         # size = dataValue.shape
@@ -99,7 +99,7 @@ def makeDates(date):
     date = date + ' 00:00:00'
     d = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     listDates.append(d)
-    for x in range(71):
+    for x in range(119):
         d = d + timedelta(hours=1)
         listDates.append(d)
     allData = df.DataFrame(listDates, columns=['fecha'])
@@ -216,12 +216,12 @@ def readCsv(variables, path, pathCsv):
         for value in filess:
             if patron.match(value) != None:
                 tempData = df.read_csv(mypath + value)
-                tempData = prom(tempData,variables)
+                tempData = completeMet(tempData)
                 tempData = tempData.iloc[0:24, :]
                 dataVa = concat([tempData, dataVa], axis=0)
     dataVa = dataVa.reset_index()
     dataVa = dataVa.drop(labels='index', axis=1)
-    dataVa.to_csv(pathCsv + variables + '_total_prom.csv', encoding='utf-8', index=False)
+    dataVa.to_csv(pathCsv + variables + '_total.csv', encoding='utf-8', index=False)
     dataVa = df.DataFrame()
 
 
@@ -296,6 +296,7 @@ def completeMet(data):
     nameColumns = data.columns.values
     nameColumns = nameColumns[1:]
     fecha = data['fecha'].values
+    print(data)
     for i in range(24):
         f = fecha[i]
         fechaOri.append(f)
@@ -303,6 +304,8 @@ def completeMet(data):
         da = dateInit + timedelta(hours=24)
         ti = da.strftime('%Y-%m-%d %H:%M:%S')
         temp = data[data.fecha == ti]
+        print(ti)
+        print(temp)
         dtemp = data.loc[temp.index, nameColumns]
         newData = df.concat([newData, dtemp])
     newData = newData.drop(labels='fecha', axis=1)

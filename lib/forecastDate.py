@@ -202,7 +202,6 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
 
 
 
-
 def findT(fileName):
         if "PM2.5" in fileName:
             return "forecast_pmdoscinco"
