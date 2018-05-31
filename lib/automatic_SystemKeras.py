@@ -1,8 +1,8 @@
 '''
-File name : automatic_System.py
+File name : confAutomatic_SystemKeras.py
 Author: Pablo Camacho Gonzalez
 Python version: 3.6.4
-Date last modified: 28/02/2018
+Date last modified: 31/05/2018
 '''
 
 
@@ -423,37 +423,10 @@ def guardarPrediccion(estacion, fecha, Valor,contaminant,tipo):
     :param valor: prediction value
     :type valor: float32
     """
-    if estacion == 'SFE':
-        fecha = fecha + timedelta(days = 2)
-        fecha1 = fecha + timedelta(hours = 6)
+    if estacion == 'TAH':
+        fecha = fecha + timedelta(days = 1)
+        fecha1 = fecha + timedelta(hours = 15)
         fechaActual = str(fecha1.year) + '-' + str(fecha1.month) + '-' + str(fecha1.day)+' '+str(fecha1.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
-        if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
-        else:
-            print('valor repetido')
-    elif estacion == 'NEZ':
-        fecha = fecha + timedelta(days=2)
-        fecha = fecha + timedelta(hours = 11)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
-        if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
-        else:
-            print('valor repetido')
-    elif estacion == 'TAH':
-        fecha = fecha + timedelta(days=2)
-        fecha = fecha + timedelta(hours=15)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
-        if rept == 0:
-            fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
-        else:
-            print('valor repetido')
-    elif estacion == 'UAX':
-        fecha = fecha + timedelta(days=2)
-        fecha = fecha + timedelta(hours=13)
-        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
         rept = fd.rev_data(estacion,fechaActual,findT(contaminant),tipo)
         if rept == 0:
             fd.saveData(estacion, fechaActual, Valor, findT(contaminant),tipo)
@@ -972,4 +945,3 @@ def init():
 
 
 init()
-
