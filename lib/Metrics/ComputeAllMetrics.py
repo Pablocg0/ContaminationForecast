@@ -49,19 +49,14 @@ def getAllMetrics(obs, pred):
     error = obs - pred # Error
     mobs = np.mean(obs) # Mean observed
     mpred = np.mean(pred) # Mean predicted
-    plt.plot(error)
-    plt.show()
     # ******** MAE *********
     mse = np.mean(np.abs(error))
-    print("MAE: ", mse)
 
     # ******** MSE *********
     mse = np.mean(error**2)
-    print("MSE: ", mse)
 
     # ******** RMSE *********
     rmse = np.sqrt(mse)
-    print("RMSE: ", rmse)
 
     # ******** Index of Agreement *********
     a = np.sum(np.abs(pred-obs))
@@ -70,7 +65,6 @@ def getAllMetrics(obs, pred):
         iagree = 1 - a/b
     else:
         iagree = b/a - 1
-    print("Index of Agreement: ", iagree)
 
     # ******** R *********
     a = obs-mobs
@@ -78,17 +72,56 @@ def getAllMetrics(obs, pred):
     up = np.mean(a*b)
     down = np.sqrt(np.mean(a**2))*np.sqrt(np.mean(b**2))
     pearson = up/down
-    print("Pearson Correlation Coefficient: ", pearson, " NP=",np.corrcoef(pred, obs)[0,1])
 
     # ******** R2 *********
     # rtwo = 1 - (np.sum(error)/np.sum(obs-mobs))
     rtwo = pearson*pearson
-    print("R2: ", rtwo)
 
+    print("MSE: ", mse)
+    print("RMSE: ", rmse)
+    print("R2: ", rtwo)
+    print("Index of Agreement: ", iagree)
+    print("Pearson Correlation Coefficient: ", pearson, " NP=",np.corrcoef(pred, obs)[0,1])
+
+    return [mse, rmse, iagree, pearson, rtwo]
+
+def plotByStation(data, title, stations):
+    '''Computes all the metrics from the paper by station'''
+
+    print("******************")
+    corr_coef = np.zeros(len(stations))
+    idx_agreement = np.zeros(len(stations))
+    rmse_all = np.zeros(len(stations))
+    rsquared = np.zeros(len(stations))
+    for i, station in enumerate(stations):
+
+        idx = data['id_est'] == station
+        obs = data.ix[idx]['gt'].values
+        pred = data.ix[idx]['fo'].values
+
+        [mse, rmse, iagree, pearson, rtwo] = getAllMetrics(obs,pred)
+
+        corr_coef[i] = pearson
+        rsquared[i] = rtwo
+        rmse_all[i] = np.sqrt(mse)
+        idx_agreement[i] = iagree
+
+    generalPlot(stations,corr_coef,'{} Pearson Correlation Coefficient '.format(title))
+    generalPlot(stations,rmse_all,'{} RMSE'.format(title))
+    generalPlot(stations,rsquared,'{} R^2'.format(title))
+    generalPlot(stations,idx_agreement,'{} Index of agreement'.format(title))
+
+def generalPlot(x,y,title, figsize=[9,5]):
+    f = plt.figure(figsize=figsize)
+    plt.bar(x, y)
+    plt.title(title)
+    plt.ylim([min(y)-.05, max(y)+.02])
+    plt.savefig('imgs/Final_Figures/{}.png'.format(title.replace(' ','_')))
+    plt.show()
 
 if __name__ == "__main__":
-    # forecast_types = {1:'Climatologia', 2:'Normal', 3:'Meteorologia',4:'Datos Limpios'}
-    forecast_types = {2:'Meteorologia'}
+    # forecast_types = {1:'Climatologia', 2:'Normal (TensorFlow)', 3:'Normal (Keras)',4:'Datos Limpios', 5:'Correlacion (Keras)'}
+    forecast_types = {3:'Keras'}
     for year in [2017]:
         for forecast_type in forecast_types.keys():
                 print("############ Forecast type", forecast_types.get(forecast_type),"  ###########")
@@ -97,7 +130,11 @@ if __name__ == "__main__":
                 print("Reading data for year ", year, " ....")
                 data = getData([], year, forecast_type, all=True)
                 print("Done")
-                getAllMetrics(data['gt'], data['fo'])
+                ## All data has ben read
+                # getAllMetrics(data['gt'], data['fo'])
+
+                stations = data['id_est'].unique()
+                plotByStation(data, 'All stations', stations)
 
                 # ******** Best 9 stations *********
                 print("\n ****** Best 9 stations")
@@ -106,6 +143,9 @@ if __name__ == "__main__":
                 data = getData(stations, year, forecast_type)
                 print("Done")
                 getAllMetrics(data['gt'], data['fo'])
+
+                stations = ['ATI','BJU','CUA','LPR','MER','PED','TLA','UIZ','XAL']
+                plotByStation(data, 'Top 9', stations)
 
                 # ******** Only PED *********
                 print("\n ****** PED station...")
