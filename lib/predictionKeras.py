@@ -5,6 +5,7 @@ import os
 import keras
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
+import tensorflow as tf
 
 
 def normalize(data, station, contaminant, dirData):
@@ -70,9 +71,7 @@ def prediction(station, contaminant, arrayPred, dirTrain, dirData):
 
     name = 'train_'+station+'_'+contaminant
 
-    model = Sequential()
-
-    model = load_model(dirTrain + station + '/' + name + '.h5')
+    model = load_model(dirTrain + station + '/' + name + '.h5', {'tf': tf})
 
     for x in arrayPred:
         pred = model.predict(x)

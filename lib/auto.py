@@ -6,7 +6,7 @@ Date last modified: 27/02/2018
 '''
 
 from Utilites.Utilites import prepro as an
-from NNSystem.neuralNetworkGpu import train as nng
+from NNSystem.neuralNetworKeras import train as nng
 import pandas as df
 import os
 
