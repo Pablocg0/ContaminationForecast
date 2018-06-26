@@ -9,8 +9,8 @@ def nicePrint(colnames, rows):
     #for i in range(len(colnames)):
         #print(colnames[i], " - ", rows[0][i])
 
-    print(rows[0][0])
-    print(colnames[1], "-", rows[0][1], "   ", colnames[2], "-", rows[0][2]) 
+    print('***** {} *****'.format(rows[0][0]))
+    print(colnames[1], ":", rows[0][1], "   ", colnames[2], ":", rows[0][2])
     print("\t P \t N")
     print('PP \t {} \t {}'.format(rows[0][3], rows[0][4]) )
     print("PN \t {} \t {}".format(rows[0][5], rows[0][6]) )
@@ -22,30 +22,27 @@ def computeConfussionMatrix():
     except:
         print("Failed to connect to database")
 
-
     try:
         cur = conn.cursor();
 
-        print("---------- Computing RMSE ALL --------")
-        orig_query = Path('SQL/GetRMSE.sql').read_text()
-        cur.execute(orig_query);
-        colnames = [desc[0] for desc in cur.description]
-        rows = cur.fetchall();
-        rmse = np.sqrt(float(rows[0][1])/ float(rows[0][0]))
-        print("RMSE = ", rmse)
-        print("MAE = ", rows[0][2])
+        # print("---------- Computing RMSE ALL --------")
+        # orig_query = Path('SQL/GetRMSE.sql').read_text()
+        # cur.execute(orig_query);
+        # colnames = [desc[0] for desc in cur.description]
+        # rows = cur.fetchall();
+        # rmse = np.sqrt(float(rows[0][1])/ float(rows[0][0]))
+        # print("RMSE = ", rmse)
+        # print("MAE = ", rows[0][2])
 
-        print("---------- Computing RMSE Good ones--------")
-        orig_query = Path('SQL/GetRMSEOnlyGood.sql').read_text()
-        cur.execute(orig_query);
-        colnames = [desc[0] for desc in cur.description]
-        rows = cur.fetchall();
-        rmse = np.sqrt(float(rows[0][1])/ float(rows[0][0]))
-        print("RMSE = ", rmse)
-        print("MAE = ", rows[0][2])
+        # print("---------- Computing RMSE Good ones--------")
+        # orig_query = Path('SQL/GetRMSEOnlyGood.sql').read_text()
+        # cur.execute(orig_query);
+        # colnames = [desc[0] for desc in cur.description]
+        # rows = cur.fetchall();
+        # rmse = np.sqrt(float(rows[0][1])/ float(rows[0][0]))
+        # print("RMSE = ", rmse)
+        # print("MAE = ", rows[0][2])
         
-        print("Closing connection...")
-        conn.close()
         # ----------- ALL ESTATIONS ------------
         text = ['Buena', 'Regular', 'Mala', 'Muy Mala', 'Ext Mala']
         #values = [0, 50, 100, 150, 200, 500]

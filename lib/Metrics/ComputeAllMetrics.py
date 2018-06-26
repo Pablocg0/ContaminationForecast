@@ -6,6 +6,7 @@ import numpy as np
 from pathlib import Path
 from pandas import DataFrame, Series
 from pandas import read_sql
+import matplotlib.pyplot as plt
 
 def nicePrint(colnames, rows):
     for i in range(len(colnames)):
@@ -40,53 +41,76 @@ def getData(stations, year, forecast_type, all=False):
         conn.close()
         return []
 
-    print("Closing connection...")
+    print("Done, closing connection...")
     conn.close()
     return data
 
 def getAllMetrics(obs, pred):
-    error = obs - pred
-    # ******** MEE *********
+    error = obs - pred # Error
+    mobs = np.mean(obs) # Mean observed
+    mpred = np.mean(pred) # Mean predicted
+    plt.plot(error)
+    plt.show()
+    # ******** MAE *********
     mse = np.mean(np.abs(error))
-    print("MSE: ", mse)
+    print("MAE: ", mse)
 
     # ******** MSE *********
-    mse = np.mean(error**2 )
+    mse = np.mean(error**2)
     print("MSE: ", mse)
 
     # ******** RMSE *********
-    rmse = np.sqrt( mse )
+    rmse = np.sqrt(mse)
     print("RMSE: ", rmse)
 
     # ******** Index of Agreement *********
-    mobs = np.mean(obs)
-    iagree = 1 - (np.sum(np.abs(error)))/np.sum( (np.abs(pred - obs) + np.abs(obs - mobs)) )
+    a = np.sum(np.abs(pred-obs))
+    b = 2* np.sum(np.abs(obs - mobs))
+    if a <= b:
+        iagree = 1 - a/b
+    else:
+        iagree = b/a - 1
     print("Index of Agreement: ", iagree)
 
+    # ******** R *********
+    a = obs-mobs
+    b = pred-mpred
+    up = np.mean(a*b)
+    down = np.sqrt(np.mean(a**2))*np.sqrt(np.mean(b**2))
+    pearson = up/down
+    print("Pearson Correlation Coefficient: ", pearson, " NP=",np.corrcoef(pred, obs)[0,1])
 
-forecast_types = {1:'Climatologia', 2:'Normal', 3:'Meteorologia',4:'Datos Limpios'}
-for year in range(2017,2018):
-    for forecast_type in forecast_types.keys():
-            print("############ Forecast type", forecast_types.get(forecast_type),"  ###########")
-            # ******** All stations *********
-            print("\n ****** All stations")
-            print("Reading data for year ", year, " ....")
-            data = getData([], year, forecast_type, all=True)
-            print("Done")
-            getAllMetrics(data['gt'], data['fo'])
+    # ******** R2 *********
+    # rtwo = 1 - (np.sum(error)/np.sum(obs-mobs))
+    rtwo = pearson*pearson
+    print("R2: ", rtwo)
 
-            # ******** Best 9 stations *********
-            print("\n ****** Best 9 stations")
-            stations = "\'ATI','BJU','CUA','LPR','MER','PED','TLA','UIZ','XAL\'"
-            print("Reading data for year ",year," ....")
-            data = getData(stations, year, forecast_type)
-            print("Done")
-            getAllMetrics(data['gt'], data['fo'])
 
-            # ******** Only PED *********
-            print("\n ****** PED station...")
-            stations = "\'PED\'"
-            print("Reading data for year ",year," ....")
-            data = getData(stations, year, forecast_type)
-            print("Done")
-            getAllMetrics(data['gt'], data['fo'])
+if __name__ == "__main__":
+    # forecast_types = {1:'Climatologia', 2:'Normal', 3:'Meteorologia',4:'Datos Limpios'}
+    forecast_types = {2:'Meteorologia'}
+    for year in [2017]:
+        for forecast_type in forecast_types.keys():
+                print("############ Forecast type", forecast_types.get(forecast_type),"  ###########")
+                # ******** All stations *********
+                print("\n ****** All stations")
+                print("Reading data for year ", year, " ....")
+                data = getData([], year, forecast_type, all=True)
+                print("Done")
+                getAllMetrics(data['gt'], data['fo'])
+
+                # ******** Best 9 stations *********
+                print("\n ****** Best 9 stations")
+                stations = "\'ATI','BJU','CUA','LPR','MER','PED','TLA','UIZ','XAL\'"
+                print("Reading data for year ",year," ....")
+                data = getData(stations, year, forecast_type)
+                print("Done")
+                getAllMetrics(data['gt'], data['fo'])
+
+                # ******** Only PED *********
+                print("\n ****** PED station...")
+                stations = "\'PED\'"
+                print("Reading data for year ",year," ....")
+                data = getData(stations, year, forecast_type)
+                print("Done")
+                getAllMetrics(data['gt'], data['fo'])

@@ -3,7 +3,7 @@ FROM cont_otres as gt, forecast_otres as fo
 WHERE
     date_part('year', gt.fecha)  = YEAR
     AND date_part('year', fo.fecha)  = YEAR
-    AND fo.val = TYPEFOR
+    AND fo.id_tipo_pronostico = TYPEFOR
     AND date_part('year',  fo.fecha) =  date_part('year',  gt.fecha)
     AND date_part('month', fo.fecha) =  date_part('month', gt.fecha) 
     AND date_part('day',   fo.fecha) =  date_part('day',   gt.fecha) 
