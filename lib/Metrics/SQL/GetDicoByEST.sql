@@ -27,6 +27,7 @@ FROM
 	WHERE 
 		date_part('year', fecha)  = 2017 		
 		AND id_est = 'EST'
+		AND id_tipo_pronostico = 3
 	GROUP BY
 		1,2,3 ) as fo
 
