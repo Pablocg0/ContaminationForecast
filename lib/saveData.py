@@ -67,7 +67,7 @@ def saveData(listEstations, startDate, nameContaminant, endDate, dirr, dirTotalC
             data = data.drop(labels='index', axis=1)
             if mode == 'C':
                 data = fd.readData(startDate[i], endDate, [est[i]], contaminant) # solo para cuando no se quiere quitar el ruido
-                build = fd.buildClass2(data, [est[i]], contaminant, 24, startDate[i], endDate) #solo para cuando no se quiere quitar el ruido
+                build = fd.buildClass2(data, [est[i]], contaminant, 48, startDate[i], endDate) #solo para cuando no se quiere quitar el ruido
                 data = tempData.fillna(value=-1)  # solo para cuando no se quiere quitar el ruido
                 build = tempBuild  # solo para cuando no se quiere quitar el ruido
             data = data.fillna(value=-1)
