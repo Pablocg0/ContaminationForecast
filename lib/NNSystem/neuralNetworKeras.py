@@ -23,7 +23,9 @@ def train (x_data,y_data, columns, iteraciones, station, contaminant, dirTrain):
     name = 'train_'+station+'_'+contaminant
 
     x_train = x_data
+    print(x_train)
     y_target = y_data
+    print(y_target[0][0])
 
     model = Sequential()
 
@@ -34,7 +36,7 @@ def train (x_data,y_data, columns, iteraciones, station, contaminant, dirTrain):
     model = multi_gpu_model(model, gpus=4)
 
 
-    model.compile(loss='mean_squared_error', optimizer = 'adam', metrics =['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer = 'adam')
     #tensorboard = TensorBoard(log_dir="logs/" + station )
     model.fit(x_train, y_target, epochs=150, batch_size=64*4)
     model.save(dirTrain + station + '/' + name + '.h5')

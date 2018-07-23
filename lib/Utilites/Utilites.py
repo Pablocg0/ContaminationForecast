@@ -26,6 +26,7 @@ def converToArray(alldata,contaminant):
     c = np.ones((len(alldata.index),1));
     columns= alldata.columns;
     patron = re.compile(name+'_.*');
+    #patron = re.compile('_*')
     index =0;
     for x in columns:
         if patron.match(x) != None:

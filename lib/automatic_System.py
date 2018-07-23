@@ -1,3 +1,4 @@
+
 '''
 File name : automatic_System.py
 Author: Pablo Camacho Gonzalez
@@ -681,13 +682,12 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     :type variables: list(Strings)
     """
     nameC = findT(contaminant)
-    dataForecast = fd.get_forecast(nameC, estacion)
+    dataForecast = ultimate_data(estacion,nameC, 2,1)
     if dataForecast.empty:
         print('No se ha hecho pronostico para la estacion:'+ estacion)
         return 0
     else:
         fechaUltima = dataForecast['fecha'][0]
-        print(fechaUltima)
         if estacion == 'SFE':
             fechaUltima = fechaUltima -timedelta(hours=6)
         elif estacion == 'TAH':
@@ -696,6 +696,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             fechaUltima = fechaUltima - timedelta(hours=13)
         elif estacion == 'NEZ':
             fechaUltima = fechaUltima - timedelta(hours=11)
+
         fechaUltima = fechaUltima - timedelta(days = 1)
         print('Fecha Actual: ' + str(fecha))
         print('Fecha Ultimo Registro: ' + str(fechaUltima))
@@ -739,6 +740,36 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
         else:
             print('Pronostico actualizado')
             return 0
+
+def ultimate_data(estacion,nameContaminant,tipoComplete, tipoCorrelacion):
+    complete = fd.get_forecast(nameContaminant, estacion,tipoComplete)
+    Correlacion = fd.get_forecast(nameContaminant, estacion,tipoCorrelacion)
+    if complete.empty and Correlacion.empty:
+        #print('NO hay datos del ultimo pronostico')
+        return df.DataFrame()
+    elif Correlacion.empty:
+        #print('ultimo pronostico hecho de forma normal')
+        fechaComplete = complete['fecha'][0]
+        #print('fecha completa:' + str(fechaComplete))
+        return complete
+    elif complete.empty:
+        #print('ultimo pronostico hecho con Correlacion')
+        fechaCorrelacion = Correlacion['fecha'][0]
+        #print('fecha Correlacion: ' + str(fechaCorrelacion))
+        return Correlacion
+    fechaComplete = complete['fecha'][0]
+    fechaCorrelacion = Correlacion['fecha'][0]
+    #print('fecha completa:' + str(fechaComplete))
+    #print('fecha Correlacion: ' + str(fechaCorrelacion))
+    if fechaComplete > fechaCorrelacion:
+        #print('ultimo pronostico hecho de forma normal')
+        return complete
+    elif fechaCorrelacion > fechaComplete:
+        #print('ultimo pronostico hecho con Correlacion')
+        return Correlacion
+    else:
+        #print('no hay Informacion')
+        return fd.DataFrame()
 
 
 def pronostico_normal(data,dirFestivos,dataMet,estacion,contaminant,dirData,dirTrain):
@@ -785,9 +816,12 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
     :type dataMet: DataFrame
     """
     data = fd.get_climatology(fechaInicio, fechaFinal, estacion)
+    print(data)
     data = makeDates(fechaInicio,fechaFinal,data)
     #sys.out
+    print(data)
     data = data.reset_index(drop=True)
+    print(data)
     data = separateDate(data)
     data = totalUnionData(data, dirFestivos)
     data = df.concat([data, dataMet], axis=1, join='inner')
@@ -856,10 +890,11 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
 
 def makeDates(fechaInicio, fechaFinal, data):
     dates=[]
-    while fechaInicio < fechaFinal:
+    while fechaInicio <= fechaFinal:
         dates.append(fechaInicio)
         fechaInicio = fechaInicio + timedelta(hours=1)
     frameDates = df.DataFrame(dates, columns=['fecha'])
+    print(frameDates)
     data = data.drop('hora', axis=1)
     frameDates = df.concat([frameDates, data], axis=1)
     return frameDates

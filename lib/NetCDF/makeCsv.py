@@ -296,7 +296,6 @@ def completeMet(data):
     nameColumns = data.columns.values
     nameColumns = nameColumns[1:]
     fecha = data['fecha'].values
-    print(data)
     for i in range(24):
         f = fecha[i]
         fechaOri.append(f)
@@ -304,9 +303,8 @@ def completeMet(data):
         da = dateInit + timedelta(hours=24)
         ti = da.strftime('%Y-%m-%d %H:%M:%S')
         temp = data[data.fecha == ti]
-        print(ti)
-        print(temp)
         dtemp = data.loc[temp.index, nameColumns]
+        print(dtemp)
         newData = df.concat([newData, dtemp])
     newData = newData.drop(labels='fecha', axis=1)
     newData = newData.reset_index(drop=True)
