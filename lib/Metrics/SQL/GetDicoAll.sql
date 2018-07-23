@@ -1,5 +1,5 @@
 SELECT 	'INDEX' as indice, 
-    sum(CASE WHEN val_gt = 0 THEN 1 ELSE 0 END) as N,
+  sum(CASE WHEN val_gt = 0 THEN 1 ELSE 0 END) as N,
 	sum(CASE WHEN val_gt = 1 THEN 1 ELSE 0 END) as P,
 	sum(CASE WHEN val_gt = 1 and val_fo = 1 THEN 1 ELSE 0 END) as TP,
 	sum(CASE WHEN val_gt = 0 and val_fo = 1 THEN 1 ELSE 0 END) as FP,
@@ -13,7 +13,7 @@ FROM
 		max(val) as ppm_gt
 	FROM cont_otres
 	WHERE 
-		date_part('year', fecha)  = 2017 
+		date_part('year', fecha)  = 2017
 	GROUP BY
 		1,2,3 ) as gt,
 	
@@ -24,7 +24,8 @@ FROM
 		max(val) as ppm_fo
 	FROM forecast_otres
 	WHERE 
-		date_part('year', fecha)  = 2017 		
+		date_part('year', fecha)  = 2017
+		AND id_tipo_pronostico = 3
 	GROUP BY
 		1,2,3 ) as fo
 
