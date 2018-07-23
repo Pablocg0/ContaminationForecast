@@ -654,22 +654,17 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
     :type variables: list(Strings)
     """
     nameC = findT(contaminant)
-    dataForecast = fd.get_forecast(nameC, estacion)
+    dataForecast = ultimate_data(estacion,nameC,3,5)
     if dataForecast.empty:
         print('No se ha hecho pronostico para la estacion:'+ estacion)
         return 0
     else:
         fechaUltima = dataForecast['fecha'][0]
         print(fechaUltima)
-        if estacion == 'SFE':
-            fechaUltima = fechaUltima -timedelta(hours=6)
-        elif estacion == 'TAH':
+        if estacion == 'TAH':
             fechaUltima = fechaUltima - timedelta(hours=15)
-        elif estacion == 'UAX':
-            fechaUltima = fechaUltima - timedelta(hours=13)
-        elif estacion == 'NEZ':
-            fechaUltima = fechaUltima - timedelta(hours=11)
-        fechaUltima = fechaUltima - timedelta(days = 1)
+        else:
+            fechaUltima = fechaUltima - timedelta(days = 1)
         print('Fecha Actual: ' + str(fecha))
         print('Fecha Ultimo Registro: ' + str(fechaUltima))
         if fechaUltima == fecha:
@@ -687,7 +682,7 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             if data.empty and (fecha-fechaUltima) > timedelta(hours=3):
                 print('Pronostico con Correlacion')
                 #useClimatology(contaminant,estacion,fechaTemp,fecha,dataMet,dirData,dirTrain, dirFestivos)
-                dataCorrelacion(contaminant, estacion, fechaTemp, fecha, dataMet, dirData, dirData, dirTrain, dirFestivos)
+                dataCorrelacion(contaminant, estacion, fechaTemp, fecha, dataMet, dirData, dirTrain, dirFestivos)
                 return 1
             elif (fecha-fechaUltima) < timedelta(hours=3):
                 print('Correlacion cada 4 horas')
@@ -697,7 +692,8 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
                 if primer_fecha > fechaTemp:
                     fechaFinClim =  primer_fecha - timedelta(hours=1)
                     #useClimatology(contaminant,estacion,fechaTemp,fechaFinClim,dataMet,dirData,dirTrain,dirFestivos)
-                    dataCorrelacion(contaminant, estacion, fechaTemp, fecha, dataMet, dirData, dirData, dirTrain, dirFestivos)
+                    print('Pronostico con Correlacion')
+                    dataCorrelacion(contaminant, estacion, fechaTemp, fecha, dataMet, dirData, dirTrain, dirFestivos)
                     #pronostico_normal(data,dirFestivos,dataMet,estacion,contaminant,dirData,dirTrain)
                     return 1
                 else:
@@ -715,6 +711,36 @@ def update4hours(estacion, contaminant, fecha, dirData, dirTrain, dirCsv,dirFest
             print('Pronostico actualizado')
             return 0
 
+
+def ultimate_data(estacion,nameContaminant,tipoComplete, tipoCorrelacion):
+    complete = fd.get_forecast(nameContaminant, estacion,tipoComplete)
+    Correlacion = fd.get_forecast(nameContaminant, estacion,tipoCorrelacion)
+    if complete.empty and Correlacion.empty:
+        #print('NO hay datos del ultimo pronostico')
+        return df.DataFrame()
+    elif Correlacion.empty:
+        #print('ultimo pronostico hecho de forma normal')
+        fechaComplete = complete['fecha'][0]
+        #print('fecha completa:' + str(fechaComplete))
+        return complete
+    elif complete.empty:
+        #print('ultimo pronostico hecho con Correlacion')
+        fechaCorrelacion = Correlacion['fecha'][0]
+        #print('fecha Correlacion: ' + str(fechaCorrelacion))
+        return Correlacion
+    fechaComplete = complete['fecha'][0]
+    fechaCorrelacion = Correlacion['fecha'][0]
+    #print('fecha completa:' + str(fechaComplete))
+    #print('fecha Correlacion: ' + str(fechaCorrelacion))
+    if fechaComplete > fechaCorrelacion:
+        #print('ultimo pronostico hecho de forma normal')
+        return complete
+    elif fechaCorrelacion > fechaComplete:
+        #print('ultimo pronostico hecho con Correlacion')
+        return Correlacion
+    else:
+        #print('no hay Informacion')
+        return df.DataFrame()
 
 
 def pronostico_normal(data,dirFestivos,dataMet,estacion,contaminant,dirData,dirTrain):
@@ -785,7 +811,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
         print(fechaPronostico)
         fechaUpdate = fechaPronostico
         fechaUpdate = fechaUpdate - timedelta(days=1)
-        guardarPrediccion(estacion, fechaUpdate, [xs], contaminant,1)
+        guardarPrediccion(estacion, fechaUpdate, [xs], contaminant,5)
         fechaPronostico = fechaPronostico + timedelta(hours=1)
     print('Climatologia:' + estacion)
 
@@ -794,9 +820,45 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
     data_Corr = df.read_csv('/ServerScript/AirQualityModel/ContaminationForecast/Data/Correlacion_table.csv', index_col=0)
     corr_est = data_Corr[estacion].sort_values(ascending=False)
     estacion_corr = corr_est.index[1]
+    print('Estacion usada para la correlacion: ' + estacion_corr)
     data = fd.readData_corr(fechaInicio, fechaFin, [estacion_corr], contaminant)
     if data.empty:
-        useClimatology(contaminant, estacion, fechaUltima, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+        print('Estacion: ' + estacion_corr + ' no tiene datos')
+        estacion_corr = corr_est.index[2]
+        data = fd.readData_corr(fechaInicio, fechaFin, [estacion_corr], contaminant)
+        print('Estacion usada para la correlacion: ' + estacion_corr)
+        if data.empty:
+            print('Estacion: ' + estacion_corr + ' no tiene datos')
+            useClimatology(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos)
+        else:
+            data = data.drop_duplicates(keep='first')
+            data = data.reset_index(drop=True)
+            index_values = data.columns.values[1:]
+            for xs in index_values:
+                data.rename(columns={xs:xs.replace(estacion_corr.lower(), estacion.lower())}, inplace = True)
+            data = separateDate(data)
+            data = totalUnionData(data, dirFestivos)
+            data = df.concat([data, dataMet], axis=1, join='inner')
+            print(data)
+            #data =  data.merge(dataMet, how='left', on='fecha')
+            data = filterData(data, dirData + estacion + "_" + contaminant + ".csv")
+            data = data.fillna(value=-1)
+            index = data.index.values
+            arrayPred = []
+            for x in index:
+                pred = data.ix[x].values
+                valPred = pred[2:]
+                valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
+                arrayPred.append(convert(valNorm))
+            result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
+            columnContaminant = findTable2(contaminant)
+            real = pre.desNorm(result, estacion, contaminant, dirData, columnContaminant+ '_')
+            for xs in range(len(real)):
+                fechaPronostico = data['fecha'].iloc[xs].values
+                fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
+                fechaPronostico1 =  fechaPronostico - timedelta(days=1)
+                pronostico = real[xs]
+                guardarPrediccion(estacion, fechaPronostico1, [pronostico],contaminant,5)
     else:
         data = data.drop_duplicates(keep='first')
         data = data.reset_index(drop=True)
@@ -815,7 +877,6 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
         for x in index:
             pred = data.ix[x].values
             valPred = pred[2:]
-            print(valPred)
             valNorm = pre.normalize(valPred, estacion, contaminant, dirData)
             arrayPred.append(convert(valNorm))
         result = pre.prediction(estacion, contaminant, arrayPred, dirTrain, dirData)
@@ -824,18 +885,19 @@ def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirDat
         for xs in range(len(real)):
             fechaPronostico = data['fecha'].iloc[xs].values
             fechaPronostico = datetime.strptime(fechaPronostico[1], '%Y-%m-%d %H:%M:%S')
+            fechaPronostico1 =  fechaPronostico - timedelta(days=1)
             pronostico = real[xs]
-            guardarPrediccionRep(estacion, fechaPronostico, [pronostico],contaminant,5)
-
+            guardarPrediccion(estacion, fechaPronostico1, [pronostico],contaminant,5)
 
 def makeDates(fechaInicio, fechaFinal, data):
     dates=[]
-    while fechaInicio < fechaFinal:
+    while fechaInicio <= fechaFinal:
         dates.append(fechaInicio)
         fechaInicio = fechaInicio + timedelta(hours=1)
     frameDates = df.DataFrame(dates, columns=['fecha'])
     data = data.drop('hora', axis=1)
     frameDates = df.concat([frameDates, data], axis=1)
+    frameDates = frameDates.dropna(axis=1, how='any')
     return frameDates
 
 

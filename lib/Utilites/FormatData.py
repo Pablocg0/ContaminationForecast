@@ -204,7 +204,7 @@ class FormatData(object):
         return build;
 
 
-    def get_forecast(nameContaminant, estacion):
+    def get_forecast(nameContaminant, estacion, tipo):
         """
         function that brings from the database the last prediction saved
 
@@ -219,11 +219,10 @@ class FormatData(object):
         conn = conexion.getPostgresConn()
         cur = conn.cursor()
         nameTable = nameContaminant
-        tempDataValues = pd.read_sql_query("""SELECT * FROM {0} WHERE id_est = '{1}' ORDER BY fecha DESC LIMIT 1; """.format(nameTable,estacion),conn);
+        tempDataValues = pd.read_sql_query("""SELECT * FROM {0} WHERE id_est = '{1}' AND id_tipo_pronostico = {2} ORDER BY fecha DESC LIMIT 1; """.format(nameTable,estacion, tipo),conn);
         conn.commit()
         cur.close()
         return tempDataValues
-
 
     def get_climatology(fechaInicio, fechaFinal, estacion):
         """

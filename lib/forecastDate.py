@@ -36,7 +36,8 @@ def totalPredection(est, dirData, dirrDataC, dirTrain, contaminant,columnContami
     """
     for x in est:
         print(x)
-        forecastDate(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+        #forecastDate(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+        forecastDate2(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, '/ServerData/DataCsv/totalCuadrantes/')
 
 
 def forecastDate(station, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin):
@@ -78,6 +79,69 @@ def forecastDate(station, dirData, dirrDataC, dirTrain, contaminant, columnConta
     real = desNorm(result, sta, contaminant, dirData, columnContaminant)
     dataPrediccion = real
     savePrediccion(station, dataPrediccion, contaminant, dataTemp)
+
+
+def forecastDate2(station, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, dirTotalCsv):
+    sta = station
+    name = sta + '_' + contaminant
+    tempData  = baseContaminantes(fechaInicio, fechaFin, station, contaminant)
+    if tempData.empty:
+        dataBackup = back(dirData, contaminant)
+        data = dataBackup
+        data = data.fillna(value=-1)
+        data = filterData(data, dirData + name + ".csv")
+        data = data.fillna(value=-1)
+        temp = data.ix[0].values
+        temp = temp[1:]
+        dataPred = pre.normalize(temp, sta, contaminant, dirData)
+        dataPred = convert(dataPred)
+        prediccion = pre.prediction(sta, contaminant, [dataPred], dirTrain, dirData)
+    else:
+        data =  tempData.dropna(axis=1, how = 'all')
+        data = data.fillna(value = -1)
+        data = data.reset_index(drop = True)
+        data = separateDate(data)
+        data = unionData(data,dirTotalCsv)
+        data = data.drop_duplicates(keep='first')
+        data = filterData(data,dirData + name + '.csv')
+        data = data.fillna(value = -1)
+        dataTemp = data['fecha']
+        index = data.index.values
+        print(data)
+        arrayPred = []
+        for x in index:
+            pred = data.ix[x].values
+            valPred = pred[1:]
+            valNorm = pre.normalize(valPred, sta,  contaminant, dirData)
+            arrayPred.append(convert(valNorm))
+        result = pre.prediction(sta,contaminant,arrayPred, dirTrain,dirData)
+        real = desNorm(result, sta, contaminant, dirData, columnContaminant)
+        dataPrediccion =  real
+        savePrediccion(station, dataPrediccion, contaminant, dataTemp)
+
+def back(dirData, contaminant):
+    if contaminant == 'PM10':
+        temp = df.read_csv(dirData + 'TAH_' + contaminant + '.csv')
+    else:
+        temp = df.read_csv(dirData + "MGH_" + contaminant + ".csv")
+    return temp.loc[:0]
+
+
+def baseContaminantes(fechaInicio, fechaFinal, estacion, contaminant):
+    """
+    function to bring the information of the contaminants from the database
+
+    :param fecha: date to bring the information
+    :type fecha: date
+    :param estacion:name of the station from which the information is extracted
+    :type estacion: String
+    :return: array with pollutant information
+    :type return: array float32
+    """
+    #fechaFinal = str(fechaFinal.year) + '-' + numString(fechaFinal.month) + '-' + numString(fechaFinal.day)+' '+numString(fecha.hour)+':00:00'
+    #fechaInicio = str(fechaInicio.year) + '-' + numString(fechaInicio.month) + '-' + numString(fechaInicio.day)+' '+numString(fecha.hour)+':00:00'
+    data = fd.readData(fechaInicio, fechaFinal, [estacion], contaminant)
+    return data.fillna(value=-1)
 
 def filterData(data, dirData):
     """
@@ -138,7 +202,7 @@ def desNorm(data, station, contaminant, dirData, columnContaminant):
         real.append(realVal)
     return real
 
-def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
+def savePrediccion1(estacion, dataPrediccion, contaminant, fechas):
     """
     function to save the prediction in the database
 
@@ -150,12 +214,37 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     :type valor: float32
     """
     print(findT(contaminant))
+    size = len(dataPrediccion)
+    for i in range(size):
+        fecha = fechas.iloc[i]
+        print(fecha)
+        Valor = dataPrediccion[i]
+        #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+        if estacion == 'TAH':
+            fecha = fecha + timedelta(hours =15)
+        else:
+            fecha = fecha + timedelta(days=1)
+        fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+        fd.saveData(estacion, fechaActual, [Valor[0]], findT(contaminant),3)
+
+
+def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
+    """
+    function to save the prediction in the database
+    :param estacion: name the station
+    :type estacion: string
+    :param fecha: current date
+    :type fecha: date
+    :param valor: prediction value
+    :type valor: float32
+    """
+    print(findT(contaminant))
     if estacion == 'SFE':
         size = len(dataPrediccion)
         for i in range(size):
-            fecha = fechas[i]
+            fecha = fechas.iloc[i]
             Valor = dataPrediccion[i]
-            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 6)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
@@ -163,9 +252,9 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     elif estacion == 'NEZ':
         size = len(dataPrediccion)
         for i in range(size):
-            fecha = fechas[i]
+            fecha = fechas.iloc[i]
             Valor = dataPrediccion[i]
-            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 11)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
@@ -173,9 +262,9 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     elif estacion == 'TAH':
         size = len(dataPrediccion)
         for i in range(size):
-            fecha = fechas[i]
+            fecha = fechas.iloc[i]
             Valor = dataPrediccion[i]
-            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 15)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
@@ -183,9 +272,9 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     elif estacion == 'UAX':
         size = len(dataPrediccion)
         for i in range(size):
-            fecha = fechas[i]
+            fecha = fechas.iloc[i]
             Valor = dataPrediccion[i]
-            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 13)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
@@ -193,9 +282,9 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
     else:
         size = len(dataPrediccion)
         for i in range(size):
-            fecha = fechas[i]
+            fecha = fechas.iloc[i]
             Valor = dataPrediccion[i]
-            fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+            #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
             fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
@@ -232,6 +321,122 @@ def findT(fileName):
 
         if "SO2" in fileName:
             return "forecast_sodos"
+
+def separateDate(data):
+    """
+    Function to separate the date in year, month ,day and the function sine of each one of them
+
+    :parama data: DataFrame that contains the dates
+    :type data: DataFrame
+    """
+    dates = data['fecha']
+    lenght = len(dates.index)
+    years = np.ones((lenght, 1)) * -1
+    sinYears = np.ones((lenght, 1)) * -1
+    months = np.ones((lenght, 1)) * -1
+    sinMonths = np.ones((lenght, 1)) * -1
+    days = np.ones((lenght, 1)) * -1
+    sinDays = np.ones((lenght, 1)) * -1
+    wDay = np.ones((lenght, 1)) * -1
+    sinWday = np.ones((lenght, 1)) * -1
+    i = 0
+    for x in dates:
+        d = x
+        # d = datetime.strptime(x,"%Y-%m-%d %H:%M:%S")
+        wD = weekday(d.year, d.month, d.day)
+        wDay[i] = wD[0]
+        sinWday[i] = wD[1]
+        years[i] = d.year
+        # sinYears[i]= np.sin(d.year)
+        months[i] = d.month
+        sinMonths[i] = (1 + np.sin(((d.month - 1) / 11) * (2 * np.pi))) / 2
+        days[i] = d.day
+        sinDays[i] = (1 + np.sin(((d.day - 1) / 23) * (2 * np.pi))) / 2
+        i += 1
+    weekD = df.DataFrame(wDay, columns=['weekday'])
+    data['weekday'] = weekD
+    sinWeekD = df.DataFrame(sinWday, columns=['sinWeekday'])
+    data['sinWeekday'] = sinWeekD
+    dataYear = df.DataFrame(years, columns=['year'])
+    data['year'] = dataYear
+    # dataSinYear = df.DataFrame(sinYears, columns= ['sinYear'])print(data)
+    # data['sinYear'] = dataSinYear
+    dataMonths = df.DataFrame(months, columns=['month'])
+    data['month'] = dataMonths
+    dataSinMonths = df.DataFrame(sinMonths, columns=['sinMonth'])
+    data['sinMonth'] = dataSinMonths
+    dataDay = df.DataFrame(days, columns=['day'])
+    data['day'] = dataDay
+    dataSinDay = df.DataFrame(sinDays, columns=['sinDay'])
+    data['sinDay'] = dataSinDay
+    return data
+
+def unionData(data, dirTotalCsv):
+    """
+    Function to join the data of the netcdf and the data of the pollutants
+
+    :param data: dataFrame(minollutants data
+    :type data: dataFrame
+    :return: dataFrame
+    """
+    dataFestivos = df.read_csv('../../Data/Festivos.csv')
+    dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
+    dataFestivos2 = convertDates(dataFestivos)
+    data = data.merge(dataFestivos2, how='left', on='fecha')
+    data = data.reset_index()
+    data = data.drop(labels='index', axis=1)
+    variables = ['U10', 'V10', 'RAINC', 'T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW']
+    netcdf = dirTotalCsv
+    for i in variables:
+        netcdf += i + '_total.csv'
+        dataNet = df.read_csv(netcdf)
+        dataNet2 = convertDates(dataNet)
+        data = data.merge(dataNet2, how='left', on='fecha')
+        netcdf = dirTotalCsv
+    allD = data.dropna(axis=0, how='any')
+    # allD = data.fillna(value=-1)
+    allD = allD.reset_index()
+    allD = allD.drop(labels='index', axis=1)
+    return allD
+
+def convertDates(data):
+    """
+    function to convert a string into a date and save it in a dataframe
+
+    :param data: dataframe with the dates to convert
+    :type data : DataFrame
+    :return: DataFrame
+    """
+    fecha = data['fecha']
+    data = data.drop(labels='fecha', axis=1)
+    date = []
+    for i in fecha:
+        datef = datetime.strptime(i, '%Y-%m-%d %H:%M:%S')
+        date.append(datef)
+    dataTemp = df.DataFrame(date, columns=['fecha'])
+    data['fecha'] = dataTemp
+    return data
+
+def weekday(year, month, day):
+    """
+    Function to take day of the week using the congruence of Zeller , 1 is Sunday
+
+    :param year: year of the date
+    :type year: int
+    :param month: month of the date
+    :type month: int
+    :param day: day of the date
+    :type day: int
+    :return: int, 1 is Sunday
+    """
+    a = (14 - month) / 12
+    a = int(a)
+    y = year - a
+    m = month + 12 * a - 2
+    week = (day + y + int(y / 4) - int(y / 100) + int(y / 400) + int((31 * m) / 12)) % 7
+    week = week + 1
+    sinWeek = (1 + np.sin(((week - 1) / 7) * (2 * np.pi))) / 2
+    return [week, sinWeek]
 
 
 def init():

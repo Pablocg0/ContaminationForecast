@@ -34,7 +34,7 @@ def trainNeuralNetworks(est, dirr, dirTrain, fechaFinal, contaminant, iteracione
         station = est[i]
         print(station)
         name = station + '_' + contaminant  # name the file with the data
-        newD = dirr + 'B' +contaminant +'/' + name
+        newD = dirr + contaminant +'/' + name
         if not os.path.exists(dirTrain):
             os.makedirs(dirTrain)
         print(newD+ '.csv')
