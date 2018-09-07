@@ -7,7 +7,7 @@ Date last modified: 27/02/2018
 
 
 from datetime import datetime, timedelta
-import prediction as pre
+import predictionKeras as pre
 from Utilites.metricas import metricas
 import pandas as df
 import numpy as np
@@ -225,7 +225,7 @@ def savePrediccion1(estacion, dataPrediccion, contaminant, fechas):
         else:
             fecha = fecha + timedelta(days=1)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, [Valor[0]], findT(contaminant),3)
+        fd.saveData(estacion, fechaActual, [Valor[0]], findT(contaminant),2)
 
 
 def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
