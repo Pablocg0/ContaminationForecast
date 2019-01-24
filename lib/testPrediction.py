@@ -8,6 +8,7 @@ Date last modified: 27/02/2018
 
 from datetime import datetime, timedelta
 import prediction as pre
+import predictionKeras as preK
 from Utilites.metricas import metricas
 import pandas as df
 import numpy as np
@@ -22,7 +23,7 @@ loss_vec = []
 metri = []
 
 
-def totalPredection(est, dirData, dirrDataC, dirGraficas, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin):
+def totalPredection(est, dirData, dirrDataC, dirGraficas, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin,version):
     """
     function to send to do the forecast of a station and graph it
 
@@ -41,9 +42,14 @@ def totalPredection(est, dirData, dirrDataC, dirGraficas, dirTrain, contaminant,
     :param fechaFin: end date of the forecast
     :type fechaFin: date
     """
-    for x in est:
-        print(x)
-        trial(x, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+    if version == 'KERAS':
+        for x in est:
+            print(x)
+            trialk(x, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+    else if version == 'TENSOR':
+        for x in est:
+            print(x)
+            trial(x, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
 
 
 def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin):
@@ -103,6 +109,94 @@ def trial(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, colum
         valNorm = pre.normalize(valPred, sta, contaminant, dirData)
         arrayPred.append(convert(valNorm))
     result = pre.prediction(sta, contaminant, arrayPred, dirTrain, dirData)
+    real = desNorm(result, sta, contaminant, dirData, columnContaminant)
+    #metri.append(metricas(inf, real, station))
+    plt.figure(figsize=(22.2, 11.4))
+    plt.plot(inf, color='tomato', linestyle="solid", marker='o', label='Valor observado.');
+    plt.plot(real, color='darkgreen', linestyle='solid', marker='o', label='Pronóstico 24h NN.');
+    plt.title(nombreEst(station) + ' (' + station + ') comparación de ' + contaminant+' observado vs red neuronal' + ' para la primer semana de ' + nombre + ' 2016' ,fontsize=25, y=1.1 )
+    plt.xlabel('Fecha', fontsize=18)
+    #n = 'Primera semana de '+nombre
+    #plt.xlabel(n,fontsize=22);
+    plt.ylabel('Partes por millon (PPM)', fontsize=22)
+    plt.legend(loc='best')
+    plt.grid(True, axis='both', alpha= 0.3, linestyle="--", which="both")
+    # plt.xticks(location,labels,fontsize=8,rotation=80)
+    plt.xticks(location,labels,fontsize=16,rotation=80)
+    #plt.xlim(lugar,lugar+144);
+    plt.axhspan(20, 40, color='lightgray', alpha=0.3)
+    plt.axhspan(60, 80, color='lightgray', alpha=0.3)
+    plt.axhspan(100, 120, color='lightgray', alpha=0.3)
+    plt.gca().spines['bottom'].set_color('dimgray')
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(dirGraficas + station + '_' + nombre + '.png')
+    plt.show();
+    plt.clf();
+    plt.close()
+    #gError(inf, real, location, labels, station, dirGraficas)
+    # graSubPlot(inf,real,station,location,dirGraficas,labels)
+
+
+def trialk(station, dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin):
+    """
+    function to make the forecast of a whole year and graph it
+
+    :param station: name the station
+    :type station: String
+    :param dirData: address of the files with training information
+    :type dirData: String
+    :param dirGraficas: address where the graphics are saved
+    :type dirGraficas: String
+    :param dirTrain: address of the training files of the neural network
+    :type dirTrain: String
+    :param columnContaminant:name of the pollutant in the DataFrame
+    :type columnContaminant: String
+    :param fechaInicio: start date of the forecast
+    :type fechaInicio: date
+    :param fechaFin: end date of the forecast
+    :type fechaFin: date
+    """
+    sta = station
+    name = sta + '_' + contaminant
+    temp = df.read_csv(dirrDataC + name + '.csv')  # we load the data in the Variable data
+    temp = temp.fillna(value=-1.0)
+    data = temp[(temp['fecha'] <= fechaFin) & (temp['fecha'] >= fechaInicio)]
+    data = data.reset_index(drop=True)
+    data = filterData(data, dirData + name + '.csv')
+    data = data.fillna(value=-1.0)
+    tempBuild = df.read_csv(dirrDataC + name + '_pred.csv')  # we load the data in the Variable build
+    tempBuild = tempBuild.fillna(value=-1.0)
+    build = tempBuild[(tempBuild['fecha'] <= fechaFin) & (tempBuild['fecha'] >= fechaInicio)];
+    build = build.reset_index(drop=True)
+    build = build.fillna(value=-1.0)
+    l = xlabel(data)
+    labels = l[0]
+    location = l[1]
+    print(labels)
+    if (station == 'SAG') | (station == 'UIZ'):
+        #loc = labels.index('Marzo')
+        #lugar = location[loc] + 1
+        #nombre = labels[loc]
+        nombre = 'anio'
+    else:
+        print('no mes')
+        #loc = labels.index('Marzo')
+        #lugar = location[loc] + 1
+        #nombre = labels[loc]
+        nombre = 'anio'
+    arrayPred = []
+    nameColumn = columnContaminant +'_'+ sta + '_delta'
+    inf = build[nameColumn].values
+    index = data.index.values
+    for x in index:
+        pred = data.ix[x].values
+        valPred = pred[1:]
+        valNorm = pre.normalize(valPred, sta, contaminant, dirData)
+        arrayPred.append(convert(valNorm))
+    result = preK.prediction(sta, contaminant, arrayPred, dirTrain, dirData)
     real = desNorm(result, sta, contaminant, dirData, columnContaminant)
     #metri.append(metricas(inf, real, station))
     plt.figure(figsize=(22.2, 11.4))
@@ -438,6 +532,6 @@ def obtMax(station, contaminant, columnContaminant):
     return maxx
 
 
-def init(dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, est):
-    totalPredection(est, dirData, dirrDataC, dirGraficas, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
+def init(dirData, dirrDataC, dirGraficas, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, est,version):
+    totalPredection(est, dirData, dirrDataC, dirGraficas, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin,version)
     saveMetric(dirGraficas)

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ~/anaconda3/envs/tensorflow/bin/activate tensorflow
-python /ServerScript/AirQualityModel/ContaminationForecast/lib/NetCDF/makeCsv.py
-#python /ServerScript/AirQualityModel/ContaminationForecast/lib/saveData.py
-
+source /home/olmozavala/anaconda3/bin/activate base
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64/
+python /media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/lib/NetCDF/makeCsv.py S
+python /media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/lib/NetCDF/makeCsv.py P
+python /media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/lib/saveData.py

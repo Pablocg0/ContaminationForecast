@@ -2,7 +2,8 @@
 
 source ~/anaconda3/envs/tensorflow/bin/activate tensorflow
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64/
-python /ServerScript/AirQualityModel/ContaminationForecast/lib/forecastDate.py O3 cont_otres
+python /media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/lib/forecastDate.py O3 cont_otres KERAS
+python /media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/lib/forecastDate.py O3 cont_otres TENSOR
 #python /ServerScript/AirQualityModel/ContaminationForecast/lib/forecastDate.py PMCO cont_pmco
 #python /ServerScript/AirQualityModel/ContaminationForecast/lib/forecastDate.py PM2.5 cont_pmdoscinco
 #python /ServerScript/AirQualityModel/ContaminationForecast/lib/forecastDate.py NOX cont_nox

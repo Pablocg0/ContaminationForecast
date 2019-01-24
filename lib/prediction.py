@@ -34,6 +34,7 @@ def normalize(data, station, contaminant, dirData):
                 norm = 0.0
             else:
                 norm = (x - mi) / (m - mi)
+                #norm = (x - 0) / (m - 0)
         valNorm.append(float(norm))
         i += 1
     return valNorm
@@ -143,7 +144,7 @@ def prediction(station, contaminant, arrayPred, dirTrain, dirData):
     with tf.Session() as sess:
         #saver = tf.train.import_meta_graph(dirTrain + station + '/' + name + '-1000.meta')
         saver = tf.train.Saver()
-        print(dirTrain + station)
+        print(dirTrain + station+"/")
         saver.restore(sess, tf.train.latest_checkpoint(dirTrain + station + '/'))# load training
         #sess.run(tf.global_variables_initializer())
         # print(sess.run(final_output, feed_dict={x_data:values}));

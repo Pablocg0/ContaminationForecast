@@ -7,6 +7,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 import tensorflow as tf
 
+name = ""
 
 def normalize(data, station, contaminant, dirData):
     """
@@ -66,12 +67,11 @@ def desNorm(data, station, contaminant, dirData,columnContaminant):
 
 
 def prediction(station, contaminant, arrayPred, dirTrain, dirData):
-
     result = []
+    print(dirTrain + station + '/' + 'train_'+station+'_'+contaminant + '.h5')
+    #name = 'train_'+station+'_'+contaminant
 
-    name = 'train_'+station+'_'+contaminant
-
-    model = load_model(dirTrain + station + '/' + name + '.h5', {'tf': tf})
+    model = load_model(dirTrain + station + '/' + 'train_'+station+'_'+contaminant + '.h5', {'tf': tf})
 
     for x in arrayPred:
         pred = model.predict(x)
