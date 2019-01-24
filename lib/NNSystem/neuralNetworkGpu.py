@@ -89,13 +89,13 @@ def train(x_d, y_data, columns, iteraciones, station, contaminant, dirTrain):
 
 
     #--------Create output layer (1 output value)--------
-    with tf.device("/gpu:2"):
+    with tf.device("/gpu:0"):
         weight_3 = init_weight(shape=[(columns-1)*2,1])
         bias_3 = init_bias(shape=[1]);
         final_output = fully_connected(layer_2, weight_3, bias_3)
 
     # Declare loss function (L1)
-    with tf.device("/gpu:3"):
+    with tf.device("/gpu:1"):
         loss = tf.reduce_mean(tf.abs(y_target - final_output))
 
     # Declare optimizer gradientDescent

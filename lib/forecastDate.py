@@ -7,7 +7,8 @@ Date last modified: 27/02/2018
 
 
 from datetime import datetime, timedelta
-import predictionKeras as pre
+import predictionKeras as preK
+import prediction as pre
 from Utilites.metricas import metricas
 import pandas as df
 import numpy as np
@@ -17,7 +18,7 @@ import configparser
 import sys
 
 
-def totalPredection(est, dirData, dirrDataC, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin):
+def totalPredection(est, dirData, dirrDataC, dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin, version):
     """
     function to send to do the forecast of a station and graph it
 
@@ -34,10 +35,16 @@ def totalPredection(est, dirData, dirrDataC, dirTrain, contaminant,columnContami
     :param fechaFin: end date of the forecast
     :type fechaFin: date
     """
-    for x in est:
-        print(x)
-        #forecastDate(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
-        forecastDate2(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, '/ServerData/DataCsv/totalCuadrantes/')
+    if version == 'KERAS':
+        for x in est:
+            print(x)
+            #forecastDate(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+            forecastDateKeras(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, '/media/storageBK/AirQualityForecast/Data/DataCsv/totalCuadrantes/')
+    else if version == 'TENSOR':
+        for x in est:
+            print(x)
+            #forecastDate(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin)
+            forecastDate2(x, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, '/media/storageBK/AirQualityForecast/Data/DataCsv/totalCuadrantes/')
 
 
 def forecastDate(station, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin):
@@ -107,7 +114,6 @@ def forecastDate2(station, dirData, dirrDataC, dirTrain, contaminant, columnCont
         data = data.fillna(value = -1)
         dataTemp = data['fecha']
         index = data.index.values
-        print(data)
         arrayPred = []
         for x in index:
             pred = data.ix[x].values
@@ -118,6 +124,45 @@ def forecastDate2(station, dirData, dirrDataC, dirTrain, contaminant, columnCont
         real = desNorm(result, sta, contaminant, dirData, columnContaminant)
         dataPrediccion =  real
         savePrediccion(station, dataPrediccion, contaminant, dataTemp)
+
+def forecastDateKeras(station, dirData, dirrDataC, dirTrain, contaminant, columnContaminant, fechaInicio, fechaFin, dirTotalCsv):
+    sta = station
+    name = sta + '_' + contaminant
+    tempData  = baseContaminantes(fechaInicio, fechaFin, station, contaminant)
+    if tempData.empty:
+        dataBackup = back(dirData, contaminant)
+        data = dataBackup
+        data = data.fillna(value=-1)
+        data = filterData(data, dirData + name + ".csv")
+        data = data.fillna(value=-1)
+        temp = data.ix[0].values
+        temp = temp[1:]
+        dataPred = pre.normalize(temp, sta, contaminant, dirData)
+        dataPred = convert(dataPred)
+        prediccion = preK.prediction(sta, contaminant, [dataPred], dirTrain, dirData)
+    else:
+        data =  tempData.dropna(axis=1, how = 'all')
+        data = data.fillna(value = -1)
+        data = data.reset_index(drop = True)
+        data = separateDate(data)
+        data = unionData(data,dirTotalCsv)
+        data = data.drop_duplicates(keep='first')
+        data = filterData(data,dirData + name + '.csv')
+        data = data.fillna(value = -1)
+        dataTemp = data['fecha']
+        index = data.index.values
+        arrayPred = []
+        for x in index:
+            pred = data.ix[x].values
+            valPred = pred[1:]
+            valNorm = pre.normalize(valPred, sta,  contaminant, dirData)
+            arrayPred.append(convert(valNorm))
+        result = pre.prediction(sta,contaminant,arrayPred, dirTrain,dirData)
+        real = desNorm(result, sta, contaminant, dirData, columnContaminant)
+        dataPrediccion =  real
+        savePrediccion1(station, dataPrediccion, contaminant, dataTemp)
+
+
 
 def back(dirData, contaminant):
     if contaminant == 'PM10':
@@ -225,7 +270,8 @@ def savePrediccion1(estacion, dataPrediccion, contaminant, fechas):
         else:
             fecha = fecha + timedelta(days=1)
         fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-        fd.saveData(estacion, fechaActual, [Valor[0]], findT(contaminant),2)
+        print(Valor);
+        fd.saveData(estacion, fechaActual,[Valor], findT(contaminant),3)
 
 
 def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
@@ -248,6 +294,7 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 6)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            #fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),3)
             fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
     elif estacion == 'NEZ':
         size = len(dataPrediccion)
@@ -258,7 +305,8 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 11)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
-            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
+            fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),3)
+            #fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
     elif estacion == 'TAH':
         size = len(dataPrediccion)
         for i in range(size):
@@ -268,6 +316,7 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 15)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            #fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),3)
             fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
     elif estacion == 'UAX':
         size = len(dataPrediccion)
@@ -278,6 +327,7 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
             fecha = fecha + timedelta(days=1)
             fecha = fecha + timedelta(hours = 13)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            #fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),3)
             fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
     else:
         size = len(dataPrediccion)
@@ -287,6 +337,7 @@ def savePrediccion(estacion, dataPrediccion, contaminant, fechas):
             #fecha =  datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
             fecha = fecha + timedelta(days=1)
             fechaActual = str(fecha.year) + '-' + str(fecha.month) + '-' + str(fecha.day)+' '+str(fecha.hour)+':00:00'
+            #fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),3)
             fd.saveData(estacion, fechaActual, [Valor], findT(contaminant),2)
 
 
@@ -379,10 +430,11 @@ def unionData(data, dirTotalCsv):
     :type data: dataFrame
     :return: dataFrame
     """
-    dataFestivos = df.read_csv('../../Data/Festivos.csv')
+    dataFestivos = df.read_csv('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/Data/Festivos.csv')
     dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
     dataFestivos2 = convertDates(dataFestivos)
     data = data.merge(dataFestivos2, how='left', on='fecha')
+    data = data.drop_duplicates(keep='first')
     data = data.reset_index()
     data = data.drop(labels='index', axis=1)
     variables = ['U10', 'V10', 'RAINC', 'T2', 'TH2', 'RAINNC', 'PBLH', 'SWDOWN', 'GLW']
@@ -392,9 +444,12 @@ def unionData(data, dirTotalCsv):
         dataNet = df.read_csv(netcdf)
         dataNet2 = convertDates(dataNet)
         data = data.merge(dataNet2, how='left', on='fecha')
+        data = data.drop_duplicates(keep='first')
+        data = data.reset_index()
+        data = data.drop(labels='index', axis=1)
         netcdf = dirTotalCsv
-    allD = data.dropna(axis=0, how='any')
-    # allD = data.fillna(value=-1)
+    #allD = data.dropna(axis=0, how='any')
+    allD = data.fillna(value=-1)
     allD = allD.reset_index()
     allD = allD.drop(labels='index', axis=1)
     return allD
@@ -414,7 +469,8 @@ def convertDates(data):
         datef = datetime.strptime(i, '%Y-%m-%d %H:%M:%S')
         date.append(datef)
     dataTemp = df.DataFrame(date, columns=['fecha'])
-    data['fecha'] = dataTemp
+    #data['fecha'] = dataTemp
+    data.insert(0,'fecha',dataTemp)
     return data
 
 def weekday(year, month, day):
@@ -442,10 +498,11 @@ def weekday(year, month, day):
 def init():
     contaminant = str(sys.argv[1])
     columnContaminant = str(sys.argv[2])
+    version = str(sys.argv[3])
     print(contaminant)
     print(columnContaminant)
     config = configparser.ConfigParser()
-    config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/forecast/forecastDate.conf')
+    config.read('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/modulos/forecast/forecastDate.conf')
     dirData = config.get('forecastDate', 'datos')
     dirrDataC = config.get('forecastDate', 'datosComp')
     dirTrain = config.get('forecastDate', 'train')
@@ -453,6 +510,6 @@ def init():
     fechaFin = config.get('forecastDate', 'fechaFin')
     est = config.get('forecastDate', 'estaciones' + contaminant)
     est  = est.split()
-    totalPredection(est, dirData+ contaminant+'/', dirrDataC+ contaminant+'/', dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin)
+    totalPredection(est, dirData+ contaminant+'/', dirrDataC+ contaminant+'/', dirTrain, contaminant,columnContaminant, fechaInicio, fechaFin,version)
 
 init()

@@ -9,7 +9,9 @@ Date last modified: 28/02/2018
 
 from datetime import datetime, timedelta
 from Utilites.FormatData import FormatData as fd
+#from FormatData import FormatData as fd
 from Utilites.Utilites import prepro as an
+#from Utilites import prepro as an
 import time
 import sys, os
 import pandas as df
@@ -85,6 +87,7 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
     print(dirTrain)
     print(dirData)
     dataBackup = back(dirData, contaminant)
+    dirNetCDF += str(datetime.now().year) + '/'
     if buscarArchivo(informacion[3], dirCsv):
         fecha = str(informacion[0].year) + "-" + numString(informacion[0].month)+"-"+numString(informacion[0].day)
         dataMet = unionMeteorologia(fecha, informacion[0], dirCsv, variables)
@@ -119,7 +122,8 @@ def leerArchivo(informacion, estaciones, variables, dirNetCDF, dirCsv, dirData, 
             else:
                 print('update 4 hours')
     elif buscarArchivo(informacion[2], dirNetCDF):  # NetCDF
-        direccioNetCDF = dirNetCDF +'0' +str(informacion[0].month) + "_" + deMonth(informacion[0].month) + "/"
+        month_number =str(informacion[0].month)
+        direccioNetCDF = dirNetCDF + month_number.zfill(2) + "_" + deMonth(informacion[0].month) + "/"
         data = open_netcdf(direccioNetCDF + informacion[2], informacion[2], informacion[2], pathCopyData);
         fecha = str(informacion[0].year) + "-" + numString(informacion[0].month)+"-"+numString(informacion[0].day)
         checkFile(data, informacion[2], fecha, 2, path, numRow, numColumns, minlat, maxlat, minlon, maxlon, variables)
@@ -851,7 +855,7 @@ def useClimatology(contaminant, estacion, fechaInicio, fechaFinal, dataMet,dirDa
 
 def dataCorrelacion(contaminant, estacion, fechaInicio, fechaFin, dataMet,dirData,dirTrain, dirFestivos):
     print('COrrelacion')
-    data_Corr = df.read_csv('/ServerScript/AirQualityModel/ContaminationForecast/Data/Correlacion_table.csv', index_col=0)
+    data_Corr = df.read_csv('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/Data/Correlacion_table.csv', index_col=0)
     corr_est = data_Corr[estacion].sort_values(ascending=False)
     estacion_corr = corr_est.index[1]
     data = fd.readData_corr(fechaInicio, fechaFin, [estacion_corr], contaminant)
@@ -966,7 +970,7 @@ def findTable2(fileName):
 def init():
     contaminant = str(sys.argv[1])
     config = configparser.ConfigParser()
-    config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/forecast/confAutomatic_System.conf')
+    config.read('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/modulos/forecast/confAutomatic_System.conf')
     dirNetCDF = config.get('automatic_System', 'dirNetCDF')
     dirCsv = config.get('automatic_System', 'dirCsv')
     dirData = config.get('automatic_System', 'dirData')

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+#import predictionKeras as pre
 import prediction as pre
 import pandas as df
 import numpy as np
@@ -43,7 +44,7 @@ def forecast_month(month, year, dirData, dirTotalCsv, dirTrain,estacion, contami
 
 
 def unionMeteorologia(data,dirTotalCsv):
-    dataFestivos = df.read_csv('/ServerScript/AirQualityModel/ContaminationForecast/Data/Festivos.csv')
+    dataFestivos = df.read_csv('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/Data/Festivos.csv')
     dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
     dataFestivos2 = convertDates(dataFestivos)
     data = data.merge(dataFestivos2, how='left', on='fecha')
@@ -337,7 +338,7 @@ def init():
         month = month -1
     contaminant = str(sys.argv[1])
     config = configparser.ConfigParser()
-    config.read('/home/pablo/ContaminationForecast/modulos/forecast/confForecast_UpdateMonth.conf')
+    config.read('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/modulos/forecast/confForecast_UpdateMonth.conf')
     dirData = config.get('forecast_month', 'dirData')
     dirTotalCsv = config.get('forecast_month', 'dirTotalCsv')
     dirTrain = config.get('forecast_month', 'dirTrain')

@@ -304,7 +304,6 @@ def completeMet(data):
         ti = da.strftime('%Y-%m-%d %H:%M:%S')
         temp = data[data.fecha == ti]
         dtemp = data.loc[temp.index, nameColumns]
-        print(dtemp)
         newData = df.concat([newData, dtemp])
     newData = newData.drop(labels='fecha', axis=1)
     newData = newData.reset_index(drop=True)
@@ -493,8 +492,9 @@ def checkFile(net, name, date, opt, path, numRow, numColumns, minlat, maxlat, mi
 
 
 def init():
+    mode = str(sys.argv[1])
     config = configparser.ConfigParser()
-    config.read('/ServerScript/AirQualityModel/ContaminationForecast/modulos/Pre-procesamiento/confMakeCsv.conf')
+    config.read('/media/storageBK/AirQualityForecast/Scripts/ContaminationForecast/modulos/Pre-procesamiento/confMakeCsv.conf')
     path = config.get('makeCsv', 'path')
     pathCsv = config.get('makeCsv', 'pathCsv')
     pathCopyData = config.get('makeCsv', 'pathCopyData')
@@ -508,7 +508,7 @@ def init():
     dateInit = config.get('makeCsv', 'dateInit')
     dateFinal = config.get('makeCsv', 'dateFinal')
     variables = config.get('makeCsv', 'variables')
-    mode = config.get('makeCsv', 'mode')
+    #mode = config.get('makeCsv', 'mode')
     variables = variables.split()
     if mode == 'S':
         print('save')
