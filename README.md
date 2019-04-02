@@ -1,11 +1,11 @@
 # ContaminationForecast
 
-# Neural network design for pollution prediction
+This system is a Neural Network for pollution prediction of Mexico City
 
-## Pip dependency installation
+## Installation
+### Pip dependency installation
 
-### tensorflow
-
+Tensorflow
 
 `pip installl tensorflow`
 
@@ -13,74 +13,45 @@ or
 
 `pip installl tensorflow-gpu`
 
-### pandas
+```
+pip install pandas
+pip install -U scikit-learn
+pip install seaborn
+```
 
-`pip install pandas`
+### Anaconda dependency installation
 
 
-### sklearn
-
-`pip install -U scikit-learn`
-
-### seaborn
-
-`pip install seaborn`
-
-## Anaconda dependency installation
-
-### CUDA
-
- For the installation of CUDA visit
-
- https://developer.nvidia.com/cuda-downloads
-
-### tensorflow
-
- For the installation of tensorflow gpu visit:
-
- https://www.tensorflow.org/install/install_linux#InstallingAnaconda
-
- For tensorflow
-
- `conda install -c jjhelmus tensorflow=0.12.0rc0`
-
- `conda install -c anaconda tensorflow-gpu`
-
-### pandas
-
-`conda install -c anaconda pandas=0.20.1`
-
-### sklearn
-
-`conda install -c anaconda scikit-learn=0.18.1`
-
-### seaborn
-
-`conda install seaborn`
-
+```
+conda install -c jjhelmus tensorflow=0.12.0rc0
+conda install -c anaconda tensorflow-gpu
+conda install -c anaconda pandas=0.20.1
+conda install -c anaconda scikit-learn=0.18.1
+conda install seaborn
+```
 ## Quickstart
-
-### Data
-1. Create data from Netcdf files
-
-`NetCDF/makeCsv.py`
+### Create data from Netcdf files
+This code will generate CSV files from NetCDFs of a metheorological forecast form the IOA group at the UNAM. It should
+also work for other WRF model outputs. 
+`python NetCDF/makeCsv.py`
 
 File involved:
-
    * `NetCDF/NewBBOX.py`
    * `NetCDF/Dominio.py`
 
-2. Create holiday data
+### Create holiday data
+This code will generate a CSV file containing the Mexican holidays with these numbers: 0 = laboral, 1 = oficial, 2 = sep
+`python Utilites/makeDayCsv.py`
 
-`Utilites/makeDayCsv.py`
+Input file:
+   * `Data/Festivos.csv`
+   
+Output file:
+   * `Data/Festivos2019Merged.csv`
 
-File involved:
+### Creation of table with pollutant data and data created previously
 
-   * `Utilites/data.csv`
-
-3. Creation of table with pollutant data and data created previously
-
-`saveData.py`
+`python saveData.py`
 
 File involved:
 
