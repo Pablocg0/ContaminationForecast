@@ -209,7 +209,7 @@ def separateDate(data):
         months[i] = d.month
         sinMonths[i] = (1 + np.sin(((d.month - 1) / 11) * (2 * np.pi))) / 2
         days[i] = d.day
-        sinDays[i] = (1 + np.sin(((d.day - 1) / 23) * (2 * np.pi))) / 2
+        sinDays[i] = (1 + np.sin(((d.day - 1) / 30) * (2 * np.pi))) / 2
         i += 1
     weekD = df.DataFrame(wDay, columns=['weekday'])
     data['weekday'] = weekD
@@ -280,7 +280,7 @@ def unionData(data, dirTotalCsv):
     :return: dataFrame
     """
     dataFestivos = df.read_csv('../../Data/Festivos.csv')
-    dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
+    #dataFestivos = dataFestivos.drop('Unnamed: 0', axis=1)
     dataFestivos2 = convertDates(dataFestivos)
     data = data.merge(dataFestivos2, how='left', on='fecha')
     data = data.reset_index()
