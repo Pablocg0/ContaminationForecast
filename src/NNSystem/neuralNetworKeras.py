@@ -37,8 +37,9 @@ def train (x_data,y_data, columns, iteraciones, station, contaminant, dirTrain):
 
 
     model.compile(loss='mean_squared_error', optimizer = 'adam')
-    #tensorboard = TensorBoard(log_dir="logs/" + station )
-    model.fit(x_train, y_target, epochs=150, batch_size=64*4)
+    tensorboard = TensorBoard(log_dir="logs/" + station )
+    stop_callback = EarlyStopping(monitor='val_loss',min_delta=.0001,patience=100, mode='auto')
+    model.fit(x_train, y_target, epochs=10000, batch_size=64*4, validation_split= 0.1, callbacks=[tensorboard, stop_callback])
     model.save(dirTrain + station + '/' + name + '.h5')
     del model
 
