@@ -621,7 +621,7 @@ def separateDate(data):
         months[i] = d.month
         sinMonths[i] = (1 + np.sin(((d.month - 1) / 11) * (2 * np.pi))) * 0.5
         days[i] = d.day
-        sinDays[i] = (1 + np.sin(((d.day - 1) / 23) * (2 * np.pi))) * 0.5
+        sinDays[i] = (1 + np.sin(((d.day - 1) / 30) * (2 * np.pi))) * 0.5
         i += 1
     weekD = df.DataFrame(wDay, columns=['weekday'])
     data = df.concat([data,weekD], axis=1)
